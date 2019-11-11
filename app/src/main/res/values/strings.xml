@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Safet</string>
+    <string name="title_activity_home">Home</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Notifications</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="pickup_notification"><b>Pick up notification</b>\nNotify when bus gets to pickup location</string>
+    <string name="drop_notification"><b>Drop notification</b>\nNotify when bus gets to drop location</string>
+    <string name="reached_school_notification"><b>Reached school</b>\nNotify when reached school</string>
+    <string name="left_school_notification"><b>Left school</b>\nNotify when leaving school</string>
+</resources>
