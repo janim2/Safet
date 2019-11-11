@@ -39,15 +39,24 @@ public class Settings extends Fragment {
 
         //        making the text color mix mix
 //        for pickup notification text
-        Spannable wordtoSpan = new SpannableString(getResources().getString(R.string.pickup_notification));
-        wordtoSpan.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.main_blue)), 0, 20, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        pickup_notify.setText(wordtoSpan);
+        Spannable pickupT = new SpannableString(getResources().getString(R.string.pickup_notification));
+        pickupT.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.main_blue)), 0, 20, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        pickup_notify.setText(pickupT);
 
 //        for drop notification
+        Spannable dropT = new SpannableString(getResources().getString(R.string.drop_notification));
+        dropT.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.main_blue)), 0, 18, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        dropped_notify.setText(dropT);
 
 //        for reached notification
+        Spannable reachedT = new SpannableString(getResources().getString(R.string.reached_school_notification));
+        reachedT.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.main_blue)), 0, 15, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        reached_notify.setText(reachedT);
 
 //        for left school notification
+        Spannable leftT = new SpannableString(getResources().getString(R.string.left_school_notification));
+        leftT.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.main_blue)), 0, 12, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        left_notify.setText(leftT);
         return settings;
 
     }
