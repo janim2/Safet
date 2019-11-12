@@ -159,6 +159,7 @@
                 android:textSize="13sp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
+                android:textColor="@color/main_blue"
                 android:layout_marginTop="-10dp"
                 android:background="@android:color/white"
                 android:text="Write us directly"/>
@@ -166,8 +167,9 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:background="@android:drawable/editbox_background"
+                android:background="@drawable/border_only_curved_corners"
                 android:hint="Subject"
+                android:paddingLeft="10dp"
                 android:layout_marginTop="20dp"
                 android:textSize="14sp"
                 android:inputType="text"
@@ -177,10 +179,11 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:background="@android:drawable/editbox_background"
+                android:background="@drawable/border_only_curved_corners"
                 android:hint="Type your message here"
                 android:layout_marginTop="10dp"
                 android:textSize="14sp"
+                android:paddingLeft="10dp"
                 android:inputType="textMultiLine"
                 android:textColor="@color/main_blue"
                 android:textColorHint="@color/colorPrimary"/>

@@ -1,5 +1,7 @@
 package com.tekdivisal.safet;
 
+import android.app.Notification;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -81,6 +83,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.notifications) {
+            startActivity(new Intent(MainActivity.this, Notifications.class));
             return true;
         }
 
