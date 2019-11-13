@@ -17,10 +17,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private FragmentManager manager;
+    private FirebaseAuth mauth;
+    private Accessories mainAccessor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         manager = getSupportFragmentManager();
+        mauth = FirebaseAuth.getInstance();
+        mainAccessor = new Accessories(MainActivity.this);
 
 //
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -54,7 +60,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        manager.beginTransaction().replace(R.id.container, new Home()).commit();
+        if(mauth.getCurrentUser() != null){
+            if(mainAccessor.getBoolean("isverified")){
+                manager.beginTransaction().replace(R.id.container, new Home()).commit();
+            }else{
+//                startActivity(new Intent(MainActivity.this, School_Verification.class));
+            }
+        }else{
+            startActivity(new Intent(MainActivity.this, Login.class));
+        }
     }
 
     @Override

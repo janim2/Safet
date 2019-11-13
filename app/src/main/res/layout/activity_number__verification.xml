@@ -47,7 +47,7 @@
                     android:layout_height="43dp"
                     android:layout_weight="2.5"
                     android:src="@drawable/ghana"
-                    android:padding="5dp"
+                    android:padding="10dp"
                     android:id="@+id/country_code_picker"
                     android:background="@android:drawable/editbox_background">
                 </ImageView>
@@ -77,10 +77,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Code Sent"
                 android:visibility="gone"
                 android:layout_marginTop="20dp"
-                android:id="@+id/code_sent_message"
+                android:id="@+id/status_message"
                 android:gravity="center"
                 android:textColor="@android:color/holo_green_dark"
                 android:textSize="10dp"/>
