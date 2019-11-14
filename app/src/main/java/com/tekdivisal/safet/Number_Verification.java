@@ -24,8 +24,13 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,21 +38,23 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Number_Verification extends Activity {
 
     private ImageView goBack_Image;
     private Button next_Button;
-    private String sphone_number, sschool_code,sregistered_number,spassword, sconfirmpassword,
-    parent_fname, parent_lname, parent_email, parent_location;
-    private EditText phone_number_editText, password_edditText, confitm_password_editText;
-    private ProgressBar loading, password_loading;
-    private TextView status_message_textview, password_success_message;
+    private String sphone_number, sschool_code,
+            transit_code, number_without_zero;
+    private EditText phone_number_editText, code_one, code_two, code_three, code_four, code_five, code_six;
+    private ProgressBar loading;
+    private TextView status_message_textview;
     private DatabaseReference check_existance_reference;
     private Accessories number_verification_accessor;
     private LinearLayout password_layout;
     private FirebaseAuth mauth;
-
+    private String mVerificationId;
+    private PhoneAuthProvider.ForceResendingToken mResendToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +69,12 @@ public class Number_Verification extends Activity {
         loading = findViewById(R.id.loading);
         status_message_textview = findViewById(R.id.status_message);
         password_layout = findViewById(R.id.password_layout);
-        password_edditText = findViewById(R.id.password_editText);
-        confitm_password_editText = findViewById(R.id.confirm_password_editText);
-        password_loading = findViewById(R.id.password_loading);
-        password_success_message = findViewById(R.id.password_success_message);
+        code_one = findViewById(R.id.code_number_one);
+        code_two = findViewById(R.id.code_number_two);
+        code_three = findViewById(R.id.code_number_three);
+        code_four = findViewById(R.id.code_number_four);
+        code_five = findViewById(R.id.code_number_five);
+        code_six = findViewById(R.id.code_number_six);
 
         number_verification_accessor = new Accessories(Number_Verification.this);
 
@@ -91,7 +100,8 @@ public class Number_Verification extends Activity {
                 String formated_number = number_from_editText.replace("(","");
                 String formated_number2 = formated_number.replace(")","");
                 String formated_number3 = formated_number2.replace("-","");
-                sphone_number  = "0" + formated_number3.replace(" ","");
+                number_without_zero = formated_number3.replace(" ","");
+                sphone_number  = "0" + number_without_zero;
                 if(!sphone_number.equals("")){
                     if(isNetworkAvailable()){
                         Check_for_user_existance(sphone_number);
@@ -108,6 +118,180 @@ public class Number_Verification extends Activity {
                 }
             }
         });
+
+        // auto movement in code area
+        code_one.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(code_one.getText().toString().length()==1)     //size as per your requirement
+                {
+                    code_two.requestFocus();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        code_two.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(code_two.getText().toString().length()==1)     //size as per your requirement
+                {
+                    code_three.requestFocus();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        code_three.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(code_three.getText().toString().length()==1)     //size as per your requirement
+                {
+                    code_four.requestFocus();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        code_four.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(code_four.getText().toString().length()==1)     //size as per your requirement
+                {
+                    code_five.requestFocus();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        code_five.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(code_five.getText().toString().length()==1)     //size as per your requirement
+                {
+                    code_six.requestFocus();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        code_six.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(code_six.getText().toString().length()==1)     //size as per your requirement
+                {
+//                    dothelogin();
+                    next_Button.setText("CONFIRM CODE");
+                    next_Button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String thecode = code_one.getText().toString()+code_two.getText().toString()+
+                                    code_three.getText().toString()+code_four.getText().toString()+code_five.getText().toString()+
+                                    code_six.getText().toString();
+                            if(isNetworkAvailable()){
+                                verifyPhoneNumberWithCode(mVerificationId,thecode);
+                            }else{
+                                loading.setVisibility(View.GONE);
+                                status_message_textview.setText("No internet connection");
+                                status_message_textview.setTextColor(getResources().getColor(R.color.colorAccent));
+                                status_message_textview.setVisibility(View.VISIBLE);
+                            }
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void verifyPhoneNumberWithCode(String verificationId,String theuserentered_code){
+        loading.setVisibility(View.VISIBLE);
+        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, theuserentered_code);
+        // [END verify_with_code]
+        signInWithPhoneAuthCredential(credential);
+    }
+
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        mauth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            loading.setVisibility(View.GONE);
+                            status_message_textview.setText("Verification complete");
+                            status_message_textview.setTextColor(getResources().getColor(R.color.main_blue));
+                            status_message_textview.setVisibility(View.VISIBLE);
+                            startActivity(new Intent(Number_Verification.this,Verify_School.class));
+                            Get_parent_registration_id(sphone_number, transit_code);
+
+                        } else {
+                            // Sign in failed, display a message and update the UI
+                            loading.setVisibility(View.GONE);
+                            status_message_textview.setText("Login failed");
+                            status_message_textview.setTextColor(getResources().getColor(R.color.colorAccent));
+                            status_message_textview.setVisibility(View.VISIBLE);                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                // The verification code entered was invalid
+
+                            }
+                        }
+                    }
+                });
     }
 
     private void Check_for_user_existance(final String phone_number) {
@@ -115,8 +299,6 @@ public class Number_Verification extends Activity {
             loading.setVisibility(View.VISIBLE);
             status_message_textview.setVisibility(View.GONE);
             check_existance_reference = FirebaseDatabase.getInstance().getReference("isRegistered");
-
-
             check_existance_reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -133,7 +315,14 @@ public class Number_Verification extends Activity {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if(dataSnapshot.exists()){
                                     for(DataSnapshot child : dataSnapshot.getChildren()){
-                                        Get_parent_registration_id(phone_number, child.getKey());
+                                        loading.setVisibility(View.GONE);
+                                        status_message_textview.setText("Number validation complete");
+                                        status_message_textview.setTextColor(getResources().getColor(R.color.colorAccent));
+                                        status_message_textview.setVisibility(View.VISIBLE);
+
+                                        Authentiate_the_parent_number(number_without_zero);
+                                        transit_code = child.getKey();
+//                                        Get_parent_registration_id(phone_number, child.getKey());
                                     }
 
                                 }
@@ -147,9 +336,9 @@ public class Number_Verification extends Activity {
 
                     }else{
                         loading.setVisibility(View.GONE);
-                        password_success_message.setText("Number is not registered with school");
-                        password_success_message.setTextColor(getResources().getColor(R.color.colorAccent));
-                        password_success_message.setVisibility(View.VISIBLE);
+                        status_message_textview.setText("Number is not registered with school");
+                        status_message_textview.setTextColor(getResources().getColor(R.color.colorAccent));
+                        status_message_textview.setVisibility(View.VISIBLE);
                     }
                 }
 
@@ -163,6 +352,85 @@ public class Number_Verification extends Activity {
         }
     }
 
+    private void Authentiate_the_parent_number(String phoneNumber) {
+
+        loading.setVisibility(View.GONE);
+        status_message_textview.setText("Sending code ...");
+        status_message_textview.setTextColor(getResources().getColor(R.color.colorAccent));
+        status_message_textview.setVisibility(View.VISIBLE);
+
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                "+233" + phoneNumber,        // Phone number to verify
+                60,                 // Timeout duration
+                TimeUnit.SECONDS,   // Unit of timeout
+                this,               // Activity (for callback binding)
+                mCallbacks);        // OnVerificationStateChangedCallbacksPhoneAuthActivity.java
+        loading.setVisibility(View.VISIBLE);
+    }
+
+    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+        @Override
+        public void onVerificationCompleted(PhoneAuthCredential credential) {
+            // This callback will be invoked in two situations:
+            // 1 - Instant verification. In some cases the phone number can be instantly
+            //     verified without needing to send or enter a verification code.
+            // 2 - Auto-retrieval. On some devices Google Play services can automatically
+            //     detect the incoming verification SMS and perform verificaiton without
+            //     user action.
+//                signInWithPhoneAuthCredential(credential);
+        }
+
+        @Override
+        public void onVerificationFailed(FirebaseException e) {
+            // This callback is invoked in an invalid request for verification is made,
+            // for instance if the the phone number format is not valid.
+            loading.setVisibility(View.GONE);
+
+
+            if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                // Invalid request
+
+            } else if (e instanceof FirebaseTooManyRequestsException) {
+                // The SMS quota for the project has been exceeded
+
+            }
+
+            // Show a message and update the UI
+
+        }
+
+        @Override
+        public void onCodeSent(String verificationId,
+                               PhoneAuthProvider.ForceResendingToken token) {
+            // The SMS verification code has been sent to the provided phone number, we
+            // now need to ask the user to enter the code and then construct a credential
+            // by combining the code with a verification ID.
+
+            loading.setVisibility(View.GONE);
+            status_message_textview.setText("Code has been sent");
+            status_message_textview.setTextColor(getResources().getColor(R.color.colorAccent));
+            status_message_textview.setVisibility(View.VISIBLE);
+
+            password_layout.setVisibility(View.VISIBLE);
+            // Save verification ID and resending token so we can use them later
+            mVerificationId = verificationId;
+            mResendToken = token;
+
+            next_Button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(!code_one.equals("") && !code_two.equals("") && !code_three.equals("") && !code_four.equals("") && !code_five.equals("") && !code_six.equals("")){
+
+                    }else{
+                        loading.setVisibility(View.GONE);
+                        status_message_textview.setText("Code required");
+                        status_message_textview.setTextColor(getResources().getColor(R.color.colorAccent));
+                        status_message_textview.setVisibility(View.VISIBLE);                    }
+                }
+            });
+        }
+    };
+
     private void Get_parent_registration_id(final String phone_number, String key) {
         DatabaseReference get_parent_id = FirebaseDatabase.getInstance().getReference("isRegistered").child(phone_number).child(key);
         get_parent_id.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -174,37 +442,8 @@ public class Number_Verification extends Activity {
                             sschool_code = child.getValue().toString();
                             number_verification_accessor.put("school_code",sschool_code);
                             number_verification_accessor.put("user_phone_number", phone_number);
-                            loading.setVisibility(View.GONE);
-
-                            //verification message
-                            status_message_textview.setText("Verification successful");
-                            status_message_textview.setTextColor(getResources().getColor(R.color.main_blue));
-                            status_message_textview.setVisibility(View.VISIBLE);
-                            password_layout.setVisibility(View.VISIBLE);
-
-                            //setting new button onclick
-                            next_Button.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    spassword = password_edditText.getText().toString().trim();
-                                    sconfirmpassword = confitm_password_editText.getText().toString().trim();
-
-                                    if(spassword.equals(sconfirmpassword)){
-                                        SIgn_user_in_with_details(phone_number, spassword, sconfirmpassword);
-                                    }
-                                    else{
-                                        loading.setVisibility(View.GONE);
-                                        password_success_message.setText("Password mismatch");
-                                        password_success_message.setTextColor(getResources().getColor(R.color.colorAccent));
-                                        password_success_message.setVisibility(View.VISIBLE);
-                                    }
-
-                                }
-                            });
-
-                        }
                     }
-
+                }
                 }
             }
 
@@ -213,93 +452,6 @@ public class Number_Verification extends Activity {
 
             }
         });
-    }
-
-    private void SIgn_user_in_with_details(String phone_number, String spassword, String sconfirmpassword) {
-        password_loading.setVisibility(View.VISIBLE);
-        mauth.signInWithEmailAndPassword(phone_number+"@gmail.com",spassword).addOnCompleteListener(Number_Verification.this,new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(!task.isSuccessful()){
-                    password_loading.setVisibility(View.GONE);
-                    password_success_message.setVisibility(View.VISIBLE);
-                    password_success_message.setTextColor(getResources().getColor(R.color.colorAccent));
-                    password_success_message.setText("Login failed");
-                }else{
-                    password_loading.setVisibility(View.GONE);
-                    password_success_message.setVisibility(View.VISIBLE);
-                    password_success_message.setTextColor(getResources().getColor(R.color.main_blue));
-                    password_success_message.setText("Login successful");
-                    Intent gotoVerification = new Intent(Number_Verification.this,Verify_school.class);
-//                                        gotoVerification.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(gotoVerification);
-                    getUserInformation();
-                }
-            }
-        });
-    }
-
-    private void getUserInformation() {
-        DatabaseReference get_parent_info = FirebaseDatabase.getInstance().getReference("parents").child(sschool_code).child(sphone_number);
-        get_parent_info.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    for(DataSnapshot child : dataSnapshot.getChildren()){ //getting the parent details
-                        if(child.getKey().equals("firstname")){
-                            parent_fname = child.getValue().toString();
-                            number_verification_accessor.put("parent_fname", parent_fname);
-                        }
-                        if(child.getKey().equals("lastname")){
-                            parent_lname = child.getValue().toString();
-                            number_verification_accessor.put("parent_lname", parent_lname);
-                        }
-                        if(child.getKey().equals("email")){
-                            parent_email = child.getValue().toString();
-                            number_verification_accessor.put("parent_email", parent_email);
-                        }
-                        if(child.getKey().equals("location")){
-                            parent_location = child.getValue().toString();
-                            number_verification_accessor.put("parent_location", parent_location);
-                        }
-                    }
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    public void Get_for_user_school(final String phone_number, String key){
-        //checking if user exists in database
-
-        check_existance_reference = FirebaseDatabase.getInstance().getReference("isRegistered").child(phone_number).child(key);
-        check_existance_reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    for(DataSnapshot child : dataSnapshot.getChildren()){
-                        if(child.getKey().equals("school_code")){
-                            sschool_code = child.getValue().toString();
-                            number_verification_accessor.put("school_code",sschool_code);
-                            number_verification_accessor.put("user_phone_number", phone_number);
-                            loading.setVisibility(View.GONE);
-                        }
-                    }
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
     }
 
     private boolean isNetworkAvailable() {

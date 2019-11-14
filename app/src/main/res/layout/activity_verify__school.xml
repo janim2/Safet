@@ -29,7 +29,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Enter your mobile number"
+                android:text="One last step"
                 android:textSize="13sp"
                 android:layout_marginTop="20dp"
                 android:id="@+id/enter_number_text"
@@ -39,66 +39,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="43dp"
-                    android:layout_weight="2.5"
-                    android:src="@drawable/ghana"
-                    android:padding="10dp"
-                    android:id="@+id/country_code_picker"
-                    android:background="@android:drawable/editbox_background">
-                </ImageView>
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="43dp"
-                    android:inputType="phone"
-                    android:textSize="15sp"
-                    android:maxLength="13"
-                    android:textColor="@android:color/black"
-                    android:textColorHint="@color/colorPrimary"
-                    android:hint="(206) 000-000"
-                    android:id="@+id/user_phone_number"
-                    android:background="@android:drawable/editbox_background"
-                    android:layout_weight="1"/>
-
-            </LinearLayout>
-
-            <ProgressBar
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:id="@+id/loading"
-                android:visibility="gone"
-                android:layout_marginTop="20dp"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:layout_marginTop="20dp"
-                android:id="@+id/status_message"
-                android:gravity="center"
-                android:textColor="@android:color/holo_green_dark"
-                android:textSize="10dp"/>
-
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/password_layout"
-                android:visibility="gone"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Enter code sent to phone number"
+                    android:text="Enter school code"
                     android:textSize="12sp"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="20dp"
+                    android:id="@+id/verification_no_message"
                     android:textColor="@color/main_blue"
                     android:textStyle="bold"/>
 
@@ -169,40 +118,27 @@
                         android:background="@android:drawable/editbox_background"
                         android:textColorHint="@android:color/darker_gray"
                         android:textColor="@android:color/black"/>
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:hint="0"
-                        android:maxLength="1"
-                        android:inputType="text"
-                        android:textSize="15sp"
-                        android:enabled="false"
-                        android:id="@+id/code_number_five"
-                        android:gravity="center"
-                        android:background="@android:drawable/editbox_background"
-                        android:textColorHint="@android:color/darker_gray"
-                        android:textColor="@android:color/black"/>
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:hint="0"
-                        android:maxLength="1"
-                        android:inputType="text"
-                        android:textSize="15sp"
-                        android:enabled="false"
-                        android:id="@+id/code_number_six"
-                        android:gravity="center"
-                        android:background="@android:drawable/editbox_background"
-                        android:textColorHint="@android:color/darker_gray"
-                        android:textColor="@android:color/black"/>
                 </LinearLayout>
-
-
             </LinearLayout>
+
+
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:id="@+id/loading"
+                android:visibility="gone"
+                android:layout_marginTop="20dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginTop="20dp"
+                android:id="@+id/status_message"
+                android:gravity="center"
+                android:textColor="@android:color/holo_green_dark"
+                android:textSize="10dp"/>
+
         </LinearLayout>
 
 
@@ -212,7 +148,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/colorPrimary"
-        android:text="VERIFY NUMBER"
+        android:text="FINISH"
         android:textSize="13sp"
         android:id="@+id/next_button"
         android:layout_gravity="bottom"

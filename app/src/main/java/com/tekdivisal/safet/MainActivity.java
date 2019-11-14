@@ -25,6 +25,8 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -136,31 +138,61 @@ public class MainActivity extends AppCompatActivity
 
         }
         else if (id == R.id.logout) {
-            final AlertDialog.Builder logout = new AlertDialog.Builder(MainActivity.this, R.style.Myalert);
-            logout.setTitle("Signing Out?");
-            logout.setMessage("Leaving us? Please reconsider.");
-            logout.setNegativeButton("Sign out", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-//                        logout here
-                    if(isNetworkAvailable()){
-                        FirebaseAuth.getInstance().signOut();
-                        mainAccessor.put("isverified", false);
-                        mainAccessor.clearStore();
-                        startActivity(new Intent(MainActivity.this,Login.class));
-                    }else{
-                        Toast.makeText(MainActivity.this,"No internet connection",Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
 
-            logout.setPositiveButton("Stay", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-            logout.show();
+            new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("Signing Out?")
+                    .setContentText("No local user settings would be not affected by this operation.\nContinue?")
+                    .setConfirmText("Sign out")
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog
+                                    .setTitleText("Success")
+                                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                            if(isNetworkAvailable()){
+                                FirebaseAuth.getInstance().signOut();
+                                mainAccessor.put("isverified", false);
+                                mainAccessor.clearStore();
+                                startActivity(new Intent(MainActivity.this,Login.class));
+                            }else{
+                                Toast.makeText(MainActivity.this,"No internet connection",Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                    })
+                    .setCancelText("Cancel")
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            finish();
+                        }
+                    })
+                    .show();
+//            final AlertDialog.Builder logout = new AlertDialog.Builder(MainActivity.this, R.style.Myalert);
+//            logout.setTitle("Signing Out?");
+//            logout.setMessage("Leaving us? Please reconsider.");
+//            logout.setNegativeButton("Sign out", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+////                        logout here
+//                    if(isNetworkAvailable()){
+//                        FirebaseAuth.getInstance().signOut();
+//                        mainAccessor.put("isverified", false);
+//                        mainAccessor.clearStore();
+//                        startActivity(new Intent(MainActivity.this,Login.class));
+//                    }else{
+//                        Toast.makeText(MainActivity.this,"No internet connection",Toast.LENGTH_LONG).show();
+//                    }
+//                }
+//            });
+//
+//            logout.setPositiveButton("Stay", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    dialog.cancel();
+//                }
+//            });
+//            logout.show();
 
         }
 
