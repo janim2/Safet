@@ -9,8 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Login_Last_step"></activity>
-        <activity android:name=".Number_Verification" />
+        <activity android:name=".Verify_school"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".Number_Verification"
+            android:screenOrientation="portrait"/>
         <activity android:name=".Login" />
         <activity
             android:name=".Notifications"

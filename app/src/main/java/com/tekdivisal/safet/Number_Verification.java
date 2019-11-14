@@ -11,6 +11,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,7 +38,8 @@ public class Number_Verification extends Activity {
 
     private ImageView goBack_Image;
     private Button next_Button;
-    private String sphone_number, sschool_code,sregistered_number,spassword, sconfirmpassword;
+    private String sphone_number, sschool_code,sregistered_number,spassword, sconfirmpassword,
+    parent_fname, parent_lname, parent_email, parent_location;
     private EditText phone_number_editText, password_edditText, confitm_password_editText;
     private ProgressBar loading, password_loading;
     private TextView status_message_textview, password_success_message;
@@ -89,7 +92,6 @@ public class Number_Verification extends Activity {
                 String formated_number2 = formated_number.replace(")","");
                 String formated_number3 = formated_number2.replace("-","");
                 sphone_number  = "0" + formated_number3.replace(" ","");
-                Toast.makeText(Number_Verification.this, sphone_number,Toast.LENGTH_LONG).show();
                 if(!sphone_number.equals("")){
                     if(isNetworkAvailable()){
                         Check_for_user_existance(sphone_number);
@@ -101,7 +103,7 @@ public class Number_Verification extends Activity {
                     }
                 }else{
                     status_message_textview.setText("Number required");
-                    status_message_textview.setTextColor(getResources().getColor(R.color.main_blue));
+                    status_message_textview.setTextColor(getResources().getColor(R.color.colorAccent));
                     status_message_textview.setVisibility(View.VISIBLE);
                 }
             }
@@ -144,7 +146,10 @@ public class Number_Verification extends Activity {
                         });
 
                     }else{
-                    Toast.makeText(Number_Verification.this,"Cannot get ID",Toast.LENGTH_LONG).show();
+                        loading.setVisibility(View.GONE);
+                        password_success_message.setText("Number is not registered with school");
+                        password_success_message.setTextColor(getResources().getColor(R.color.colorAccent));
+                        password_success_message.setVisibility(View.VISIBLE);
                     }
                 }
 
@@ -168,6 +173,7 @@ public class Number_Verification extends Activity {
                         if(child.getKey().equals("school_code")){
                             sschool_code = child.getValue().toString();
                             number_verification_accessor.put("school_code",sschool_code);
+                            number_verification_accessor.put("user_phone_number", phone_number);
                             loading.setVisibility(View.GONE);
 
                             //verification message
@@ -188,9 +194,9 @@ public class Number_Verification extends Activity {
                                     }
                                     else{
                                         loading.setVisibility(View.GONE);
-                                        status_message_textview.setText("Password mismatch");
-                                        status_message_textview.setTextColor(getResources().getColor(R.color.main_blue));
-                                        status_message_textview.setVisibility(View.VISIBLE);
+                                        password_success_message.setText("Password mismatch");
+                                        password_success_message.setTextColor(getResources().getColor(R.color.colorAccent));
+                                        password_success_message.setVisibility(View.VISIBLE);
                                     }
 
                                 }
@@ -210,23 +216,60 @@ public class Number_Verification extends Activity {
     }
 
     private void SIgn_user_in_with_details(String phone_number, String spassword, String sconfirmpassword) {
-        mauth.signInWithEmailAndPassword(sschool_email,spassword).addOnCompleteListener(Admin_Login.this,new OnCompleteListener<AuthResult>() {
+        password_loading.setVisibility(View.VISIBLE);
+        mauth.signInWithEmailAndPassword(phone_number+"@gmail.com",spassword).addOnCompleteListener(Number_Verification.this,new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(!task.isSuccessful()){
-                    loading.setVisibility(View.GONE);
-                    success_message.setVisibility(View.VISIBLE);
-                    success_message.setTextColor(getResources().getColor(R.color.red));
-                    success_message.setText("Login failed");
+                    password_loading.setVisibility(View.GONE);
+                    password_success_message.setVisibility(View.VISIBLE);
+                    password_success_message.setTextColor(getResources().getColor(R.color.colorAccent));
+                    password_success_message.setText("Login failed");
                 }else{
-                    loading.setVisibility(View.GONE);
-                    success_message.setVisibility(View.VISIBLE);
-                    success_message.setTextColor(getResources().getColor(R.color.green));
-                    success_message.setText("Login successful");
-                    Intent gotoVerification = new Intent(Admin_Login.this,Verify_School.class);
+                    password_loading.setVisibility(View.GONE);
+                    password_success_message.setVisibility(View.VISIBLE);
+                    password_success_message.setTextColor(getResources().getColor(R.color.main_blue));
+                    password_success_message.setText("Login successful");
+                    Intent gotoVerification = new Intent(Number_Verification.this,Verify_school.class);
 //                                        gotoVerification.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(gotoVerification);
+                    getUserInformation();
                 }
+            }
+        });
+    }
+
+    private void getUserInformation() {
+        DatabaseReference get_parent_info = FirebaseDatabase.getInstance().getReference("parents").child(sschool_code).child(sphone_number);
+        get_parent_info.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot child : dataSnapshot.getChildren()){ //getting the parent details
+                        if(child.getKey().equals("firstname")){
+                            parent_fname = child.getValue().toString();
+                            number_verification_accessor.put("parent_fname", parent_fname);
+                        }
+                        if(child.getKey().equals("lastname")){
+                            parent_lname = child.getValue().toString();
+                            number_verification_accessor.put("parent_lname", parent_lname);
+                        }
+                        if(child.getKey().equals("email")){
+                            parent_email = child.getValue().toString();
+                            number_verification_accessor.put("parent_email", parent_email);
+                        }
+                        if(child.getKey().equals("location")){
+                            parent_location = child.getValue().toString();
+                            number_verification_accessor.put("parent_location", parent_location);
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }
@@ -243,6 +286,7 @@ public class Number_Verification extends Activity {
                         if(child.getKey().equals("school_code")){
                             sschool_code = child.getValue().toString();
                             number_verification_accessor.put("school_code",sschool_code);
+                            number_verification_accessor.put("user_phone_number", phone_number);
                             loading.setVisibility(View.GONE);
                         }
                     }

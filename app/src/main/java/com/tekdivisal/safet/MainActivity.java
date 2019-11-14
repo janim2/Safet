@@ -1,12 +1,17 @@
 package com.tekdivisal.safet;
 
 import android.app.Notification;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -130,11 +136,43 @@ public class MainActivity extends AppCompatActivity
 
         }
         else if (id == R.id.logout) {
+            final AlertDialog.Builder logout = new AlertDialog.Builder(MainActivity.this, R.style.Myalert);
+            logout.setTitle("Signing Out?");
+            logout.setMessage("Leaving us? Please reconsider.");
+            logout.setNegativeButton("Sign out", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+//                        logout here
+                    if(isNetworkAvailable()){
+                        FirebaseAuth.getInstance().signOut();
+                        mainAccessor.put("isverified", false);
+                        mainAccessor.clearStore();
+                        startActivity(new Intent(MainActivity.this,Login.class));
+                    }else{
+                        Toast.makeText(MainActivity.this,"No internet connection",Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+
+            logout.setPositiveButton("Stay", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            logout.show();
 
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

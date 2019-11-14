@@ -66,8 +66,9 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Guardian name"
+                            android:text=""
                             android:gravity="center"
+                            android:id="@+id/parent_name"
                             android:textSize="14dp"
                             android:textColor="@android:color/white"
                             />
@@ -99,18 +100,31 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="+233 277777777"
+                    android:text=""
                     android:drawableLeft="@drawable/phone"
                     android:drawablePadding="10dp"
+                    android:id="@+id/parent_number"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="14sp"/>
 
                  <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="email@email.com"
+                    android:text=""
+                     android:id="@+id/parent_email"
                      android:textColor="@color/colorPrimary"
                      android:drawableLeft="@drawable/email"
+                     android:drawablePadding="10dp"
+                     android:layout_marginTop="5dp"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                     android:id="@+id/parent_location"
+                     android:textColor="@color/colorPrimary"
+                     android:drawableLeft="@drawable/location"
                      android:drawablePadding="10dp"
                      android:layout_marginTop="5dp"
                     android:textSize="14sp"/>
