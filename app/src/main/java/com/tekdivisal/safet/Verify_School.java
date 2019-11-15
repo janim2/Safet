@@ -187,38 +187,45 @@ public class Verify_School extends Activity {
                 {
 //                    dothelogin();
 //                    next_button.setText("VERIFY");
-                    String scode_one = code_one.getText().toString();
-                    String scode_two = code_two.getText().toString();
-                    String scode_three = code_three.getText().toString();
-                    String scode_four = code_four.getText().toString();
-                    if(!scode_one.equals("") && !scode_two.equals("") && !scode_three.equals("")
-                            && !scode_four.equals("")){
-                        String full_code = scode_one + scode_two + scode_three + scode_four;
-                        if(isNetworkAvailable()){
-                            loading.setVisibility(View.VISIBLE);
+
+                    nextbutton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String scode_one = code_one.getText().toString();
+                            String scode_two = code_two.getText().toString();
+                            String scode_three = code_three.getText().toString();
+                            String scode_four = code_four.getText().toString();
+                            if(!scode_one.equals("") && !scode_two.equals("") && !scode_three.equals("")
+                                    && !scode_four.equals("")){
+                                String full_code = scode_one + scode_two + scode_three + scode_four;
+                                if(isNetworkAvailable()){
+                                    loading.setVisibility(View.VISIBLE);
 //                                    verification complete state here
-                            if(full_code.equals(school_code)){
-                                verify_school_accesssrs.put("isverified", true);
-                                Intent gotoMain = new Intent(Verify_School.this, MainActivity.class);
-                                startActivity(gotoMain);
-                                getUserInformation();
+                                    if(full_code.equals(school_code)){
+                                        verify_school_accesssrs.put("isverified", true);
+                                        Intent gotoMain = new Intent(Verify_School.this, MainActivity.class);
+                                        startActivity(gotoMain);
+                                        getUserInformation();
+                                    }else{
+                                        loading.setVisibility(View.GONE);
+                                        status_message.setText("School verification failed");
+                                        status_message.setTextColor(getResources().getColor(R.color.main_blue));
+                                        status_message.setVisibility(View.VISIBLE);
+                                    }
+                                }else{
+                                    loading.setVisibility(View.GONE);
+                                    status_message.setText("No internet connection");
+                                    status_message.setTextColor(getResources().getColor(R.color.colorAccent));
+                                    status_message.setVisibility(View.VISIBLE);                                }
                             }else{
                                 loading.setVisibility(View.GONE);
-                                status_message.setText("School verification failed");
-                                status_message.setTextColor(getResources().getColor(R.color.main_blue));
+                                status_message.setText("Code Required");
+                                status_message.setTextColor(getResources().getColor(R.color.colorAccent));
                                 status_message.setVisibility(View.VISIBLE);
                             }
-                        }else{
-                            loading.setVisibility(View.GONE);
-                            status_message.setText("No internet connection");
-                            status_message.setTextColor(getResources().getColor(R.color.colorAccent));
-                            status_message.setVisibility(View.VISIBLE);                                }
-                    }else{
-                        loading.setVisibility(View.GONE);
-                        status_message.setText("Code Required");
-                        status_message.setTextColor(getResources().getColor(R.color.colorAccent));
-                        status_message.setVisibility(View.VISIBLE);
-                    }
+                        }
+                    });
+
                 }
             }
 
@@ -254,8 +261,8 @@ public class Verify_School extends Activity {
                             verify_school_accesssrs.put("parent_location", parent_location);
                         }
 
-                        addToNotifications(school_code, parent_code);
                     }
+                    addToNotifications(school_code, parent_code);
 
                 }
             }
