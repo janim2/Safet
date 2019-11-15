@@ -64,6 +64,7 @@
                 android:layout_height="50dp"
                 android:src="@drawable/student"
                 android:padding="8dp"
+                android:id="@+id/notify_image"
                 android:layout_weight="3"/>
 
             <LinearLayout
@@ -77,6 +78,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Title"
+                    android:id="@+id/notify_title"
                     android:textColor="@color/main_blue"
                     android:textSize="14sp"/>
 
@@ -85,6 +87,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="13sp"
+                    android:id="@+id/notify_message"
                     android:text="Message"/>
             </LinearLayout>
         </LinearLayout>

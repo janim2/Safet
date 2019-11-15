@@ -17,11 +17,15 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.Date;
+import java.util.Random;
 
 public class Verify_School extends Activity {
 
@@ -32,6 +36,7 @@ public class Verify_School extends Activity {
     private TextView status_message;
     private String school_code, parent_code, parent_fname, parent_lname, parent_email, parent_location;
     private Accessories verify_school_accesssrs;
+    private DatabaseReference addto__Dataabse_ref;
 
 
     @Override
@@ -56,52 +61,56 @@ public class Verify_School extends Activity {
         school_code = verify_school_accesssrs.getString("school_code");
         parent_code = verify_school_accesssrs.getString("user_phone_number");
 
-
         goback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-            }
-        });
-
-        nextbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String scode_one = code_one.getText().toString();
-                String scode_two = code_two.getText().toString();
-                String scode_three = code_three.getText().toString();
-                String scode_four = code_four.getText().toString();
-                if(!scode_one.equals("") && !scode_two.equals("") && !scode_three.equals("")
-                        && !scode_four.equals("")){
-                    String full_code = scode_one + scode_two + scode_three + scode_four;
-                    if(isNetworkAvailable()){
-                        loading.setVisibility(View.VISIBLE);
-//                                    verification complete state here
-                        if(full_code.equals(school_code)){
-                            verify_school_accesssrs.put("isverified", true);
-                            Intent gotoMain = new Intent(Verify_School.this, MainActivity.class);
-                            startActivity(gotoMain);
-                            getUserInformation();
-
-                        }else{
-                            loading.setVisibility(View.GONE);
-                            status_message.setText("School verification failed");
-                            status_message.setTextColor(getResources().getColor(R.color.main_blue));
-                            status_message.setVisibility(View.VISIBLE);
-                        }
-                    }else{
-                        loading.setVisibility(View.GONE);
-                        status_message.setText("No internet connection");
-                        status_message.setTextColor(getResources().getColor(R.color.colorAccent));
-                        status_message.setVisibility(View.VISIBLE);                                }
+                if(FirebaseAuth.getInstance().getCurrentUser() != null){
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_HOME);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                 }else{
-                    loading.setVisibility(View.GONE);
-                    status_message.setText("Code Required");
-                    status_message.setTextColor(getResources().getColor(R.color.colorAccent));
-                    status_message.setVisibility(View.VISIBLE);
+                    finish();
                 }
             }
         });
+
+//        nextbutton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String scode_one = code_one.getText().toString();
+//                String scode_two = code_two.getText().toString();
+//                String scode_three = code_three.getText().toString();
+//                String scode_four = code_four.getText().toString();
+//                if(!scode_one.equals("") && !scode_two.equals("") && !scode_three.equals("")
+//                        && !scode_four.equals("")){
+//                    String full_code = scode_one + scode_two + scode_three + scode_four;
+//                    if(isNetworkAvailable()){
+//                        loading.setVisibility(View.VISIBLE);
+////                                    verification complete state here
+//                        if(full_code.equals(school_code)){
+//                            verify_school_accesssrs.put("isverified", true);
+//                            Intent gotoMain = new Intent(Verify_School.this, MainActivity.class);
+//                            startActivity(gotoMain);
+//                        }else{
+//                            loading.setVisibility(View.GONE);
+//                            status_message.setText("School verification failed");
+//                            status_message.setTextColor(getResources().getColor(R.color.main_blue));
+//                            status_message.setVisibility(View.VISIBLE);
+//                        }
+//                    }else{
+//                        loading.setVisibility(View.GONE);
+//                        status_message.setText("No internet connection");
+//                        status_message.setTextColor(getResources().getColor(R.color.colorAccent));
+//                        status_message.setVisibility(View.VISIBLE);                                }
+//                }else{
+//                    loading.setVisibility(View.GONE);
+//                    status_message.setText("Code Required");
+//                    status_message.setTextColor(getResources().getColor(R.color.colorAccent));
+//                    status_message.setVisibility(View.VISIBLE);
+//                }
+//            }
+//        });
 
 
 
@@ -178,6 +187,38 @@ public class Verify_School extends Activity {
                 {
 //                    dothelogin();
 //                    next_button.setText("VERIFY");
+                    String scode_one = code_one.getText().toString();
+                    String scode_two = code_two.getText().toString();
+                    String scode_three = code_three.getText().toString();
+                    String scode_four = code_four.getText().toString();
+                    if(!scode_one.equals("") && !scode_two.equals("") && !scode_three.equals("")
+                            && !scode_four.equals("")){
+                        String full_code = scode_one + scode_two + scode_three + scode_four;
+                        if(isNetworkAvailable()){
+                            loading.setVisibility(View.VISIBLE);
+//                                    verification complete state here
+                            if(full_code.equals(school_code)){
+                                verify_school_accesssrs.put("isverified", true);
+                                Intent gotoMain = new Intent(Verify_School.this, MainActivity.class);
+                                startActivity(gotoMain);
+                                getUserInformation();
+                            }else{
+                                loading.setVisibility(View.GONE);
+                                status_message.setText("School verification failed");
+                                status_message.setTextColor(getResources().getColor(R.color.main_blue));
+                                status_message.setVisibility(View.VISIBLE);
+                            }
+                        }else{
+                            loading.setVisibility(View.GONE);
+                            status_message.setText("No internet connection");
+                            status_message.setTextColor(getResources().getColor(R.color.colorAccent));
+                            status_message.setVisibility(View.VISIBLE);                                }
+                    }else{
+                        loading.setVisibility(View.GONE);
+                        status_message.setText("Code Required");
+                        status_message.setTextColor(getResources().getColor(R.color.colorAccent));
+                        status_message.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
@@ -212,6 +253,8 @@ public class Verify_School extends Activity {
                             parent_location = child.getValue().toString();
                             verify_school_accesssrs.put("parent_location", parent_location);
                         }
+
+                        addToNotifications(school_code, parent_code);
                     }
 
                 }
@@ -224,6 +267,33 @@ public class Verify_School extends Activity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }else{
+            finish();
+        }
+    }
+
+    private void addToNotifications(String school_code, String parent_code) {
+        try {
+            Random random = new Random();
+            int a = random.nextInt(987654);
+            String notificationID = "notification" + a+"";
+            addto__Dataabse_ref = FirebaseDatabase.getInstance().getReference("notifications").child(school_code).child(parent_code).child(notificationID);
+            addto__Dataabse_ref.child("image").setValue("WM");
+            addto__Dataabse_ref.child("message").setValue("Welcome to Safet. The most secure bus tracker system for your school. Your kids safety is our number one concern");
+            addto__Dataabse_ref.child("title").setValue("Welcome to Safet");
+            addto__Dataabse_ref.child("time").setValue(new Date().toString());
+        }catch (NullPointerException e){
+
+        }
+    }
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager

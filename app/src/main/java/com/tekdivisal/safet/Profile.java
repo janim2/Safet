@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 /**
@@ -36,13 +37,15 @@ public class Profile extends Fragment {
         parent_email_Textview = profile.findViewById(R.id.parent_email);
         parent_locationTextView = profile.findViewById(R.id.parent_location);
 
-        sparent_name = profile_accessor.getString("parent_fname") + "" + profile_accessor.getString("parent_lname");
+        sparent_name = profile_accessor.getString("parent_fname") + " " + profile_accessor.getString("parent_lname");
         sparent_email = profile_accessor.getString("parent_email");
         sparent_phone = profile_accessor.getString("user_phone_number");
         sparent_location = profile_accessor.getString("parent_location");
 
+        Toast.makeText(getActivity(), sparent_email, Toast.LENGTH_LONG).show();
+
         try {
-            parent_phone_Textview.setText(sparent_name);
+            parent_name_Textview.setText(sparent_name);
             parent_phone_Textview.setText(sparent_phone);
             parent_email_Textview.setText(sparent_email);
             parent_locationTextView.setText(sparent_location);
