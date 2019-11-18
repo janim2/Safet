@@ -29,7 +29,7 @@ public class Profile extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View profile =  inflater.inflate(R.layout.fragment_profile, container, false);
-
+        getActivity().setTitle("Profile");
         profile_accessor = new Accessories(getActivity());
 
         parent_name_Textview = profile.findViewById(R.id.parent_name);

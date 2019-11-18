@@ -3,12 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/location_fragment"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Edit_Location">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.design.widget.BottomNavigationView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:id="@+id/location_navigation"
+        app:menu="@menu/location_menu">
+
+
+    </android.support.design.widget.BottomNavigationView>
 
 </FrameLayout>

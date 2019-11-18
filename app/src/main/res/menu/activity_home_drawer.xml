@@ -14,8 +14,8 @@
             android:title="Profile" />
         <item
             android:id="@+id/edit_location"
-            android:title="Edit Location" />
-        <!--android:icon="@drawable/placeholder"-->
+            android:title="Bus Location"
+            android:icon="@drawable/route"/>
 
         <item
             android:id="@+id/settings"

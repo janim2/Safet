@@ -50,7 +50,7 @@ public class Home extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View home =  inflater.inflate(R.layout.fragment_home, container, false);
-
+        getActivity().setTitle("Home");
         //initialization of accessories
         home_accessor = new Accessories(getActivity());
 

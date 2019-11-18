@@ -31,7 +31,7 @@ public class Settings extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View settings =  inflater.inflate(R.layout.fragment_settings, container, false);
-
+        getActivity().setTitle("Settings");
         pickup_notify = settings.findViewById(R.id.pickup_notify_text);
         reached_notify = settings.findViewById(R.id.reached_notify_text);
         dropped_notify = settings.findViewById(R.id.drop_notify_text);

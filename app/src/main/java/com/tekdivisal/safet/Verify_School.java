@@ -294,7 +294,7 @@ public class Verify_School extends Activity {
             String notificationID = "notification" + a+"";
             addto__Dataabse_ref = FirebaseDatabase.getInstance().getReference("notifications").child(school_code).child(parent_code).child(notificationID);
             addto__Dataabse_ref.child("image").setValue("WM");
-            addto__Dataabse_ref.child("message").setValue("Welcome to Safet. The most secure bus tracker system for your school. Your kids safety is our number one concern");
+            addto__Dataabse_ref.child("message").setValue("Welcome to Safet. The most secure bus1 tracker system for your school. Your kids safety is our number one concern");
             addto__Dataabse_ref.child("title").setValue("Welcome to Safet");
             addto__Dataabse_ref.child("time").setValue(new Date().toString());
         }catch (NullPointerException e){

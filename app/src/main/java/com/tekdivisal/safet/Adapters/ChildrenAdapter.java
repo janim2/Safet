@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tekdivisal.safet.Child_location;
 import com.tekdivisal.safet.Model.Children;
 import com.tekdivisal.safet.R;
 
@@ -61,6 +62,7 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
 //                Intent open_driver_details = new Intent(v.getContext(), Driver_Details.class);
                 Toast.makeText(v.getContext(), "Child Details", Toast.LENGTH_LONG).show();
 //                v.getContext().startActivity(open_driver_details);
+                v.getContext().startActivity(new Intent(v.getContext(), Child_location.class));
             }
         });
     }

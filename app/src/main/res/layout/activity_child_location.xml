@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/child_find_layout"
+    tools:context=".Child_location">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="55dp">
+
+        <include layout="@layout/status_bottom_sheet"/>
+        <include layout="@layout/bus_bottom_sheet"/>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+
+    <android.support.design.widget.BottomNavigationView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:id="@+id/find_child_navigation"
+        app:menu="@menu/child_location_menu"
+        app:itemTextColor="@color/main_blue"
+        android:layout_gravity="bottom">
+
+    </android.support.design.widget.BottomNavigationView>
+
+
+
+</FrameLayout>
