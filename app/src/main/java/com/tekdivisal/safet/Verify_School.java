@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -58,7 +59,10 @@ public class Verify_School extends Activity {
         loading = findViewById(R.id.loading);
         status_message = findViewById(R.id.status_message);
 
-        school_code = verify_school_accesssrs.getString("school_code");
+        school_code = getIntent().getStringExtra("intent_school_code");
+        if(school_code == null || school_code.equals("")){
+            school_code = verify_school_accesssrs.getString("school_code");
+        }
         parent_code = verify_school_accesssrs.getString("user_phone_number");
 
         goback.setOnClickListener(new View.OnClickListener() {
@@ -191,17 +195,17 @@ public class Verify_School extends Activity {
                     nextbutton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            String scode_one = code_one.getText().toString();
-                            String scode_two = code_two.getText().toString();
-                            String scode_three = code_three.getText().toString();
-                            String scode_four = code_four.getText().toString();
+                            String scode_one = code_one.getText().toString().trim();
+                            String scode_two = code_two.getText().toString().trim();
+                            String scode_three = code_three.getText().toString().trim();
+                            String scode_four = code_four.getText().toString().trim();
                             if(!scode_one.equals("") && !scode_two.equals("") && !scode_three.equals("")
                                     && !scode_four.equals("")){
                                 String full_code = scode_one + scode_two + scode_three + scode_four;
                                 if(isNetworkAvailable()){
                                     loading.setVisibility(View.VISIBLE);
 //                                    verification complete state here
-                                    if(full_code.equals(school_code)){
+                                    if(school_code.equals(full_code)){
                                         verify_school_accesssrs.put("isverified", true);
                                         Intent gotoMain = new Intent(Verify_School.this, MainActivity.class);
                                         startActivity(gotoMain);

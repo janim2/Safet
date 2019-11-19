@@ -199,9 +199,12 @@ public class Bus_Location extends Fragment implements OnMapReadyCallback,
                             .target(driverlatlng).tilt(5)
                             .zoom(17)
                             .build();
-                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-//                    mDriverMarker =
-                    mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverlatlng).title("Your Bus").flat(true));//.icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin_)));
+                    try {
+                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    }catch (NullPointerException e){
+
+                    }
+                    mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverlatlng).title("Bus").flat(true));//.icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin_)));
                 }
             }
 

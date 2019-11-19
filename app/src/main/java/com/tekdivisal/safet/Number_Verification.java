@@ -277,15 +277,17 @@ public class Number_Verification extends Activity {
                             status_message_textview.setText("Verification complete");
                             status_message_textview.setTextColor(getResources().getColor(R.color.main_blue));
                             status_message_textview.setVisibility(View.VISIBLE);
-                            startActivity(new Intent(Number_Verification.this,Verify_School.class));
-                            Get_parent_registration_id(sphone_number, transit_code);
+                            Intent gotoVerificaton = new Intent(Number_Verification.this,Verify_School.class);
+                            gotoVerificaton.putExtra("intent_school_code", sschool_code);
+                            startActivity(gotoVerificaton);
 
                         } else {
                             // Sign in failed, display a message and update the UI
                             loading.setVisibility(View.GONE);
                             status_message_textview.setText("Login failed");
                             status_message_textview.setTextColor(getResources().getColor(R.color.colorAccent));
-                            status_message_textview.setVisibility(View.VISIBLE);                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                            status_message_textview.setVisibility(View.VISIBLE);
+                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 // The verification code entered was invalid
 
                             }
@@ -410,6 +412,7 @@ public class Number_Verification extends Activity {
             status_message_textview.setText("Code has been sent");
             status_message_textview.setTextColor(getResources().getColor(R.color.colorAccent));
             status_message_textview.setVisibility(View.VISIBLE);
+            Get_parent_registration_id(sphone_number, transit_code);
 
             password_layout.setVisibility(View.VISIBLE);
             // Save verification ID and resending token so we can use them later
