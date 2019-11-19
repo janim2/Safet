@@ -12,8 +12,9 @@ import android.widget.LinearLayout;
 public class Child_location extends AppCompatActivity {
 
     private LinearLayout status_bottom_sheet, bus_bottom_sheet;
-    private BottomSheetBehavior status_sheetBehavior, bus_sheetBehaviour;
+//    private BottomSheetBehavior status_sheetBehavior, bus_sheetBehaviour;
     private BottomNavigationView bottomNavigationView;
+    private Accessories child_location_accessor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,14 +23,16 @@ public class Child_location extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Student Name");
 
+        child_location_accessor = new Accessories(this);
+
         bottomNavigationView = findViewById(R.id.find_child_navigation);
         //status bottom sheet
         status_bottom_sheet = findViewById(R.id.status_bottom_sheet);
-        status_sheetBehavior = BottomSheetBehavior.from(status_bottom_sheet);
+//        status_sheetBehavior = BottomSheetBehavior.from(status_bottom_sheet);
 
         //bus bottom sheet
         bus_bottom_sheet = findViewById(R.id.bus_bottom_sheet);
-        bus_sheetBehaviour = BottomSheetBehavior.from(bus_bottom_sheet);
+//        bus_sheetBehaviour = BottomSheetBehavior.from(bus_bottom_sheet);
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -42,21 +45,25 @@ public class Child_location extends AppCompatActivity {
                         break;
 
                     case R.id.bus:
-                        if(bus_sheetBehaviour.getState() != BottomSheetBehavior.STATE_EXPANDED){
-                            bus_sheetBehaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
-                            status_sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        }else{
-                            bus_sheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        }
+                        child_location_accessor.put("vital_type","bus_vitals");
+                        fragmentManager.beginTransaction().replace(R.id.child_find_layout,new Vital_Info()).commit();
+//                        if(bus_sheetBehaviour.getState() != BottomSheetBehavior.STATE_EXPANDED){
+//                            bus_sheetBehaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
+//                            status_sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+//                        }else{
+//                            bus_sheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
+//                        }
                         break;
 
                     case R.id.status:
-                        if(status_sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED){
-                            status_sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                            bus_sheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        }else{
-                            status_sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        }
+                        child_location_accessor.put("vital_type","status_vitals");
+                        fragmentManager.beginTransaction().replace(R.id.child_find_layout,new Vital_Info()).commit();
+//                        if(status_sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED){
+//                            status_sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+//                            bus_sheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
+//                        }else{
+//                            status_sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+//                        }
                         break;
                 }
                 return false;
