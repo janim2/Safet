@@ -67,6 +67,7 @@
                     android:layout_margin="8dp"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="15sp"
+                    android:drawableLeft="@drawable/driver_l"
                     android:drawablePadding="8dp"
                     android:text="Driver" />
 
@@ -105,6 +106,7 @@
                     android:layout_margin="8dp"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="15sp"
+                    android:drawableLeft="@drawable/bus_l"
                     android:drawablePadding="8dp"
                     android:text="Bus Number" />
 
@@ -143,6 +145,7 @@
                     android:layout_margin="8dp"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="15sp"
+                    android:drawableLeft="@drawable/plate_l"
                     android:drawablePadding="8dp"
                     android:text="Licence" />
 

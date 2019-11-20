@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -22,6 +23,10 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.model.Polyline;
+import com.google.maps.android.PolyUtil;
+
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -41,6 +46,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -49,9 +55,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.tekdivisal.safet.Map_route.DirectionPointListener;
-import com.tekdivisal.safet.Map_route.GetPathFromLocation;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 public class Child_location extends AppCompatActivity implements OnMapReadyCallback,
@@ -73,6 +87,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     private Location mLastLocation;
     private LatLng pickuplocation;
+
 
 
     @Override
@@ -110,6 +125,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         }
         if(isNetworkAvailable()){
             getDriverID();
+//            getBusDetails();
         }
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -176,7 +192,10 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
     public void onLocationChanged(Location location) {
         mLastLocation = location;
         LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(latLng).title("Me").flat(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        if(muserMarker != null){
+            muserMarker.remove();
+        }
+        muserMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Me").flat(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
         pickuplocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
     }
@@ -255,12 +274,20 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 //                    pickuplocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 //
                     Location loc1  = new Location("");
-                    loc1.setLatitude(pickuplocation.latitude);
-                    loc1.setLongitude(pickuplocation.longitude);
+                    try{
+                        loc1.setLatitude(pickuplocation.latitude);
+                        loc1.setLongitude(pickuplocation.longitude);
+                    }catch (NullPointerException e){
+
+                    }
 
                     Location loc2  = new Location("");
-                    loc2.setLatitude(driverlatlng.latitude);
-                    loc2.setLongitude(driverlatlng.longitude);
+                    try{
+                        loc2.setLatitude(driverlatlng.latitude);
+                        loc2.setLongitude(driverlatlng.longitude);
+                    }catch (NullPointerException e){
+
+                    }
 
                     float distance = loc1.distanceTo(loc2);
                     Toast.makeText(Child_location.this,"Bus Distance: "+ String.valueOf(distance), Toast.LENGTH_LONG).show();
@@ -283,6 +310,12 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                         Toast.makeText(Child_location.this,"Bus Distance: "+ String.valueOf(distance), Toast.LENGTH_LONG).show();
                     }
 
+                    //drawing a line between the two destinations
+                    PolylineOptions options = new PolylineOptions().add(pickuplocation)
+                            .add(driverlatlng).width(5).color(Color.BLUE).geodesic(true);
+
+                    mMap.addPolyline(options);
+
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(driverlatlng).tilt(5)
                             .zoom(17)
@@ -294,12 +327,6 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                     }
 
                     mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverlatlng).title("Bus").flat(true));//.icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin_)));
-                    new GetPathFromLocation(pickuplocation, driverlatlng, new DirectionPointListener() {
-                        @Override
-                        public void onPath(PolylineOptions polyLine) {
-                            mMap.addPolyline(polyLine);
-                        }
-                    }).execute();
                 }
             }
 
