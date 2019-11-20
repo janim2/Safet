@@ -131,9 +131,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.about_school) {
             manager.beginTransaction().replace(R.id.container, new About()).commit();
 
-        } else if (id == R.id.contact) {
-            manager.beginTransaction().replace(R.id.container, new Contact()).commit();
-
         }
         else if (id == R.id.logout) {
             final AlertDialog.Builder logout = new AlertDialog.Builder(MainActivity.this, R.style.Myalert);

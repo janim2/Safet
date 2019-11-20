@@ -18,7 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Child_location"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity"
+            android:configChanges="orientation"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

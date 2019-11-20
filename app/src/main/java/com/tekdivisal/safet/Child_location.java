@@ -21,7 +21,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.Polyline;
@@ -87,6 +89,10 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     private Location mLastLocation;
     private LatLng pickuplocation;
+    private String sdriver_code,sfirst_name, slastname, saddress, sphone_number,
+    sbrand,schasis_no,sbus_code, smodel,snumber_plate, sschoolemail, ssechoollocation,
+            sschoolphone,sschoolname, child_fname_from_home, child_lname_from_home;
+    private TextView driver_name_tv, number_plate_tv, bus_model_tv, school_name_tv, school_number_tv;
 
 
 
@@ -95,8 +101,11 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_location);
 
-        getSupportActionBar().setTitle("Student Name");
+        //child name intents from home
+        child_fname_from_home = getIntent().getStringExtra("from_home_child_fname");
+        child_lname_from_home = getIntent().getStringExtra("from_home_child_lname");
 
+        getSupportActionBar().setTitle(child_fname_from_home + " " + child_fname_from_home);
         child_location_accessor = new Accessories(this);
 
         school_code = child_location_accessor.getString("school_code");
@@ -110,6 +119,12 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         //bus bottom sheet
         bus_bottom_sheet = findViewById(R.id.bus_bottom_sheet);
         bus_sheetBehaviour = BottomSheetBehavior.from(bus_bottom_sheet);
+
+        driver_name_tv = findViewById(R.id.the_driver_name);
+        number_plate_tv = findViewById(R.id.the_licence_plate);
+        bus_model_tv = findViewById(R.id.the_bus_model);
+        school_name_tv = findViewById(R.id.the_school_name);
+        school_number_tv = findViewById(R.id.theschool_number);
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -251,7 +266,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         }
     }
 
-    private void getDriverLocation(String key) {
+    private void getDriverLocation(final String key) {
         driverLocationref = FirebaseDatabase.getInstance().getReference().child("bus_location").child(school_code).child(key).child("l");
         driverLocationref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -311,10 +326,10 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                     }
 
                     //drawing a line between the two destinations
-                    PolylineOptions options = new PolylineOptions().add(pickuplocation)
-                            .add(driverlatlng).width(5).color(Color.BLUE).geodesic(true);
-
-                    mMap.addPolyline(options);
+//                    PolylineOptions options = new PolylineOptions().add(pickuplocation)
+//                            .add(driverlatlng).width(5).color(Color.BLUE).geodesic(true);
+//
+//                    mMap.addPolyline(options);
 
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(driverlatlng).tilt(5)
@@ -327,6 +342,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                     }
 
                     mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverlatlng).title("Bus").flat(true));//.icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin_)));
+                    Fetch_Driver_Info(key);
                 }
             }
 
@@ -376,6 +392,112 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                         Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog not created.");
                         break;
                 }
+            }
+        });
+    }
+
+    private void Fetch_Driver_Info(final String key) {
+        DatabaseReference getdriver_info = FirebaseDatabase.getInstance().getReference("drivers").child(school_code).child(key);
+        getdriver_info.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot child : dataSnapshot.getChildren()){
+                        if(child.getKey().equals("first_name")){
+                            sfirst_name = child.getValue().toString();
+                        }
+                        if(child.getKey().equals("last_name")){
+                            slastname = child.getValue().toString();
+                        }
+                        if(child.getKey().equals("address")){
+                            saddress = child.getValue().toString();
+                        }
+                        if(child.getKey().equals("phone_number")){
+                            sphone_number = child.getValue().toString();
+                        }
+                        sdriver_code = key;
+                    }
+                    driver_name_tv.setText(sfirst_name + " " + slastname);
+                    getBusDetails(school_code,sdriver_code);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void getBusDetails(final String schoolcode, String drivercode) {
+        DatabaseReference school_details = FirebaseDatabase.getInstance().getReference("bus_details").child(schoolcode).child(drivercode);
+        school_details.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot child : dataSnapshot.getChildren()){
+                        if(child.getKey().equals("brand")){
+                            sbrand = child.getValue().toString();
+                        }
+                        if(child.getKey().equals("bus_code")){
+                            sbus_code = child.getValue().toString();
+                        }
+                        if(child.getKey().equals("chasis_no")){
+                            schasis_no = child.getValue().toString();
+                        }
+                        if(child.getKey().equals("model")){
+                            smodel = child.getValue().toString();
+                        }
+                        if(child.getKey().equals("number_plate")){
+                            snumber_plate = child.getValue().toString();
+                        }
+                    }
+                    number_plate_tv.setText(snumber_plate);
+                    bus_model_tv.setText(sbrand + " " + smodel);
+                    getSchoolinformation(schoolcode);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getSchoolinformation(String key) {
+        DatabaseReference school_details = FirebaseDatabase.getInstance().getReference("schools").child(key);
+        school_details.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot child : dataSnapshot.getChildren()){
+                        if(child.getKey().equals("email")){
+                            sschoolemail = child.getValue().toString();
+                            child_location_accessor.put("school_email",sschoolemail);
+                        }
+                        if(child.getKey().equals("location")){
+                            ssechoollocation = child.getValue().toString();
+                            child_location_accessor.put("school_location",ssechoollocation);
+                        }
+                        if(child.getKey().equals("name")){
+                            sschoolname = child.getValue().toString();
+                            child_location_accessor.put("school_name",sschoolname);
+                        }
+                        if(child.getKey().equals("telephone")){
+                            sschoolphone = child.getValue().toString();
+                            child_location_accessor.put("school_telephone",sschoolphone);
+                        }
+                    }
+                    school_name_tv.setText(sschoolname);
+                    school_number_tv.setText(sschoolphone);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }

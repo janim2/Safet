@@ -31,6 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="School name"
+                android:id="@+id/the_school_name"
                 android:textColor="@color/main_blue"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -85,6 +86,7 @@
                     android:textSize="15sp"
                     android:layout_margin="8dp"
                     android:textColor="@color/main_blue"
+                    android:id="@+id/the_driver_name"
                     android:text="driver name"/>
 
             </LinearLayout>
@@ -108,7 +110,7 @@
                     android:textSize="15sp"
                     android:drawableLeft="@drawable/bus_l"
                     android:drawablePadding="8dp"
-                    android:text="Bus Number" />
+                    android:text="Bus Model" />
 
             </LinearLayout>
 
@@ -123,6 +125,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
                     android:layout_margin="8dp"
+                    android:id="@+id/the_bus_model"
                     android:textColor="@color/main_blue"
                     android:text="number"/>
 
@@ -162,6 +165,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
                     android:layout_margin="8dp"
+                    android:id="@+id/the_licence_plate"
                     android:textColor="@color/main_blue"
                     android:text="licence"/>
 
@@ -202,6 +206,7 @@
                     android:textSize="15sp"
                     android:layout_margin="8dp"
                     android:textColor="@color/main_blue"
+                    android:id="@+id/theschool_number"
                     android:text="(415) 349-0942"/>
 
             </LinearLayout>

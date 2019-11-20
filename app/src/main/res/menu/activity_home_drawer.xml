@@ -27,10 +27,6 @@
             android:icon="@drawable/school"
             android:title="About School" />
 
-        <item
-            android:id="@+id/contact"
-            android:icon="@drawable/sent"
-            android:title="Contact Us" />
     </group>
 
     <item android:title="More">

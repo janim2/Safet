@@ -62,7 +62,10 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
 //                Intent open_driver_details = new Intent(v.getContext(), Driver_Details.class);
                 Toast.makeText(v.getContext(), "Child Details", Toast.LENGTH_LONG).show();
 //                v.getContext().startActivity(open_driver_details);
-                v.getContext().startActivity(new Intent(v.getContext(), Child_location.class));
+                Intent child_location = new Intent(v.getContext(), Child_location.class);
+                child_location.putExtra("from_home_child_fname",itemList.get(position).getChild_fname());
+                child_location.putExtra("from_home_child_lname",itemList.get(position).getChild_lname());
+                v.getContext().startActivity(child_location);
             }
         });
     }

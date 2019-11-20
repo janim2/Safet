@@ -51,6 +51,7 @@ public class Home extends Fragment {
         // Inflate the layout for this fragment
         View home =  inflater.inflate(R.layout.fragment_home, container, false);
         getActivity().setTitle("Home");
+        setRetainInstance(true);
         //initialization of accessories
         home_accessor = new Accessories(getActivity());
 
@@ -76,6 +77,17 @@ public class Home extends Fragment {
         children_Adapter = new ChildrenAdapter(getFromDatabase(),getActivity());
         children_RecyclerView.setAdapter(children_Adapter);
 
+        no_internet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isNetworkAvailable()){
+                    get_Children_IDs();
+                }else{
+                    no_children_textView.setVisibility(View.GONE);
+                    no_internet.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         return home;
     }
 
