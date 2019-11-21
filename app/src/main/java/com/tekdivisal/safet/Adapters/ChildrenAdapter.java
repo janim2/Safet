@@ -60,7 +60,6 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
             @Override
             public void onClick(View v) {
 //                Intent open_driver_details = new Intent(v.getContext(), Driver_Details.class);
-                Toast.makeText(v.getContext(), "Child Details", Toast.LENGTH_LONG).show();
 //                v.getContext().startActivity(open_driver_details);
                 Intent child_location = new Intent(v.getContext(), Child_location.class);
                 child_location.putExtra("from_home_child_fname",itemList.get(position).getChild_fname());

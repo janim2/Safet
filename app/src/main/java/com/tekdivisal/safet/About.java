@@ -55,6 +55,11 @@ public class About extends Fragment {
 
         if(sschoolname.equals("") || sschoolphone.equals("") || sschoolemail.equals("") || ssechoollocation.equals("")){
             getSchoolinformation(school_code);
+        }else{
+            the_school_name_tv.setText(sschoolname);
+            the_school_email_tv.setText(sschoolemail);
+            the_school_number_tv.setText(sschoolphone);
+            the_school_address_tv.setText(ssechoollocation);
         }
         return about;
     }

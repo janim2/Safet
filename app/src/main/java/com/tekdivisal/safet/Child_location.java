@@ -22,10 +22,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.directions.route.AbstractRouting;
+import com.directions.route.Route;
+import com.directions.route.RouteException;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.maps.android.PolyUtil;
 
@@ -58,21 +66,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Arrays;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Child_location extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        com.google.android.gms.location.LocationListener {
+        LocationListener, RoutingListener {
 
     private LinearLayout status_bottom_sheet, bus_bottom_sheet;
     private BottomSheetBehavior status_sheetBehavior, bus_sheetBehaviour;
@@ -88,13 +89,17 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
     private Marker mDriverMarker, muserMarker;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     private Location mLastLocation;
-    private LatLng pickuplocation;
-    private String sdriver_code,sfirst_name, slastname, saddress, sphone_number,
-    sbrand,schasis_no,sbus_code, smodel,snumber_plate, sschoolemail, ssechoollocation,
-            sschoolphone,sschoolname, child_fname_from_home, child_lname_from_home;
-    private TextView driver_name_tv, number_plate_tv, bus_model_tv, school_name_tv, school_number_tv;
+    private LatLng pickuplocation, driverlatlng;
+    private String sdriver_code, sfirst_name, slastname, saddress, sphone_number,
+            sbrand, schasis_no, sbus_code, smodel, snumber_plate, sschoolemail, ssechoollocation,
+            sschoolphone, sschoolname, child_fname_from_home, child_lname_from_home;
+    private TextView driver_name_tv, number_plate_tv, bus_model_tv, school_name_tv, school_number_tv,
+    status_school_name, status_distance,status_time, status_date, status_start_time, status_end_time;
+    private String TAG = "so47492459";
+    private List<Polyline> polylines;
+    private static final int[] COLORS = new int[]{R.color.colorPrimaryDark, R.color.colorPrimary, R.color.main_blue, R.color.colorAccent, R.color.primary_dark_material_light};
 
-
+    private FrameLayout child_find_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,11 +110,14 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         child_fname_from_home = getIntent().getStringExtra("from_home_child_fname");
         child_lname_from_home = getIntent().getStringExtra("from_home_child_lname");
 
-        getSupportActionBar().setTitle(child_fname_from_home + " " + child_fname_from_home);
+        getSupportActionBar().setTitle(child_fname_from_home + " " + child_lname_from_home);
         child_location_accessor = new Accessories(this);
 
         school_code = child_location_accessor.getString("school_code");
         parent_code = child_location_accessor.getString("user_phone_number");
+
+        //layout for this activity
+        child_find_layout = findViewById(R.id.child_find_layout);
 
         bottomNavigationView = findViewById(R.id.find_child_navigation);
         //status bottom sheet
@@ -126,6 +134,17 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         school_name_tv = findViewById(R.id.the_school_name);
         school_number_tv = findViewById(R.id.theschool_number);
 
+        //status items
+        status_school_name  = findViewById(R.id.school_name);
+        status_distance  = findViewById(R.id.distance);
+        status_time  = findViewById(R.id._time);
+        status_date  = findViewById(R.id.date);
+        status_start_time  = findViewById(R.id.start_time);
+        status_end_time = findViewById(R.id.end_time);
+
+        //setting the date
+        status_date.setText(DateFormat.getDateInstance(DateFormat.FULL).format(new Date()));
+
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -133,12 +152,12 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                 .findFragmentById(R.id.map);
 
         if (ActivityCompat.checkSelfPermission(Child_location.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(Child_location.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(Child_location.this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
-        }else{
+            ActivityCompat.requestPermissions(Child_location.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+        } else {
             assert mapFragment != null;
             mapFragment.getMapAsync(this);
         }
-        if(isNetworkAvailable()){
+        if (isNetworkAvailable()) {
             getDriverID();
 //            getBusDetails();
         }
@@ -146,7 +165,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()){
+                switch (menuItem.getItemId()) {
                     case R.id.l_location:
 //                        fragmentManager.beginTransaction().replace(R.id.child_find_layout,new Bus_Location()).commit();
                         break;
@@ -154,10 +173,10 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                     case R.id.bus:
 //                        child_location_accessor.put("vital_type","bus_vitals");
 //                        fragmentManager.beginTransaction().replace(R.id.child_find_layout,new Vital_Info()).commit();
-                        if(bus_sheetBehaviour.getState() != BottomSheetBehavior.STATE_EXPANDED){
+                        if (bus_sheetBehaviour.getState() != BottomSheetBehavior.STATE_EXPANDED) {
                             bus_sheetBehaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
                             status_sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        }else{
+                        } else {
                             bus_sheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
                         }
                         break;
@@ -165,10 +184,10 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                     case R.id.status:
 //                        child_location_accessor.put("vital_type","status_vitals");
 //                        fragmentManager.beginTransaction().replace(R.id.child_find_layout,new Vital_Info()).commit();
-                        if(status_sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED){
+                        if (status_sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
                             status_sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                             bus_sheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        }else{
+                        } else {
                             status_sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                         }
                         break;
@@ -187,7 +206,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         if (ActivityCompat.checkSelfPermission(Child_location.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(Child_location.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(Child_location.this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(Child_location.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 
@@ -206,8 +225,8 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
-        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-        if(muserMarker != null){
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        if (muserMarker != null) {
             muserMarker.remove();
         }
         muserMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Me").flat(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
@@ -226,7 +245,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 //        muserMarker = mMap.addMarker(new MarkerOptions().position(pickuplocation).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
     }
 
-    protected synchronized void buildGoogleApiClient(){
+    protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(Child_location.this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).addApi(LocationServices.API
@@ -241,27 +260,27 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
     }
 
     private void getDriverID() {
-        try{
+        try {
             DatabaseReference get_Driver_notifications = FirebaseDatabase.getInstance().getReference("bus_location").child(school_code);
 
             get_Driver_notifications.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists()){
-                        for(DataSnapshot child : dataSnapshot.getChildren()){
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot child : dataSnapshot.getChildren()) {
                             getDriverLocation(child.getKey());
                         }
-                    }else{
+                    } else {
 //                    Toast.makeText(getActivity(),"Cannot get ID",Toast.LENGTH_LONG).show();
                     }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Toast.makeText(Child_location.this,"Cancelled",Toast.LENGTH_LONG).show();
+                    Toast.makeText(Child_location.this, "Cancelled", Toast.LENGTH_LONG).show();
                 }
             });
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
 
         }
     }
@@ -271,44 +290,46 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         driverLocationref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
                     List<Object> map = (List<Object>) dataSnapshot.getValue();
                     double locationlat = 0;
                     double locationlong = 0;
-                    if(map.get(0) != null){
+                    if (map.get(0) != null) {
                         locationlat = Double.parseDouble(map.get(0).toString());
                     }
-                    if(map.get(1) != null){
+                    if (map.get(1) != null) {
                         locationlong = Double.parseDouble(map.get(1).toString());
                     }
-                    LatLng driverlatlng = new LatLng(locationlat,locationlong);
-                    if(mDriverMarker != null){
+                    driverlatlng = new LatLng(locationlat, locationlong);
+                    if (mDriverMarker != null) {
                         mDriverMarker.remove();
                     }
 //
 //                    pickuplocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 //
-                    Location loc1  = new Location("");
-                    try{
+                    Location loc1 = new Location("");
+                    try {
                         loc1.setLatitude(pickuplocation.latitude);
                         loc1.setLongitude(pickuplocation.longitude);
-                    }catch (NullPointerException e){
+                    } catch (NullPointerException e) {
 
                     }
 
-                    Location loc2  = new Location("");
-                    try{
+                    Location loc2 = new Location("");
+                    try {
                         loc2.setLatitude(driverlatlng.latitude);
                         loc2.setLongitude(driverlatlng.longitude);
-                    }catch (NullPointerException e){
+                    } catch (NullPointerException e) {
 
                     }
 
-                    float distance = loc1.distanceTo(loc2);
-                    Toast.makeText(Child_location.this,"Bus Distance: "+ String.valueOf(distance), Toast.LENGTH_LONG).show();
-                    if(distance<100){
-                        Toast.makeText(Child_location.this, "bus arrived", Toast.LENGTH_SHORT).show();
+//                    drawLine();
 
+                    float distance = loc1.distanceTo(loc2);
+                    status_distance.setText(String.valueOf(distance)+"m away");
+                    status_time.setText("00:00");
+                    if (distance < 80) {
+                        status_distance.setText("Bus arrived");
 //                        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(Whereto.this)
 //                                .setSmallIcon(R.drawable.pickbot_logo)
 //                                .setContentTitle("Bus Arrived")
@@ -321,8 +342,8 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 //                        // notificationID allows you to update the notification later on.
 //                        mNotificationManager.notify(1, mBuilder.build());
 
-                    }else{
-                        Toast.makeText(Child_location.this,"Bus Distance: "+ String.valueOf(distance), Toast.LENGTH_LONG).show();
+                    } else {
+                        status_distance.setText(String.valueOf(distance)+"m away");
                     }
 
                     //drawing a line between the two destinations
@@ -337,7 +358,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                             .build();
                     try {
                         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                    }catch (NullPointerException e){
+                    } catch (NullPointerException e) {
 
                     }
 
@@ -351,6 +372,61 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
             }
         });
+
+    }
+
+    private void drawLine() {
+
+        Routing routing = new Routing.Builder()
+                .travelMode(Routing.TravelMode.DRIVING)
+                .withListener(this)
+                .waypoints(pickuplocation, driverlatlng)
+                .key("AIzaSyBqHR9F0VhEhOAXIgktB4lQJLD_HutD4fQ")
+                .build();
+        routing.execute();
+    }
+
+    @Override
+    public void onRoutingFailure(RouteException e) {
+        if(e != null) {
+            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(this, "Something went wrong, Try again", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRoutingStart() {
+
+    }
+
+    @Override
+    public void onRoutingSuccess(ArrayList<Route> route, int ih) {
+        if (polylines.size() > 0) {
+            for (Polyline poly : polylines) {
+                poly.remove();
+            }
+        }
+
+        polylines = new ArrayList<>();
+        // Add route(s) to the map.
+        for (int i = 0; i < route.size(); i++) {
+
+            //In case of more than 5 alternative routes
+            int colorIndex = i % COLORS.length;
+
+            PolylineOptions polyOptions = new PolylineOptions();
+            polyOptions.color(getResources().getColor(COLORS[colorIndex]));
+            polyOptions.width(10 + i * 3);
+            polyOptions.addAll(route.get(i).getPoints());
+            Polyline polyline = mMap.addPolyline(polyOptions);
+            polylines.add(polyline);
+            Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRoutingCancelled() {
 
     }
 
@@ -491,6 +567,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                         }
                     }
                     school_name_tv.setText(sschoolname);
+                    status_school_name.setText(sschoolname);
                     school_number_tv.setText(sschoolphone);
                 }
             }
@@ -508,4 +585,5 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+
 }

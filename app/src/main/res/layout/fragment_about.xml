@@ -71,14 +71,6 @@
                             android:id="@+id/the_school_name"
                             android:textColor="@android:color/white"
                             />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="13sp"
-                            android:textColor="@color/main_blue"
-                            android:text="School detials"/>
-
                     </LinearLayout>
 
                 </LinearLayout>
