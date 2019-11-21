@@ -223,6 +223,7 @@
                     android:layout_marginTop="20dp"
                     android:textSize="14sp"
                     android:inputType="text"
+                    android:id="@+id/subject"
                     android:textColor="@color/main_blue"
                     android:textColorHint="@color/colorPrimary"/>
 
@@ -236,6 +237,7 @@
                     android:paddingLeft="10dp"
                     android:inputType="textMultiLine"
                     android:textColor="@color/main_blue"
+                    android:id="@+id/message"
                     android:textColorHint="@color/colorPrimary"/>
 
                 <Button
@@ -245,6 +247,7 @@
                     android:layout_gravity="right"
                     android:text="Submit"
                     android:textSize="14sp"
+                    android:id="@+id/submit_button"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/curved_corners"/>
             </LinearLayout>
