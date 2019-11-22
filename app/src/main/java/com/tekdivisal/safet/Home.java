@@ -401,7 +401,7 @@ public class Home extends Fragment {
                             try {
                                 bus_arrived_status = child.getValue().toString();
 //                                Toast.makeText(getActivity(), bus_arrived_status,Toast.LENGTH_LONG).show();
-                                home_accessor.put("bus_status", bus_arrived_status);
+//                                home_accessor.put("bus_status", bus_arrived_status);
                             }catch (NullPointerException e){
 
                             }

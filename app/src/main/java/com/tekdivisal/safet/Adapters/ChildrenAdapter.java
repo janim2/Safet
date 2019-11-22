@@ -57,13 +57,13 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
 
         name.setText(itemList.get(position).getChild_fname() + " " + itemList.get(position).getChild_lname());
         phone_number.setText(itemList.get(position).getChild_class());
-        Accessories n = new Accessories(context);
-        String sss_tatus = n.getString("bus_status");
-        if(sss_tatus != null){
-            status.setText(sss_tatus);
-        }else{
-            status.setText("Status");
-        }
+//        Accessories n = new Accessories(context);
+//        String sss_tatus = n.getString("bus_status");
+//        if(sss_tatus != null){
+//            status.setText(sss_tatus);
+//        }else{
+//            status.setText("Status");
+//        }
 
         childCardView.setOnClickListener(new View.OnClickListener() {
             @Override
