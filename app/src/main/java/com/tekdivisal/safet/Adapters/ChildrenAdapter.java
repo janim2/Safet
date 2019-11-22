@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tekdivisal.safet.Accessories;
 import com.tekdivisal.safet.Child_location;
 import com.tekdivisal.safet.Model.Children;
 import com.tekdivisal.safet.R;
@@ -47,6 +48,7 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, final int position) {
         final TextView name = holder.view.findViewById(R.id.student_name);
         TextView phone_number = holder.view.findViewById(R.id.child_class);
+        TextView status = holder.view.findViewById(R.id.status);
         CardView childCardView = holder.view.findViewById(R.id.child_cardView);
 
 //        Typeface lovelo =Typeface.createFromAsset(context.getAssets(),  "fonts/lovelo.ttf");
@@ -55,6 +57,13 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
 
         name.setText(itemList.get(position).getChild_fname() + " " + itemList.get(position).getChild_lname());
         phone_number.setText(itemList.get(position).getChild_class());
+        Accessories n = new Accessories(context);
+        String sss_tatus = n.getString("bus_status");
+        if(sss_tatus != null){
+            status.setText(sss_tatus);
+        }else{
+            status.setText("Status");
+        }
 
         childCardView.setOnClickListener(new View.OnClickListener() {
             @Override

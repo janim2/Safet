@@ -82,6 +82,7 @@
             android:layout_height="match_parent"
             android:textColor="@android:color/white"
             android:text="Status"
+            android:textSize="11sp"
             android:id="@+id/status"
             android:gravity="center"/>
     </LinearLayout>

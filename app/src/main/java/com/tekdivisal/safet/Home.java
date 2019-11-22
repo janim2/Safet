@@ -55,7 +55,8 @@ public class Home extends Fragment {
     private String school_id_string, parent_code_string, string_child_code, sfirst_name, slastname,
     sclass, sgender, driver_key;
     private Accessories home_accessor;
-    private String bus_arrived_title, bus_arrived_message, bus_arrived_time, bus_arrivedImage;
+    private String bus_arrived_title, bus_arrived_message, bus_arrived_time, bus_arrivedImage,
+            bus_arrived_status;
 
     public Home() {
         // Required empty public constructor
@@ -189,6 +190,7 @@ public class Home extends Fragment {
                 public void run() {
                     if(isNetworkAvailable()){
                         get_bus_Arrived_IDs();
+                        get_bus_status_IDs();
                     }else{
 //                        Toast.makeText(Admin_MainActivity.this,"checking", Toast.LENGTH_LONG).show();
                     }
@@ -312,7 +314,7 @@ public class Home extends Fragment {
             if(bus_arrivedImage.equals("BAN")){
                 Move_Arrived_From_pending(bus_arrived_title,bus_arrived_message,bus_arrivedImage,bus_arrived_time);
             }else{
-                Toast.makeText(getActivity(),"Nothing to move",Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(),"Nothing to move",Toast.LENGTH_LONG).show();
             }
         }
 //        builder.setDefaults(Notification.DEFAULT_SOUND);
@@ -357,6 +359,67 @@ public class Home extends Fragment {
         }catch (NullPointerException e){
 
         }
+    }
+
+    private void get_bus_status_IDs() {
+//        Toast.makeText(getActivity(), "house", Toast.LENGTH_LONG).show();
+        try {
+            DatabaseReference get_Bus_arrived = FirebaseDatabase.getInstance().getReference("trip_status")
+                    .child(school_id_string);
+            get_Bus_arrived.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                        for(DataSnapshot child : dataSnapshot.getChildren()){
+                            get_Bus_Status(child.getKey());
+                        }
+                    }else{
+//                    Toast.makeText(getActivity(),"Cannot get ID",Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(getActivity(),"Cancelled",Toast.LENGTH_LONG).show();
+                }
+            });
+        }catch(NullPointerException e){
+
+        }
+    }
+
+    private void get_Bus_Status(String key) {
+//        Toast.makeText(getActivity(), "working", Toast.LENGTH_LONG).show();
+        DatabaseReference get_Bus_status = FirebaseDatabase.getInstance().getReference("trip_status")
+                .child(school_id_string).child(key);
+        get_Bus_status.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot child : dataSnapshot.getChildren()){
+                        if(child.getKey().equals("status")){
+                            try {
+                                bus_arrived_status = child.getValue().toString();
+//                                Toast.makeText(getActivity(), bus_arrived_status,Toast.LENGTH_LONG).show();
+                                home_accessor.put("bus_status", bus_arrived_status);
+                            }catch (NullPointerException e){
+
+                            }
+
+                        }
+                        else{
+//                            Toast.makeText(getActivity(),"Couldn't fetch posts",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getActivity(),"Cancelled",Toast.LENGTH_LONG).show();
+
+            }
+        });
     }
 
     public ArrayList<Children> getFromDatabase(){
