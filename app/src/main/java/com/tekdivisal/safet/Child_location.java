@@ -1,15 +1,21 @@
 package com.tekdivisal.safet;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -17,6 +23,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -70,6 +77,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public class Child_location extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -85,7 +93,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
     private GoogleMap mMap;
     private LocationRequest mLocationRequest;
     private String school_code, parent_code;
-    private DatabaseReference driverLocationref;
+    private DatabaseReference driverLocationref, arrived_databaseReference;
     private Marker mDriverMarker, muserMarker;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     private Location mLastLocation;
@@ -330,18 +338,8 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                     status_time.setText("00:00");
                     if (distance < 80) {
                         status_distance.setText("Bus arrived");
-//                        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(Whereto.this)
-//                                .setSmallIcon(R.drawable.pickbot_logo)
-//                                .setContentTitle("Bus Arrived")
-//                                .setContentText("School Bus Has Arrived.")
-//                                .setStyle(new NotificationCompat.BigTextStyle()
-//                                        .bigText("School Bus Has Arrived."))
-//                                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-//
-//                        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//                        // notificationID allows you to update the notification later on.
-//                        mNotificationManager.notify(1, mBuilder.build());
-
+//                      // add to notifications
+                        Bus_arrived_notification();
                     } else {
                         status_distance.setText(String.valueOf(distance)+"m away");
                     }
@@ -577,6 +575,17 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
             }
         });
+    }
+
+    private void Bus_arrived_notification() {
+        Random notifyrandom = new Random();
+        int notify_no = notifyrandom.nextInt(2334);
+        String notify_id = "arrived" + notify_no+"" + schasis_no;
+        arrived_databaseReference = FirebaseDatabase.getInstance().getReference("bus_notification").child(parent_code).child(school_code).child(sdriver_code);
+        arrived_databaseReference.child("image").setValue("BAN");
+        arrived_databaseReference.child("message").setValue("Bus has arrived at the pickup/school location. If pickup is required, please proceed to bus stop to pickup child.");
+        arrived_databaseReference.child("time").setValue(new Date());
+        arrived_databaseReference.child("title").setValue("Bus Arrived");
     }
 
     private boolean isNetworkAvailable() {

@@ -47,12 +47,15 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.ViewHolder
         TextView message = holder.view.findViewById(R.id.notify_message);
 
         String the_image = itemList.get(position).getImageType();
-            if(the_image.equals("WM")){//stands for welcome Notification
-                image.setImageDrawable(holder.view.getResources().getDrawable(R.drawable.logo));
+            if(the_image == null){
             }
-//            else if(the_image.equals("US")){
-//                image.setImageDrawable(holder.view.getResources().getDrawable(R.drawable.save));
-//            }
+            else {
+                if (the_image.equals("WM")) {//stands for welcome Notification
+                    image.setImageDrawable(holder.view.getResources().getDrawable(R.drawable.logo));
+                }
+                else if (the_image.equals("BAN")) {
+                    image.setImageDrawable(holder.view.getResources().getDrawable(R.drawable.finish_line));
+                }
 //            else if(the_image.equals("AD")){
 //                image.setImageDrawable(holder.view.getResources().getDrawable(R.drawable.driver));
 //            }
@@ -65,7 +68,7 @@ public class NotifyAdapter extends RecyclerView.Adapter<NotifyAdapter.ViewHolder
 //            else{
 //                image.setImageDrawable(holder.view.getResources().getDrawable(R.drawable.logo));
 //            }
-
+            }
         title.setText(itemList.get(position).getTitle());
             message.setText(itemList.get(position).getMessage());
         }
