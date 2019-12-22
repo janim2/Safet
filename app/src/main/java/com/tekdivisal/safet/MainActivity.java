@@ -157,13 +157,13 @@ public class MainActivity extends AppCompatActivity
 
         }
         else if(id == R.id.confirm_school){
-            if(mainAccessor.getBoolean("isVerified")){
+            if(mainAccessor.getBoolean("isverified")){
                 Toast.makeText(MainActivity.this, "Unconfirmed", Toast.LENGTH_LONG).show();
-                mainAccessor.put("isVerified", false);
+                mainAccessor.put("isverified", false);
                 confirm_menuItem.setTitle("Confirm school");
-//                            Intent restart = new Intent(MainActivity.this, MainActivity.class);
-//                            restart.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                            startActivity(restart);
+                            Intent restart = new Intent(MainActivity.this, MainActivity.class);
+                            restart.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(restart);
             }else{
                 startActivity(new Intent(MainActivity.this, Verify_School.class));
             }
