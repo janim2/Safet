@@ -1,15 +1,12 @@
 package com.tekdivisal.safet;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -37,10 +34,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class Number_Verification extends Activity {
+public class Number_Verification extends AppCompatActivity {
 
     private ImageView goBack_Image;
     private Button next_Button;
@@ -104,7 +100,8 @@ public class Number_Verification extends Activity {
                 sphone_number  = "0" + number_without_zero;
                 if(!sphone_number.equals("")){
                     if(isNetworkAvailable()){
-                        Check_for_user_existance(sphone_number);
+//                        Check_for_user_existance(sphone_number);
+                        Authentiate_the_parent_number(number_without_zero);
                     }else{
                         loading.setVisibility(View.GONE);
                         status_message_textview.setText("No internet connection");
@@ -277,9 +274,11 @@ public class Number_Verification extends Activity {
                             status_message_textview.setText("Verification complete");
                             status_message_textview.setTextColor(getResources().getColor(R.color.main_blue));
                             status_message_textview.setVisibility(View.VISIBLE);
-                            Intent gotoVerificaton = new Intent(Number_Verification.this,Verify_School.class);
-                            gotoVerificaton.putExtra("intent_school_code", sschool_code);
-                            startActivity(gotoVerificaton);
+//                            Intent gotoVerificaton = new Intent(Number_Verification.this,Verify_School.class);
+                            Intent selectSchool = new Intent(Number_Verification.this,Select_School.class);
+//                            selectSchool.putExtra("intent_school_code", sschool_code);
+                            selectSchool.putExtra("user_phone_number", sphone_number);
+                            startActivity(selectSchool);
 
                         } else {
                             // Sign in failed, display a message and update the UI
@@ -412,7 +411,7 @@ public class Number_Verification extends Activity {
             status_message_textview.setText("Code has been sent");
             status_message_textview.setTextColor(getResources().getColor(R.color.colorAccent));
             status_message_textview.setVisibility(View.VISIBLE);
-            Get_parent_registration_id(sphone_number, transit_code);
+//            Get_parent_registration_id(sphone_number, transit_code);
 
             password_layout.setVisibility(View.VISIBLE);
             // Save verification ID and resending token so we can use them later

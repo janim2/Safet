@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    tools:context=".Select_School">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:padding="20dp"
+        android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="30dp"
+        android:id="@+id/back"
+        app:srcCompat="@drawable/back"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="One last step\n\nSelect School"
+        android:textSize="13sp"
+        android:layout_marginTop="20dp"
+        android:id="@+id/enter_number_text"
+        android:textColor="@color/colorPrimaryDark"
+        android:textStyle="bold"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="140dp">
+
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            android:id="@+id/schools_recyclerView"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fetching Schools..."
+        android:gravity="center"
+        android:textSize="13sp"
+        android:id="@+id/fetching_indicator"
+        android:textColor="@color/colorPrimary"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/refresh"
+        android:text="No internet\nTap to refresh"
+        android:gravity="center"
+        android:textSize="13sp"
+        android:visibility="gone"
+        android:id="@+id/nointernet"
+        android:textColor="@color/colorPrimary"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change Number"
+        android:layout_gravity="bottom"
+        android:textSize="15sp"
+        android:layout_marginBottom="17dp"
+        android:id="@+id/change_number"
+        android:textColor="@color/colorPrimaryDark"/>
+</FrameLayout>

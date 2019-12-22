@@ -1,18 +1,13 @@
 package com.tekdivisal.safet;
 
-import android.app.Notification;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -31,6 +26,10 @@ public class MainActivity extends AppCompatActivity
     private FragmentManager manager;
     private FirebaseAuth mauth;
     private Accessories mainAccessor;
+    private Menu menu;
+    private MenuItem profilemenuitem, confirm_menuItem, edit_location_menuItem,
+    locate_children_menuItem;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +37,14 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setTitle("Home");
 
         manager = getSupportFragmentManager();
         mauth = FirebaseAuth.getInstance();
         mainAccessor = new Accessories(MainActivity.this);
 
-//
+
+        //
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -61,17 +62,34 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // getting the menu from the navigation item;
+        menu = navigationView.getMenu();
+//        getting the menuitem that i want to change
+        profilemenuitem = menu.findItem(R.id.profile);
+        confirm_menuItem = menu.findItem(R.id.confirm_school);
+        edit_location_menuItem = menu.findItem(R.id.edit_location);
+        locate_children_menuItem = menu.findItem(R.id.locate_children);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         if(mauth.getCurrentUser() != null){
-            if(mainAccessor.getBoolean("isverified")){
-                manager.beginTransaction().replace(R.id.container, new Home()).commit();
+            if(mainAccessor.getBoolean("hasChoosenSchool")){
+                if(mainAccessor.getBoolean("isverified")){
+                    confirm_menuItem.setTitle("Undo school confirmation");
+                    manager.beginTransaction().replace(R.id.container, new Locate_Children()).commit();
+                }else{
+                    profilemenuitem.setVisible(false);
+                    edit_location_menuItem.setVisible(false);
+                    locate_children_menuItem.setVisible(false);
+                    manager.beginTransaction().replace(R.id.container, new Home()).commit();
+                }
             }else{
-                startActivity(new Intent(MainActivity.this, Verify_School.class));
+                startActivity(new Intent(MainActivity.this,Select_School.class));
             }
+
         }else{
             startActivity(new Intent(MainActivity.this, Login.class));
         }
@@ -119,19 +137,45 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.home) {
             manager.beginTransaction().replace(R.id.container, new Home()).commit();
         }
+
+        else if (id == R.id.locate_children) {
+            manager.beginTransaction().replace(R.id.container, new Locate_Children()).commit();
+        }
+
         else if (id == R.id.profile) {
             manager.beginTransaction().replace(R.id.container, new Profile()).commit();
 
         } else if (id == R.id.edit_location) {
             manager.beginTransaction().replace(R.id.container, new Edit_Location()).commit();
 
+
         } else if (id == R.id.settings) {
             manager.beginTransaction().replace(R.id.container, new Settings()).commit();
 
         } else if (id == R.id.about_school) {
-            manager.beginTransaction().replace(R.id.container, new About()).commit();
+            manager.beginTransaction().replace(R.id.container, new Contact_school()).commit();
 
         }
+        else if(id == R.id.confirm_school){
+            if(mainAccessor.getBoolean("isVerified")){
+                Toast.makeText(MainActivity.this, "Unconfirmed", Toast.LENGTH_LONG).show();
+                mainAccessor.put("isVerified", false);
+                confirm_menuItem.setTitle("Confirm school");
+//                            Intent restart = new Intent(MainActivity.this, MainActivity.class);
+//                            restart.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                            startActivity(restart);
+            }else{
+                startActivity(new Intent(MainActivity.this, Verify_School.class));
+            }
+        }
+
+        else if(id == R.id.change_school){
+            mainAccessor.put("hasChoosenSchool",false);
+            Intent chage_number = new Intent(MainActivity.this, Select_School.class);
+            chage_number.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(chage_number);
+        }
+
         else if (id == R.id.logout) {
             final AlertDialog.Builder logout = new AlertDialog.Builder(MainActivity.this, R.style.Myalert);
             logout.setTitle("Signing Out?");
@@ -143,6 +187,7 @@ public class MainActivity extends AppCompatActivity
                     if(isNetworkAvailable()){
                         FirebaseAuth.getInstance().signOut();
                         mainAccessor.put("isverified", false);
+                        mainAccessor.put("hasChoosenSchool",false);
                         mainAccessor.clearStore();
                         startActivity(new Intent(MainActivity.this,Login.class));
                     }else{

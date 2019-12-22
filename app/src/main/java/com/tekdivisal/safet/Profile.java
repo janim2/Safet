@@ -54,7 +54,7 @@ public class Profile extends Fragment {
         school_id_string = profile_accessor.getString("school_code");
         phone_number_string = profile_accessor.getString("user_phone_number");
 
-        Toast.makeText(getActivity(), sparent_email, Toast.LENGTH_LONG).show();
+//        Toast.makeText(getActivity(), sparent_email, Toast.LENGTH_LONG).show();
 
         try {
             parent_name_Textview.setText(sparent_name);

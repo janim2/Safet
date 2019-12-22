@@ -1,7 +1,6 @@
 package com.tekdivisal.safet;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
@@ -21,6 +20,8 @@ import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -71,7 +72,7 @@ public class Accessories
 
     }
 
-    //Method to return to Home Screen
+    //Method to return to Locate_Children Screen
     public void gotoHome(){
         Intent finali = new Intent(Intent.ACTION_MAIN);
         finali.addCategory(Intent.CATEGORY_HOME);
@@ -286,8 +287,8 @@ public class Accessories
     }
 
     public void stopKeyboard(){
-        if(context instanceof Activity){
-            ((Activity) context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        if(context instanceof AppCompatActivity){
+            ((AppCompatActivity) context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         }else{
             Toast.makeText(context, "Error: Context should be an instance of activity", Toast.LENGTH_LONG).show();
         }
@@ -300,8 +301,8 @@ public class Accessories
     //eg. Uri uri = data.getData(); imageView.setImageURI(uri); (:- To set the picture to an imageview -:)
     public void galleryAction(final int RESULT_LOAD_IMAGE){
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        if(context instanceof Activity){
-            ((Activity) context).startActivityForResult(intent, RESULT_LOAD_IMAGE);
+        if(context instanceof AppCompatActivity){
+            ((AppCompatActivity) context).startActivityForResult(intent, RESULT_LOAD_IMAGE);
         }else{
             Toast.makeText(context, "Error: Context should be an instance of activity", Toast.LENGTH_LONG).show();
         }
@@ -319,10 +320,10 @@ public class Accessories
         int currentAPIVersion = Build.VERSION.SDK_INT;
         if(currentAPIVersion >= Build.VERSION_CODES.M){
             if(ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED){
-                if(ActivityCompat.shouldShowRequestPermissionRationale((Activity)context, permission)){
+                if(ActivityCompat.shouldShowRequestPermissionRationale((AppCompatActivity)context, permission)){
                     showDialog(msg, context, permission, MY_PERMISSIONS_REQUEST);
                 }else{
-                    ActivityCompat.requestPermissions((Activity)context, new String[]{permission},
+                    ActivityCompat.requestPermissions((AppCompatActivity)context, new String[]{permission},
                             MY_PERMISSIONS_REQUEST);
                     return false;
                 }

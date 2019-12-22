@@ -17,7 +17,7 @@
             android:layout_width="130dp"
             android:layout_gravity="center"
             android:layout_height="130dp"
-            android:src="@drawable/student"
+            app:srcCompat="@drawable/student"
             android:background="@drawable/border_only_curved_corners"
             android:padding="20dp"
             android:scaleType="centerInside"

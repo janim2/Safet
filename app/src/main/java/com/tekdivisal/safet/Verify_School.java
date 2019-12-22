@@ -1,13 +1,12 @@
 package com.tekdivisal.safet;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -16,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -28,7 +26,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Date;
 import java.util.Random;
 
-public class Verify_School extends Activity {
+
+
+public class Verify_School extends AppCompatActivity {
 
     private ImageView goback;
     private EditText code_one,code_two,code_three,code_four;
@@ -68,14 +68,15 @@ public class Verify_School extends Activity {
         goback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(FirebaseAuth.getInstance().getCurrentUser() != null){
-                    Intent intent = new Intent(Intent.ACTION_MAIN);
-                    intent.addCategory(Intent.CATEGORY_HOME);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }else{
-                    finish();
-                }
+//                if(FirebaseAuth.getInstance().getCurrentUser() != null){
+//                    Intent intent = new Intent(Intent.ACTION_MAIN);
+//                    intent.addCategory(Intent.CATEGORY_HOME);
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(intent);
+//                }else{
+//                    finish();
+//                }
+                finish();
             }
         });
 

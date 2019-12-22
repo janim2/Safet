@@ -1,50 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     tools:context=".Home">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="12dp">
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical">
 
+       <ss.com.bannerslider.Slider
+           android:id="@+id/banner_slider1"
+           android:layout_width="match_parent"
+           android:layout_height="180dp"
+           android:layout_margin="5dp"
+           app:slider_animateIndicators="true"
+           app:slider_indicatorSize="12dp"
+           app:slider_interval="5000"
+           app:slider_selectedSlideIndicator="@color/colorPrimaryDark"
+           />
 
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-            android:id="@+id/children_recyclerView"
-            android:layout_height="match_parent" />
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="School name"
+          android:layout_margin="5dp"
+          android:textColor="@color/main_blue"
+          android:textSize="14sp"
+          android:gravity="center"
+          android:id="@+id/school_name"
+          android:layout_marginTop="5dp"
+          android:padding="3dp"/>
 
-    </LinearLayout>
+   </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="No children"
-        android:gravity="center"
-        android:textSize="14sp"
-        android:id="@+id/no_children"
-        android:textColor="@color/main_blue"
-        android:layout_gravity="center"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="No internet connection\nTap to refresh"
-        android:gravity="center"
-        android:visibility="gone"
-        android:id="@+id/no_internet"
-        android:textSize="14sp"
-        android:textColor="@color/colorAccent"
-        android:drawableTop="@drawable/refresh"
-        android:layout_gravity="center"/>
-
-
-    <!--<include layout="@layout/children_attachment"/>-->
-
-</FrameLayout>
+</ScrollView>

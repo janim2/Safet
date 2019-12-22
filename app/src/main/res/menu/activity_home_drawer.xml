@@ -8,6 +8,12 @@
             android:id="@+id/home"
             android:icon="@drawable/house"
             android:title="Home" />
+
+        <item
+            android:id="@+id/locate_children"
+            android:icon="@drawable/user"
+            android:title="Child Location" />
+
         <item
             android:id="@+id/profile"
             android:icon="@drawable/user"
@@ -25,12 +31,19 @@
         <item
             android:id="@+id/about_school"
             android:icon="@drawable/school"
-            android:title="About School" />
+            android:title="Contact school" />
 
     </group>
 
     <item android:title="More">
         <menu>
+            <item
+                android:id="@+id/confirm_school"
+                android:title="Confirm school"/>
+            <item
+                android:id="@+id/change_school"
+                android:title="Change school"/>
+
             <item
                 android:id="@+id/logout"
                 android:title="Logout" />

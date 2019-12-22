@@ -62,7 +62,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:src="@drawable/student"
+                app:srcCompat="@drawable/student"
                 android:padding="8dp"
                 android:id="@+id/notify_image"
                 android:layout_weight="3"/>
