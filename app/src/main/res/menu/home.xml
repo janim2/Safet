@@ -7,4 +7,13 @@
         android:title="notifications"
         android:icon="@drawable/bell"
         app:showAsAction="always" />
+
+     <item
+        android:id="@+id/messages"
+        android:orderInCategory="100"
+        android:title="messages"
+        android:icon="@drawable/message"
+        app:showAsAction="always" />
+
+
 </menu>

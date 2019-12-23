@@ -56,6 +56,19 @@
                 android:textColor="@color/main_blue"
                 android:textStyle="bold"/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:text="No internet"
+                android:gravity="center"
+                android:visibility="gone"
+                android:layout_marginTop="40dp"
+                android:id="@+id/no_internet"
+                android:drawableTop="@drawable/refresh"
+                android:textColor="@color/main_blue"
+                android:textStyle="bold"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

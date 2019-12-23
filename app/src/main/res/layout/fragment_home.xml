@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Home">
 
@@ -22,18 +23,107 @@
            app:slider_selectedSlideIndicator="@color/colorPrimaryDark"
            />
 
-      <TextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:text="School name"
-          android:layout_margin="5dp"
-          android:textColor="@color/main_blue"
-          android:textSize="14sp"
-          android:gravity="center"
-          android:id="@+id/school_name"
-          android:layout_marginTop="5dp"
-          android:padding="3dp"/>
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal">
+
+           <ImageView
+               android:layout_width="match_parent"
+               android:layout_height="40dp"
+               android:layout_weight="5"
+               android:scaleType="fitCenter"
+               android:src="@drawable/school_logo"/>
+
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_weight="1"
+               android:orientation="vertical">
+
+               <TextView
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:text="School name"
+                   android:textColor="@color/main_blue"
+                   android:textSize="14sp"
+                   android:id="@+id/school_name"
+                   android:padding="3dp"/>
+
+               <TextView
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:textSize="13sp"
+                   android:padding="3dp"
+                   android:textColor="@color/colorPrimaryDark"
+                   android:text="English | KG - SHS"/>
+
+           </LinearLayout>
+       </LinearLayout>
+       
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="43dp"
+           android:orientation="horizontal"
+           android:layout_margin="20dp">
+
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:textColor="@color/colorPrimary"
+               android:text="Admissions"
+               android:layout_weight="1"
+               android:gravity="center_vertical"
+               android:padding="3dp"
+               android:textSize="15sp"/>
+
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:textColor="@color/main_blue"
+               android:text="OPEN"
+               android:layout_weight="1"
+               android:gravity="right|center_vertical"
+               android:padding="3dp"
+               android:textSize="15sp"/>
+
+
+       </LinearLayout>
+
+       <View
+           android:layout_width="match_parent"
+           android:layout_height="0.1dp"
+           android:background="@color/colorPrimaryDark"
+           android:layout_marginTop="25dp"/>
+
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:textColor="@color/main_blue"
+           android:text="Facilities"
+           android:layout_gravity="center"
+           android:padding="3dp"
+           android:layout_marginTop="-10dp"
+           android:background="@android:color/white"/>
+
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:textColor="@color/colorPrimary"
+           android:text="No facilities uploaded yet"
+           android:layout_marginTop="30dp"
+           android:layout_gravity="center"
+           android:padding="3dp"/>
+
+       <!--<include layout="@layout/facilities_attachment"/>-->
+
 
    </LinearLayout>
 
 </ScrollView>
+
+<!--picture and name facility-->
+<!--mission -->
+<!--vision -->
+<!--anthem-->
+<!--admission status-->

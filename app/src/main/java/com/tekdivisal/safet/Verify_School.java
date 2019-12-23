@@ -36,7 +36,7 @@ public class Verify_School extends AppCompatActivity {
     private EditText code_one,code_two,code_three,code_four;
     private Button nextbutton;
     private ProgressBar loading;
-    private TextView status_message, verification_message, not_verified_message;
+    private TextView status_message, verification_message, not_verified_message, no_internet_textview;
     private String school_code, parent_code, parent_fname, parent_lname, parent_email, parent_location;
     private Accessories verify_school_accesssrs;
     private DatabaseReference addto__Dataabse_ref, check_existance_reference;
@@ -65,6 +65,7 @@ public class Verify_School extends AppCompatActivity {
         verification_message = findViewById(R.id.verification_);
         not_verified_message = findViewById(R.id.not_registered_message);
         entercode_layout = findViewById(R.id.school_code_layout);
+        no_internet_textview = findViewById(R.id.no_internet);
 
         school_code = verify_school_accesssrs.getString("school_code");
         parent_code = verify_school_accesssrs.getString("user_phone_number");
@@ -86,7 +87,24 @@ public class Verify_School extends AppCompatActivity {
 
         if(isNetworkAvailable()){
             Verify_User_eligibility(parent_code);
+        }else{
+           not_verified_message.setVisibility(View.GONE);
+           verification_message.setVisibility(View.GONE);
+           no_internet_textview.setVisibility(View.VISIBLE);
         }
+
+        no_internet_textview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isNetworkAvailable()){
+                    Verify_User_eligibility(parent_code);
+                }else{
+                    not_verified_message.setVisibility(View.GONE);
+                    verification_message.setVisibility(View.GONE);
+                    no_internet_textview.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         //setting auto jump for code editTexts
         code_one.addTextChangedListener(new TextWatcher() {
@@ -211,8 +229,10 @@ public class Verify_School extends AppCompatActivity {
 
     private void Verify_User_eligibility(final String phone_number) {
         try{
+            verification_message.setVisibility(View.VISIBLE);
             verification_message.setText("Verifying eligibility to use service...");
             not_verified_message.setVisibility(View.GONE);
+            no_internet_textview.setVisibility(View.GONE);
             check_existance_reference = FirebaseDatabase.getInstance().getReference("isRegistered").child(school_code);
             check_existance_reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override

@@ -109,6 +109,19 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home, menu);
+        MenuItem notifications = menu.findItem(R.id.notifications);
+
+        if(mainAccessor.getBoolean("isverified")){
+            notifications.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    startActivity(new Intent(MainActivity.this, Messages.class));
+                    return false;
+                }
+            });
+        }else{
+            notifications.setVisible(false);
+        }
         return true;
     }
 
@@ -120,8 +133,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.notifications) {
-            startActivity(new Intent(MainActivity.this, Notifications.class));
+//        if (id == R.id.notifications) {
+//            startActivity(new Intent(MainActivity.this, Notifications.class));
+//            return true;
+//        }
+
+        if (id == R.id.messages){
+            startActivity(new Intent(MainActivity.this, Messages.class));
             return true;
         }
 

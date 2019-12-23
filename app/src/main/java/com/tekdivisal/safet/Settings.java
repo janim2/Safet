@@ -22,7 +22,7 @@ import android.widget.Toast;
 public class Settings extends Fragment {
     private CheckBox pickup_notify, reached_notify, left_notify, dropped_notify;
     private TextView create_passwordtextview;
-    private LinearLayout create_passwordlayout, reminder_layout;
+    private LinearLayout create_passwordlayout, reminder_layout, delete_notifications_layout;
     private Accessories settings_accessor;
 
     public Settings() {
@@ -46,6 +46,7 @@ public class Settings extends Fragment {
         create_passwordlayout = settings.findViewById(R.id.create_or_change_layout);
         reminder_layout = settings.findViewById(R.id.reminder_layout);
         create_passwordtextview = settings.findViewById(R.id.create_or_chagne_textView);
+        delete_notifications_layout = settings.findViewById(R.id.delete_notifications_layotu);
 
         //        making the text color mix mix
 //        for pickup notification text
@@ -80,12 +81,20 @@ public class Settings extends Fragment {
             }
         }else{
             reminder_layout.setVisibility(View.GONE);
+            create_passwordtextview.setText("Create password");
         }
 
         create_passwordlayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "change password",Toast.LENGTH_LONG).show();
+            }
+        });
+
+        delete_notifications_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "delete notification",Toast.LENGTH_LONG).show();
             }
         });
         return settings;

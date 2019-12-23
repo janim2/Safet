@@ -18,9 +18,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Select_School"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"></activity>
+        <activity android:name=".Messages"
+            android:parentActivityName=".MainActivity"></activity>
+        <activity
+            android:name=".Select_School"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Child_location"
             android:configChanges="orientation"
@@ -30,12 +33,13 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".Verify_School"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".Verify_School"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Number_Verification"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Login" />
         <activity
             android:name=".Notifications"
