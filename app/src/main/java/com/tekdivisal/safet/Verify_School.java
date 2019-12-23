@@ -13,8 +13,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -34,10 +36,11 @@ public class Verify_School extends AppCompatActivity {
     private EditText code_one,code_two,code_three,code_four;
     private Button nextbutton;
     private ProgressBar loading;
-    private TextView status_message;
+    private TextView status_message, verification_message, not_verified_message;
     private String school_code, parent_code, parent_fname, parent_lname, parent_email, parent_location;
     private Accessories verify_school_accesssrs;
-    private DatabaseReference addto__Dataabse_ref;
+    private DatabaseReference addto__Dataabse_ref, check_existance_reference;
+    private LinearLayout entercode_layout;
 
 
     @Override
@@ -59,10 +62,11 @@ public class Verify_School extends AppCompatActivity {
         loading = findViewById(R.id.loading);
         status_message = findViewById(R.id.status_message);
 
-        school_code = getIntent().getStringExtra("intent_school_code");
-        if(school_code == null || school_code.equals("")){
-            school_code = verify_school_accesssrs.getString("school_code");
-        }
+        verification_message = findViewById(R.id.verification_);
+        not_verified_message = findViewById(R.id.not_registered_message);
+        entercode_layout = findViewById(R.id.school_code_layout);
+
+        school_code = verify_school_accesssrs.getString("school_code");
         parent_code = verify_school_accesssrs.getString("user_phone_number");
 
         goback.setOnClickListener(new View.OnClickListener() {
@@ -80,44 +84,9 @@ public class Verify_School extends AppCompatActivity {
             }
         });
 
-//        nextbutton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String scode_one = code_one.getText().toString();
-//                String scode_two = code_two.getText().toString();
-//                String scode_three = code_three.getText().toString();
-//                String scode_four = code_four.getText().toString();
-//                if(!scode_one.equals("") && !scode_two.equals("") && !scode_three.equals("")
-//                        && !scode_four.equals("")){
-//                    String full_code = scode_one + scode_two + scode_three + scode_four;
-//                    if(isNetworkAvailable()){
-//                        loading.setVisibility(View.VISIBLE);
-////                                    verification complete state here
-//                        if(full_code.equals(school_code)){
-//                            verify_school_accesssrs.put("isverified", true);
-//                            Intent gotoMain = new Intent(Verify_School.this, MainActivity.class);
-//                            startActivity(gotoMain);
-//                        }else{
-//                            loading.setVisibility(View.GONE);
-//                            status_message.setText("School verification failed");
-//                            status_message.setTextColor(getResources().getColor(R.color.main_blue));
-//                            status_message.setVisibility(View.VISIBLE);
-//                        }
-//                    }else{
-//                        loading.setVisibility(View.GONE);
-//                        status_message.setText("No internet connection");
-//                        status_message.setTextColor(getResources().getColor(R.color.colorAccent));
-//                        status_message.setVisibility(View.VISIBLE);                                }
-//                }else{
-//                    loading.setVisibility(View.GONE);
-//                    status_message.setText("Code Required");
-//                    status_message.setTextColor(getResources().getColor(R.color.colorAccent));
-//                    status_message.setVisibility(View.VISIBLE);
-//                }
-//            }
-//        });
-
-
+        if(isNetworkAvailable()){
+            Verify_User_eligibility(parent_code);
+        }
 
         //setting auto jump for code editTexts
         code_one.addTextChangedListener(new TextWatcher() {
@@ -210,7 +179,6 @@ public class Verify_School extends AppCompatActivity {
                                         verify_school_accesssrs.put("isverified", true);
                                         Intent gotoMain = new Intent(Verify_School.this, MainActivity.class);
                                         startActivity(gotoMain);
-                                        getUserInformation();
                                     }else{
                                         loading.setVisibility(View.GONE);
                                         status_message.setText("School verification failed");
@@ -240,6 +208,61 @@ public class Verify_School extends AppCompatActivity {
             }
         });
     }
+
+    private void Verify_User_eligibility(final String phone_number) {
+        try{
+            verification_message.setText("Verifying eligibility to use service...");
+            not_verified_message.setVisibility(View.GONE);
+            check_existance_reference = FirebaseDatabase.getInstance().getReference("isRegistered").child(school_code);
+            check_existance_reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.hasChild(phone_number)){
+//                        for(DataSnapshot child : dataSnapshot.getChildren()){
+//                            if(child.getKey() != null) {
+//                                Toast.makeText(Number_Verification.this, "key" + child.getKey(), Toast.LENGTH_LONG).show();
+//                                Get_for_user_school(phone_number, child.getKey());
+//                            }
+//                        }
+                        final DatabaseReference get_Registration_ids = FirebaseDatabase.getInstance().getReference("isRegistered").child(school_code).child(phone_number);
+                        get_Registration_ids.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists()){
+                                    for(DataSnapshot child : dataSnapshot.getChildren()){
+                                        not_verified_message.setVisibility(View.GONE);
+                                        verification_message.setVisibility(View.VISIBLE);
+                                        verification_message.setText("You are eligible to aceess this service");
+                                        entercode_layout.setVisibility(View.VISIBLE);
+                                        nextbutton.setVisibility(View.VISIBLE);
+                                        getUserInformation();
+                                    }
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }else{
+                        verification_message.setVisibility(View.GONE);
+                        not_verified_message.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(Verify_School.this,"Cancelled",Toast.LENGTH_LONG).show();
+                }
+            });
+        }catch (NullPointerException e){
+
+        }
+    }
+
 
 
     private void getUserInformation() {

@@ -277,7 +277,8 @@ public class Number_Verification extends AppCompatActivity {
 //                            Intent gotoVerificaton = new Intent(Number_Verification.this,Verify_School.class);
                             Intent selectSchool = new Intent(Number_Verification.this,Select_School.class);
 //                            selectSchool.putExtra("intent_school_code", sschool_code);
-                            selectSchool.putExtra("user_phone_number", sphone_number);
+                            number_verification_accessor.put("user_phone_number", sphone_number);
+//                            selectSchool.putExtra("user_phone_number", sphone_number);
                             startActivity(selectSchool);
 
                         } else {

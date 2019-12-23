@@ -29,17 +29,39 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="One last step"
+                android:text="Confirm school"
                 android:textSize="13sp"
                 android:layout_marginTop="20dp"
                 android:id="@+id/enter_number_text"
                 android:textColor="@color/main_blue"
                 android:textStyle="bold"/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="You are not registered with this school\nContact school administration for more details."
+                android:textSize="14sp"
+                android:visibility="gone"
+                android:layout_marginTop="40dp"
+                android:id="@+id/not_registered_message"
+                android:textColor="@color/main_blue"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginTop="40dp"
+                android:id="@+id/verification_"
+                android:textColor="@color/main_blue"
+                android:textStyle="bold"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:id="@+id/school_code_layout">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -145,6 +167,7 @@
         android:layout_height="50dp"
         android:background="@color/colorPrimary"
         android:text="FINISH"
+        android:visibility="gone"
         android:textSize="13sp"
         android:id="@+id/next_button"
         android:layout_gravity="bottom"

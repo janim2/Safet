@@ -79,10 +79,10 @@ public class MainActivity extends AppCompatActivity
             if(mainAccessor.getBoolean("hasChoosenSchool")){
                 if(mainAccessor.getBoolean("isverified")){
                     confirm_menuItem.setTitle("Undo school confirmation");
-                    manager.beginTransaction().replace(R.id.container, new Locate_Children()).commit();
+                    manager.beginTransaction().replace(R.id.container, new Home()).commit();
                 }else{
                     profilemenuitem.setVisible(false);
-                    edit_location_menuItem.setVisible(false);
+//                    edit_location_menuItem.setVisible(false);
                     locate_children_menuItem.setVisible(false);
                     manager.beginTransaction().replace(R.id.container, new Home()).commit();
                 }
@@ -139,14 +139,17 @@ public class MainActivity extends AppCompatActivity
         }
 
         else if (id == R.id.locate_children) {
-            manager.beginTransaction().replace(R.id.container, new Locate_Children()).commit();
+                manager.beginTransaction().replace(R.id.container, new Locate_Children()).commit();
         }
-
         else if (id == R.id.profile) {
             manager.beginTransaction().replace(R.id.container, new Profile()).commit();
 
         } else if (id == R.id.edit_location) {
-            manager.beginTransaction().replace(R.id.container, new Edit_Location()).commit();
+            if(mainAccessor.getBoolean("isverified")){
+                manager.beginTransaction().replace(R.id.container, new Edit_Location()).commit();
+            }else{
+                Toast.makeText(MainActivity.this, "Confirm school", Toast.LENGTH_LONG).show();
+            }
 
 
         } else if (id == R.id.settings) {
@@ -154,8 +157,8 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.about_school) {
             manager.beginTransaction().replace(R.id.container, new Contact_school()).commit();
-
         }
+
         else if(id == R.id.confirm_school){
             if(mainAccessor.getBoolean("isverified")){
                 Toast.makeText(MainActivity.this, "Unconfirmed", Toast.LENGTH_LONG).show();
@@ -171,6 +174,7 @@ public class MainActivity extends AppCompatActivity
 
         else if(id == R.id.change_school){
             mainAccessor.put("hasChoosenSchool",false);
+            mainAccessor.put("isverified", false);
             Intent chage_number = new Intent(MainActivity.this, Select_School.class);
             chage_number.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(chage_number);

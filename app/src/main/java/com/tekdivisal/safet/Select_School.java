@@ -99,6 +99,7 @@ public class Select_School extends AppCompatActivity {
 
     private void getAll_School_IDs() {
         fetching_indicator.setVisibility(View.VISIBLE);
+        no_internet.setVisibility(View.GONE);
         try{
             DatabaseReference get_school_ids = FirebaseDatabase.getInstance().getReference("schools");
 

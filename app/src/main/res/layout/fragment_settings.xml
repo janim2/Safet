@@ -31,8 +31,27 @@
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="43dp"
+            android:orientation="vertical"
+            android:id="@+id/create_or_change_layout"
+            android:layout_margin="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="15sp"
+                android:gravity="center_vertical"
+                android:id="@+id/create_or_chagne_textView"
+                android:textColor="@color/main_blue"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:id="@+id/reminder_layout"
             android:layout_margin="10dp">
 
             <LinearLayout

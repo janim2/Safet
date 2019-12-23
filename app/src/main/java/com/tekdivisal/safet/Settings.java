@@ -11,7 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 /**
@@ -19,7 +21,9 @@ import android.widget.TextView;
  */
 public class Settings extends Fragment {
     private CheckBox pickup_notify, reached_notify, left_notify, dropped_notify;
-
+    private TextView create_passwordtextview;
+    private LinearLayout create_passwordlayout, reminder_layout;
+    private Accessories settings_accessor;
 
     public Settings() {
         // Required empty public constructor
@@ -32,10 +36,16 @@ public class Settings extends Fragment {
         // Inflate the layout for this fragment
         View settings =  inflater.inflate(R.layout.fragment_settings, container, false);
         getActivity().setTitle("Settings");
+        settings_accessor = new Accessories(getActivity());
+
         pickup_notify = settings.findViewById(R.id.pickup_notify_text);
         reached_notify = settings.findViewById(R.id.reached_notify_text);
         dropped_notify = settings.findViewById(R.id.drop_notify_text);
         left_notify = settings.findViewById(R.id.left_notify_text);
+
+        create_passwordlayout = settings.findViewById(R.id.create_or_change_layout);
+        reminder_layout = settings.findViewById(R.id.reminder_layout);
+        create_passwordtextview = settings.findViewById(R.id.create_or_chagne_textView);
 
         //        making the text color mix mix
 //        for pickup notification text
@@ -57,6 +67,27 @@ public class Settings extends Fragment {
         Spannable leftT = new SpannableString(getResources().getString(R.string.left_school_notification));
         leftT.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.main_blue)), 0, 12, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         left_notify.setText(leftT);
+
+//       for password
+        Spannable changepassword = new SpannableString(getResources().getString(R.string.create_password));
+        changepassword.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.main_blue)), 0, 7, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        if(settings_accessor.getBoolean("isverified")){
+            if(settings_accessor.getBoolean("isPasswordCreated")){
+                create_passwordtextview.setText("Change password");
+            }else{
+                create_passwordtextview.setText("Create password");
+            }
+        }else{
+            reminder_layout.setVisibility(View.GONE);
+        }
+
+        create_passwordlayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "change password",Toast.LENGTH_LONG).show();
+            }
+        });
         return settings;
 
     }
