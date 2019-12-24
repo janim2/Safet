@@ -6,19 +6,46 @@
     android:layout_height="match_parent"
     tools:context=".Messages_Activity">
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-        android:id="@+id/messages_recyclerView"
-        android:layout_height="match_parent" />
+    <LinearLayout
+        android:layout_width="95dp"
+        android:layout_height="85dp"
+        android:orientation="vertical"
+        android:layout_marginLeft="-15dp"
+        android:layout_marginTop="-15dp"
+        android:background="@drawable/curved_corners">
 
-    <TextView
+        <TextView
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:text="What's up?"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginLeft="7dp"
+            android:textColor="@android:color/white"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No messages"
-        android:gravity="center"
-        android:textSize="13sp"
-        android:id="@+id/no_messages"
-        android:textColor="@color/colorPrimary"
-        android:layout_gravity="center"/>
+        android:orientation="vertical"
+        android:layout_marginTop="85dp">
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            android:id="@+id/messages_recyclerView"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No messages"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:id="@+id/no_messages"
+            android:textColor="@color/colorPrimary"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
 </FrameLayout>

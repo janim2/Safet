@@ -1,6 +1,7 @@
 package com.tekdivisal.safet;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -87,7 +88,8 @@ public class Settings extends Fragment {
         create_passwordlayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "change password",Toast.LENGTH_LONG).show();
+                Intent goto_password = new Intent(getActivity(), Change_password.class);
+                startActivity(goto_password);
             }
         });
 
@@ -95,6 +97,21 @@ public class Settings extends Fragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "delete notification",Toast.LENGTH_LONG).show();
+            }
+        });
+
+        delete_notifications_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(settings_accessor.getBoolean("isPasswordCreated")){
+                    Intent pasword_intent = new Intent(getActivity(), Change_password.class);
+                    pasword_intent.putExtra("pAction_indicator", "change_password");
+                    startActivity(pasword_intent);
+                }else{
+                    Intent pasword_intent = new Intent(getActivity(), Change_password.class);
+                    pasword_intent.putExtra("pAction_indicator", "create_password");
+                    startActivity(pasword_intent);
+                }
             }
         });
         return settings;
