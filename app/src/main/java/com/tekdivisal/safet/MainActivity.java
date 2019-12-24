@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity
             notifications.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    startActivity(new Intent(MainActivity.this, Messages_Activity.class));
+                    startActivity(new Intent(MainActivity.this, Notifications.class));
                     return false;
                 }
             });

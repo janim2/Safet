@@ -47,7 +47,7 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         final TextView name = holder.view.findViewById(R.id.student_name);
-        TextView phone_number = holder.view.findViewById(R.id.child_class);
+        TextView child_class = holder.view.findViewById(R.id.child_class);
         TextView status = holder.view.findViewById(R.id.status);
         CardView childCardView = holder.view.findViewById(R.id.child_cardView);
 
@@ -56,7 +56,7 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
 //        phone_number.setTypeface(lovelo);
 
         name.setText(itemList.get(position).getChild_fname() + " " + itemList.get(position).getChild_lname());
-        phone_number.setText(itemList.get(position).getChild_class());
+        child_class.setText("class: " + itemList.get(position).getChild_class());
 //        Accessories n = new Accessories(context);
 //        String sss_tatus = n.getString("bus_status");
 //        if(sss_tatus != null){
