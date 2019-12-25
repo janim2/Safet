@@ -106,17 +106,39 @@
            android:layout_marginTop="-10dp"
            android:background="@android:color/white"/>
 
-       <TextView
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:textColor="@color/colorPrimary"
-           android:text="No facilities uploaded yet"
-           android:layout_marginTop="30dp"
-           android:layout_gravity="center"
-           android:padding="3dp"/>
-
        <!--<include layout="@layout/facilities_attachment"/>-->
 
+       <FrameLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+
+           <android.support.v7.widget.RecyclerView
+               android:layout_width="match_parent"
+               app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+               android:id="@+id/facilities_recyclerView"
+               android:layout_marginTop="20dp"
+               android:layout_height="match_parent" />
+
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:textColor="@color/colorPrimary"
+               android:text="No facilities uploaded yet"
+               android:id="@+id/no_facilities"
+               android:layout_gravity="center"
+               android:padding="3dp"/>
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:text="No internet connection"
+               android:textSize="13sp"
+               android:gravity="center"
+               android:visibility="gone"
+               android:drawableTop="@drawable/refresh"
+               android:id="@+id/facilities_no_internet"
+               android:textColor="@color/colorPrimaryDark"/>
+
+       </FrameLayout>
 
    </LinearLayout>
 
