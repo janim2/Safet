@@ -33,7 +33,7 @@
                android:layout_height="40dp"
                android:layout_weight="5"
                android:scaleType="fitCenter"
-               android:src="@drawable/school_logo"/>
+               android:id="@+id/school_logo"/>
 
            <LinearLayout
                android:layout_width="match_parent"
@@ -55,6 +55,7 @@
                    android:layout_height="wrap_content"
                    android:textSize="13sp"
                    android:padding="3dp"
+                   android:id="@+id/language_range"
                    android:textColor="@color/colorPrimaryDark"
                    android:text="English | KG - SHS"/>
 
@@ -81,12 +82,67 @@
                android:layout_width="match_parent"
                android:layout_height="match_parent"
                android:textColor="@color/main_blue"
-               android:text="OPEN"
                android:layout_weight="1"
+               android:id="@+id/admission_status"
                android:gravity="right|center_vertical"
                android:padding="3dp"
                android:textSize="15sp"/>
 
+
+       </LinearLayout>
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="vertical"
+           android:visibility="gone"
+           android:id="@+id/mission_layout">
+
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:textColor="@color/main_blue"
+               android:text="Mission"
+               android:layout_gravity="center"
+               android:padding="3dp"
+               android:background="@android:color/white"/>
+
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_margin="20dp"
+               android:textSize="13sp"
+               android:textAlignment="center"
+               android:textColor="@color/colorPrimaryDark"
+               android:id="@+id/mission_text"/>
+
+       </LinearLayout>
+
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="vertical"
+           android:visibility="gone"
+           android:id="@+id/vision_layout">
+
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:textColor="@color/main_blue"
+               android:text="Vision"
+               android:layout_gravity="center"
+               android:padding="3dp"
+               android:background="@android:color/white"/>
+
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_margin="20dp"
+               android:textSize="13sp"
+               android:textAlignment="center"
+               android:textColor="@color/colorPrimaryDark"
+               android:id="@+id/vision_text"/>
 
        </LinearLayout>
 

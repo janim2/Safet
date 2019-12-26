@@ -25,7 +25,7 @@ public class Change_password extends AppCompatActivity {
     private LinearLayout change_password_layout,create_password_layout;
     private EditText current_password,create_new_password,change_new_password,
             create_confirm_password,change_confirm_password;
-    private TextView do_password_text, create_success_message, change_success_message;
+    private TextView do_password_text, create_success_message, change_success_message, already_have_password;
     private Accessories changePassword_accessor;
     private Button create_password_button, change_password_button;
     private ProgressBar create_progressBar, change_progressBar;
@@ -51,6 +51,8 @@ public class Change_password extends AppCompatActivity {
         create_progressBar = findViewById(R.id.create_loading);
         create_password_button = findViewById(R.id.create_button);
 
+        already_have_password = findViewById(R.id.already_have_password);
+
 
         //change password staff
         current_password = findViewById(R.id.current_password);
@@ -68,6 +70,16 @@ public class Change_password extends AppCompatActivity {
 //            create_password_layout.setVisibility(View.VISIBLE);
             do_password_text.setText("Create");
         }
+
+        already_have_password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changePassword_accessor.put("isPasswordCreated", true);
+                finish();
+                Toast.makeText(Change_password.this, "Enter password to access child details",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
 
         create_password_button.setOnClickListener(new View.OnClickListener() {
             @Override
