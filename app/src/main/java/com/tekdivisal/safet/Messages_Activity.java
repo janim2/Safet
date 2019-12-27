@@ -27,8 +27,8 @@ public class Messages_Activity extends AppCompatActivity {
     private ArrayList messagesArray = new ArrayList<Messages>();
     private RecyclerView messages_RecyclerView;
     private RecyclerView.Adapter messages_Adapter;
-    private String school_id, parent_code, notification_title, messages_message, messages_time,
-            messageImage;
+    private String school_id, parent_code, messages_title, messages_message, messages_time,
+            message_date, message_location;
     private FirebaseAuth mauth;
     private TextView no_messages;
 
@@ -38,7 +38,7 @@ public class Messages_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
-        getSupportActionBar().setTitle("Messages_Activity");
+        getSupportActionBar().setTitle("Messages");
 
         messages_accessor = new Accessories(Messages_Activity.this);
 
@@ -95,8 +95,8 @@ public class Messages_Activity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
                     for(DataSnapshot child : dataSnapshot.getChildren()){
-                        if(child.getKey().equals("title")){
-                            notification_title = child.getValue().toString();
+                        if(child.getKey().equals("subject")){
+                            messages_title = child.getValue().toString();
                         }
 
                         if(child.getKey().equals("message")){
@@ -107,17 +107,20 @@ public class Messages_Activity extends AppCompatActivity {
                             messages_time = child.getValue().toString();
                         }
 
-                        if(child.getKey().equals("image")){
-                            messageImage = child.getValue().toString();
+                        if(child.getKey().equals("date")){
+                            message_date = child.getValue().toString();
                         }
 
+                        if(child.getKey().equals("location")){
+                            message_location = child.getValue().toString();
+                        }
                         else{
 //                            Toast.makeText(getActivity(),"Couldn't fetch posts",Toast.LENGTH_LONG).show();
 
                         }
                     }
 
-                    Notify obj = new Notify(notification_title,messages_message,messages_time,messageImage);
+                    Messages obj = new Messages(messages_title,messages_message,message_location, message_date,messages_time);
                     messagesArray.add(obj);
                     messages_RecyclerView.setAdapter(messages_Adapter);
                     messages_Adapter.notifyDataSetChanged();

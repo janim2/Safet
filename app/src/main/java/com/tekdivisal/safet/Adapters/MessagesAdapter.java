@@ -1,7 +1,11 @@
 package com.tekdivisal.safet.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tekdivisal.safet.Model.Messages;
-import com.tekdivisal.safet.Model.Notify;
 import com.tekdivisal.safet.R;
 
 import java.util.ArrayList;
@@ -46,16 +49,34 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         ImageView image = holder.view.findViewById(R.id.messages_image);
 //        TextView time = holder.view.findViewById(R.id.);
         TextView message = holder.view.findViewById(R.id.messages_message);
+        TextView location = holder.view.findViewById(R.id.location_message);
+        TextView date = holder.view.findViewById(R.id.date_message);
+        TextView time = holder.view.findViewById(R.id.time_message);
 
 //        String the_image = itemList.get(position).getImage();
 //                if (the_image.equals("")) {//stands for welcome Notification
-                    image.setImageDrawable(holder.view.getResources().getDrawable(R.drawable.logo));
+                    image.setImageDrawable(holder.view.getResources().getDrawable(R.drawable.message));
 //                }
 //                else if (the_image.equals("")) {
 //                    image.setImageDrawable(holder.view.getResources().getDrawable(R.drawable.finish_line));
 //                }
-        title.setText(itemList.get(position).getTitle());
-                message.setText(itemList.get(position).getMessage());
+        title.setText(itemList.get(position).getMessage_title());
+        message.setText(itemList.get(position).getMessage_message());
+
+
+        if(!itemList.get(position).getLocation().equals("")){
+            location.setVisibility(View.VISIBLE);
+            location.setText("Location: " + itemList.get(position).getLocation());
+        }
+        if(!itemList.get(position).getDate().equals("")){
+            date.setVisibility(View.VISIBLE);
+            date.setText("Date: "  + itemList.get(position).getDate());
+        }
+        if(!itemList.get(position).getTime().equals("")){
+            time.setVisibility(View.VISIBLE);
+            time.setText("Time: "+ itemList.get(position).getTime());
+        }
+
         }
 
 

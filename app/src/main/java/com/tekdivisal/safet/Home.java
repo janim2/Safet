@@ -65,7 +65,7 @@ public class Home extends Fragment {
             image_one_image, image_two_image, image_three_image, language_string, range_string,
             school_logo_string,
             mission_string, vision_string, admission_status_string, parent_code_string,message_arrived_title,
-            message_arrived_message, message_arrived_date, message_arrived_time;
+            message_arrived_message,message_arrived_location, message_arrived_date, message_arrived_time;
     private TextView no_facilities, facilies_no_internet, language_range_textview, mission_text,
             vision_text, admission_status;
 
@@ -200,6 +200,14 @@ public class Home extends Fragment {
                             message_arrived_message = child.getValue().toString();
                         }
 
+                        if(child.getKey().equals("location")){
+                            message_arrived_location = child.getValue().toString();
+                            if(!message_arrived_location.equals("")){
+
+                            }else{
+                                message_arrived_location = "";
+                            }
+                        }
                         if(child.getKey().equals("date")){
                             message_arrived_date = child.getValue().toString();
                             if(!message_arrived_date.equals("Select date")){
@@ -224,7 +232,7 @@ public class Home extends Fragment {
                         }
                     }
                     Show_arrived_notification(R.drawable.message,key, message_arrived_title, message_arrived_message,
-                            message_arrived_date,message_arrived_time);
+                            message_arrived_location,message_arrived_date,message_arrived_time);
                 }
             }
 
@@ -236,7 +244,8 @@ public class Home extends Fragment {
         });
     }
 
-    private void Show_arrived_notification(int message, String key, String message_arrived_title, String message_arrived_message, String message_arrived_date, String message_arrived_time) {
+    private void Show_arrived_notification(int message, String key, String message_arrived_title,
+                                           String message_arrived_message, String message_arrived_location,String message_arrived_date, String message_arrived_time) {
         // Create an explicit intent for an Activity in your app
         Intent intent = new Intent(getActivity(), Messages_Activity.class);
 //        intent.putExtra("alertID","yes");
@@ -274,7 +283,7 @@ public class Home extends Fragment {
 //            builder.setDefaults(Notification.DEFAULT_SOUND);
             builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 //            builder.setDefaults(Notification.DEFAULT_VIBRATE);
-                Move_Arrived_From_pending(key,message_arrived_title,message_arrived_message,message_arrived_date,message_arrived_time);
+                Move_Arrived_From_pending(key,message_arrived_title,message_arrived_message,message_arrived_location,message_arrived_date,message_arrived_time);
 
         }else {
 //        builder.setDefaults(Notification.DEFAULT_SOUND);
@@ -283,17 +292,18 @@ public class Home extends Fragment {
             NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getActivity());
             // notificationId is a unique int for each notification that you must define
             notificationManagerCompat.notify(1200, builder.build());
-            Move_Arrived_From_pending(key,message_arrived_title, message_arrived_message, message_arrived_date, message_arrived_time);
+            Move_Arrived_From_pending(key,message_arrived_title, message_arrived_message, message_arrived_location,message_arrived_date, message_arrived_time);
         }
     }
 
-    private void Move_Arrived_From_pending(final String message_key, String message_arrived_title, String message_arrived_message, String message_arrived_date, String message_arrived_time) {
+    private void Move_Arrived_From_pending(final String message_key, String message_arrived_title, String message_arrived_message, String message_arrived_location,String message_arrived_date, String message_arrived_time) {
         try {
             DatabaseReference move_from_tmpMessage_to_main = FirebaseDatabase.getInstance().getReference("messages")
                     .child(school_id).child(parent_code_string).child(message_key);
 
             move_from_tmpMessage_to_main.child("subject").setValue(message_arrived_title);
             move_from_tmpMessage_to_main.child("message").setValue(message_arrived_message);
+            move_from_tmpMessage_to_main.child("location").setValue(message_arrived_location);
             move_from_tmpMessage_to_main.child("date").setValue(message_arrived_date);
             move_from_tmpMessage_to_main.child("time").setValue(message_arrived_time)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {

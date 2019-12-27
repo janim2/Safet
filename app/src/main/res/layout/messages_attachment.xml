@@ -42,6 +42,36 @@
                     android:textSize="13sp"
                     android:id="@+id/messages_message"
                     android:text="Message"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    android:layout_marginTop="13dp"
+                    android:id="@+id/location_message"
+                    android:text="Location"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/date_message"
+                    android:text="Date"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/time_message"
+                    android:text="Time"/>
             </LinearLayout>
         </LinearLayout>
 

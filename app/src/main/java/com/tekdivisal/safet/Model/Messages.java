@@ -15,7 +15,7 @@ public class Messages {
 
     }
 
-    public Messages(String title, String message, String time, String date, String location) {
+    public Messages(String title, String message,String location, String date,String time) {
 
         this.image = image;
         this.title = title;
@@ -27,9 +27,9 @@ public class Messages {
 
 
     public String getImage(){return image; }
-    public String getTitle(){return title; }
+    public String getMessage_title(){return title; }
 
-    public String getMessage(){return message; }
+    public String getMessage_message(){return message; }
 
     public String getTime(){return time; }
 
