@@ -1,13 +1,25 @@
 package com.tekdivisal.safet;
 
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +29,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +43,8 @@ import com.tekdivisal.safet.Model.Facilities;
 import com.tekdivisal.safet.PiccassoImageProcessor.PicassoImageLoadingService;
 
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Random;
 
 import ss.com.bannerslider.Slider;
 
@@ -46,8 +62,10 @@ public class Home extends Fragment {
     private RecyclerView facilities_RecyclerView;
     private RecyclerView.Adapter facilities_Adapter;
     private String school_id,facility_id,facility_name, facility_image,
-            image_one_image, image_two_image, image_three_image, language_string, range_string, school_logo_string,
-            mission_string, vision_string, admission_status_string;
+            image_one_image, image_two_image, image_three_image, language_string, range_string,
+            school_logo_string,
+            mission_string, vision_string, admission_status_string, parent_code_string,message_arrived_title,
+            message_arrived_message, message_arrived_date, message_arrived_time;
     private TextView no_facilities, facilies_no_internet, language_range_textview, mission_text,
             vision_text, admission_status;
 
@@ -67,6 +85,7 @@ public class Home extends Fragment {
         homeaccessor = new Accessories(getActivity());
 
         school_id = homeaccessor.getString("school_code");
+        parent_code_string = homeaccessor.getString("user_phone_number");
 
         Slider.init(new PicassoImageLoadingService(getActivity()));
         slider = unverified.findViewById(R.id.banner_slider1);
@@ -95,6 +114,8 @@ public class Home extends Fragment {
         facilities_Adapter = new Facilities_Adapter(getFacilitiesFromDatabase(),getActivity());
         facilities_RecyclerView.setAdapter(facilities_Adapter);
 
+        new Look_for_all().execute();
+
         facilies_no_internet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,6 +133,181 @@ public class Home extends Fragment {
         return  unverified;
     }
 
+
+    private class Look_for_all extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            final Handler thehandler;
+
+            thehandler = new Handler(Looper.getMainLooper());
+            final int delay = 15000;
+
+            thehandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(isNetworkAvailable()){
+                        get_Messages_IDs();
+                    }else{
+//                        Toast.makeText(Admin_MainActivity.this,"checking", Toast.LENGTH_LONG).show();
+                    }
+                    thehandler.postDelayed(this,delay);
+                }
+            },delay);
+            return null;
+        }
+    }
+
+    private void get_Messages_IDs() {
+        try {
+            DatabaseReference get_messages_arrived = FirebaseDatabase.getInstance().getReference("temp_messages")
+                    .child(school_id).child(parent_code_string);
+            get_messages_arrived.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                        for(DataSnapshot child : dataSnapshot.getChildren()){
+                            Fetch_message_details(child.getKey());
+                        }
+                    }else{
+//                    Toast.makeText(getActivity(),"Cannot get ID",Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(getActivity(),"Cancelled",Toast.LENGTH_LONG).show();
+                }
+            });
+        }catch(NullPointerException e){
+
+        }
+    }
+
+    private void Fetch_message_details(final String key) {
+        DatabaseReference has_bus_arrived = FirebaseDatabase.getInstance().getReference("temp_messages")
+                .child(school_id).child(parent_code_string).child(key);
+        has_bus_arrived.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot child : dataSnapshot.getChildren()){
+                        if(child.getKey().equals("subject")){
+                            message_arrived_title = child.getValue().toString();
+                        }
+
+                        if(child.getKey().equals("message")){
+                            message_arrived_message = child.getValue().toString();
+                        }
+
+                        if(child.getKey().equals("date")){
+                            message_arrived_date = child.getValue().toString();
+                            if(!message_arrived_date.equals("Select date")){
+
+                            }else{
+                                message_arrived_date = "";
+                            }
+                        }
+
+                        if(child.getKey().equals("time")){
+                            message_arrived_time = child.getValue().toString();
+                            if(!message_arrived_time.equals("Select time")){
+
+                            }else{
+                                message_arrived_time = "";
+                            }
+                        }
+
+                        else{
+//                            Toast.makeText(getActivity(),"Couldn't fetch posts",Toast.LENGTH_LONG).show();
+
+                        }
+                    }
+                    Show_arrived_notification(R.drawable.message,key, message_arrived_title, message_arrived_message,
+                            message_arrived_date,message_arrived_time);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getActivity(),"Cancelled",Toast.LENGTH_LONG).show();
+
+            }
+        });
+    }
+
+    private void Show_arrived_notification(int message, String key, String message_arrived_title, String message_arrived_message, String message_arrived_date, String message_arrived_time) {
+        // Create an explicit intent for an Activity in your app
+        Intent intent = new Intent(getActivity(), Messages_Activity.class);
+//        intent.putExtra("alertID","yes");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 0, intent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity(), "1200")
+                .setSmallIcon(message)
+                .setContentTitle(message_arrived_title)
+                .setContentText(message_arrived_message)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(message_arrived_message))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+//                .setFullScreenIntent(fullScreenPendingIntent,true);
+
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.app_name);
+            String description = getString(R.string.app_name);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("1200", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getActivity().getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getActivity());
+
+            // notificationId is a unique int for each notification that you must define
+            notificationManagerCompat.notify(1200, builder.build());
+//            builder.setDefaults(Notification.DEFAULT_SOUND);
+            builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+//            builder.setDefaults(Notification.DEFAULT_VIBRATE);
+                Move_Arrived_From_pending(key,message_arrived_title,message_arrived_message,message_arrived_date,message_arrived_time);
+
+        }else {
+//        builder.setDefaults(Notification.DEFAULT_SOUND);
+            builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+//        builder.setDefaults(Notification.DEFAULT_VIBRATE);
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getActivity());
+            // notificationId is a unique int for each notification that you must define
+            notificationManagerCompat.notify(1200, builder.build());
+            Move_Arrived_From_pending(key,message_arrived_title, message_arrived_message, message_arrived_date, message_arrived_time);
+        }
+    }
+
+    private void Move_Arrived_From_pending(final String message_key, String message_arrived_title, String message_arrived_message, String message_arrived_date, String message_arrived_time) {
+        try {
+            DatabaseReference move_from_tmpMessage_to_main = FirebaseDatabase.getInstance().getReference("messages")
+                    .child(school_id).child(parent_code_string).child(message_key);
+
+            move_from_tmpMessage_to_main.child("subject").setValue(message_arrived_title);
+            move_from_tmpMessage_to_main.child("message").setValue(message_arrived_message);
+            move_from_tmpMessage_to_main.child("date").setValue(message_arrived_date);
+            move_from_tmpMessage_to_main.child("time").setValue(message_arrived_time)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    DatabaseReference removeRef = FirebaseDatabase.getInstance().getReference("temp_messages").child(school_id).child(parent_code_string).child(message_key);
+                    removeRef.removeValue();
+                    Toast.makeText(getActivity(), "Removed", Toast.LENGTH_LONG).show();
+                }
+            });
+        }catch (NullPointerException e){
+
+        }
+    }
 
     private void Fetch_Facilities_IDS() {
         facilies_no_internet.setVisibility(View.GONE);
@@ -392,13 +588,6 @@ public class Home extends Fragment {
         return  facilitiesArray;
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -410,5 +599,17 @@ public class Home extends Fragment {
             no_facilities.setVisibility(View.GONE);
         }
 
+    }
+
+    private boolean isNetworkAvailable() {
+        try {
+            ConnectivityManager connectivityManager
+                    = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }catch (NullPointerException e){
+
+        }
+      return true;
     }
 }

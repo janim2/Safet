@@ -47,13 +47,13 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 //        TextView time = holder.view.findViewById(R.id.);
         TextView message = holder.view.findViewById(R.id.messages_message);
 
-        String the_image = itemList.get(position).getImage();
-                if (the_image.equals("")) {//stands for welcome Notification
+//        String the_image = itemList.get(position).getImage();
+//                if (the_image.equals("")) {//stands for welcome Notification
                     image.setImageDrawable(holder.view.getResources().getDrawable(R.drawable.logo));
-                }
-                else if (the_image.equals("")) {
-                    image.setImageDrawable(holder.view.getResources().getDrawable(R.drawable.finish_line));
-                }
+//                }
+//                else if (the_image.equals("")) {
+//                    image.setImageDrawable(holder.view.getResources().getDrawable(R.drawable.finish_line));
+//                }
         title.setText(itemList.get(position).getTitle());
                 message.setText(itemList.get(position).getMessage());
         }
