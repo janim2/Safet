@@ -91,6 +91,196 @@
 
        </LinearLayout>
 
+       <android.support.v7.widget.CardView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:elevation="5dp"
+           android:visibility="gone"
+           app:cardElevation="5dp"
+           android:id="@+id/quick_access_cardView"
+           app:cardCornerRadius="5dp"
+           android:layout_margin="20dp">
+
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:orientation="vertical">
+
+               <TextView
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:text="Quick Access"
+                   android:padding="5dp"
+                   android:textSize="15sp"
+                   android:textColor="@color/main_blue"/>
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal">
+
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="vertical"
+                       android:layout_weight="1"
+                       android:id="@+id/profile_layout"
+                       android:padding="10dp">
+
+                       <ImageView
+                           android:layout_width="50dp"
+                           android:layout_height="50dp"
+                           android:src="@drawable/user"
+                           android:padding="7dp"
+                           android:layout_gravity="center"
+                           android:background="@drawable/border_only_curved_corners"/>
+
+                       <TextView
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:text="Profile"
+                           android:textColor="@color/colorPrimaryDark"
+                           android:layout_marginTop="5dp"
+                           android:gravity="center"/>
+                   </LinearLayout>
+
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="vertical"
+                       android:layout_weight="1"
+                       android:id="@+id/child_location_layout"
+                       android:padding="10dp">
+
+                       <ImageView
+                           android:layout_width="50dp"
+                           android:layout_height="50dp"
+                           android:src="@drawable/child"
+                           android:padding="7dp"
+                           android:layout_gravity="center"
+                           android:background="@drawable/border_only_curved_corners"/>
+
+                       <TextView
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:text="Child location"
+                           android:textColor="@color/colorPrimaryDark"
+                           android:layout_marginTop="5dp"
+                           android:gravity="center"/>
+                   </LinearLayout>
+
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="vertical"
+                       android:layout_weight="1"
+                       android:id="@+id/bus_location_layout"
+                       android:padding="10dp">
+
+                       <ImageView
+                           android:layout_width="50dp"
+                           android:layout_height="50dp"
+                           android:src="@drawable/route"
+                           android:padding="7dp"
+                           android:layout_gravity="center"
+                           android:background="@drawable/border_only_curved_corners"/>
+
+                       <TextView
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:text="Bus location"
+                           android:textColor="@color/colorPrimaryDark"
+                           android:layout_marginTop="5dp"
+                           android:gravity="center"/>
+                   </LinearLayout>
+
+               </LinearLayout>
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal">
+
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="vertical"
+                       android:layout_weight="1"
+                       android:id="@+id/contact_layout"
+                       android:padding="10dp">
+
+                       <ImageView
+                           android:layout_width="50dp"
+                           android:layout_height="50dp"
+                           android:padding="7dp"
+                           android:src="@drawable/school"
+                           android:layout_gravity="center"
+                           android:background="@drawable/border_only_curved_corners"/>
+
+                       <TextView
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:text="Contact school"
+                           android:textColor="@color/colorPrimaryDark"
+                           android:layout_marginTop="5dp"
+                           android:gravity="center"/>
+                   </LinearLayout>
+
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="vertical"
+                       android:layout_weight="1"
+                       android:id="@+id/settings_layout"
+                       android:padding="10dp">
+
+                       <ImageView
+                           android:layout_width="50dp"
+                           android:layout_height="50dp"
+                           android:padding="7dp"
+                           android:src="@drawable/settings"
+                           android:layout_gravity="center"
+                           android:background="@drawable/border_only_curved_corners"/>
+
+                       <TextView
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:text="Settings"
+                           android:textColor="@color/colorPrimaryDark"
+                           android:layout_marginTop="5dp"
+                           android:gravity="center"/>
+                   </LinearLayout>
+
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="vertical"
+                       android:layout_weight="1"
+                       android:id="@+id/logout_layout"
+                       android:padding="10dp">
+
+                       <ImageView
+                           android:layout_width="50dp"
+                           android:layout_height="50dp"
+                           android:padding="8dp"
+                           android:src="@drawable/logout"
+                           android:layout_gravity="center"
+                           android:background="@drawable/border_only_curved_corners"/>
+
+                       <TextView
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:text="LOGOUT"
+                           android:layout_marginTop="5dp"
+                           android:textColor="@color/main_blue"
+                           android:gravity="center"/>
+                   </LinearLayout>
+
+               </LinearLayout>
+           </LinearLayout>
+
+       </android.support.v7.widget.CardView>
+
        <LinearLayout
            android:layout_width="match_parent"
            android:layout_height="wrap_content"

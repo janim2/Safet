@@ -196,6 +196,7 @@ public class Verify_School extends AppCompatActivity {
                                     if(school_code.equals(full_code)){
                                         verify_school_accesssrs.put("isverified", true);
                                         Intent gotoMain = new Intent(Verify_School.this, MainActivity.class);
+                                        gotoMain.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                         startActivity(gotoMain);
                                     }else{
                                         loading.setVisibility(View.GONE);
