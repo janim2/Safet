@@ -31,7 +31,7 @@ public class Notifications extends AppCompatActivity {
     private String school_id, parent_code, notification_title, notifications_message, notifications_time,
             notificationImage;
     private FirebaseAuth mauth;
-    private TextView no_notifications;
+    private TextView no_notifications, no_internet;
 
     private Accessories notifications_accessor;
 
@@ -50,17 +50,32 @@ public class Notifications extends AppCompatActivity {
 
         notifications_RecyclerView = findViewById(R.id.notifications_recyclerView);
         no_notifications = findViewById(R.id.no_notifications);
+        no_internet = findViewById(R.id.no_internet);
 
         //reviews adapter settings starts here
         if(isNetworkAvailable()){
                 getUserNotifications_ID();
         }else{
-            no_notifications.setText("No internet connection");
-            no_notifications.setVisibility(View.VISIBLE);
+            no_notifications.setVisibility(View.GONE);
+            no_internet.setVisibility(View.VISIBLE);
         }
         notifications_RecyclerView.setHasFixedSize(true);
         notifications_Adapter = new NotifyAdapter(getNotificationsFromDatabase(),Notifications.this);
         notifications_RecyclerView.setAdapter(notifications_Adapter);
+
+        no_internet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                no_internet.setVisibility(View.GONE);
+                no_notifications.setVisibility(View.VISIBLE);
+                if(isNetworkAvailable()){
+                    getUserNotifications_ID();
+                }else{
+                    no_notifications.setVisibility(View.GONE);
+                    no_internet.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     private void getUserNotifications_ID() {

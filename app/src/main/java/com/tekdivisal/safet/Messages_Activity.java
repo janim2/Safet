@@ -30,7 +30,7 @@ public class Messages_Activity extends AppCompatActivity {
     private String school_id, parent_code, messages_title, messages_message, messages_time,
             message_date, message_location;
     private FirebaseAuth mauth;
-    private TextView no_messages;
+    private TextView no_messages, no_internet;
 
     private Accessories messages_accessor;
 
@@ -49,17 +49,32 @@ public class Messages_Activity extends AppCompatActivity {
 
         messages_RecyclerView = findViewById(R.id.messages_recyclerView);
         no_messages = findViewById(R.id.no_messages);
+        no_internet = findViewById(R.id.no_internet);
 
         //reviews adapter settings starts here
         if(isNetworkAvailable()){
             getUsermessages_ID();
         }else{
-            no_messages.setText("No internet connection");
-            no_messages.setVisibility(View.VISIBLE);
+            no_messages.setVisibility(View.GONE);
+            no_internet.setVisibility(View.VISIBLE);
         }
         messages_RecyclerView.setHasFixedSize(true);
         messages_Adapter = new MessagesAdapter(getmessagesFromDatabase(), Messages_Activity.this);
         messages_RecyclerView.setAdapter(messages_Adapter);
+
+        no_internet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                no_internet.setVisibility(View.GONE);
+                no_messages.setVisibility(View.VISIBLE);
+                if(isNetworkAvailable()){
+                    getUsermessages_ID();
+                }else{
+                    no_messages.setVisibility(View.GONE);
+                    no_internet.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     private void getUsermessages_ID() {

@@ -18,8 +18,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Change_password"
-            android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".Assign_bus_To_Child"></activity>
+        <activity
+            android:name=".Change_password"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".Messages_Activity"
             android:parentActivityName=".MainActivity" />

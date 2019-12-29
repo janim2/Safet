@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tekdivisal.safet.Accessories;
+import com.tekdivisal.safet.Assign_bus_To_Child;
 import com.tekdivisal.safet.Child_location;
 import com.tekdivisal.safet.Model.Children;
 import com.tekdivisal.safet.R;
@@ -64,16 +65,28 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
 //        }else{
 //            status.setText("Status");
 //        }
-
         childCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                Intent open_driver_details = new Intent(v.getContext(), Driver_Details.class);
 //                v.getContext().startActivity(open_driver_details);
-                Intent child_location = new Intent(v.getContext(), Child_location.class);
-                child_location.putExtra("from_home_child_fname",itemList.get(position).getChild_fname());
-                child_location.putExtra("from_home_child_lname",itemList.get(position).getChild_lname());
-                v.getContext().startActivity(child_location);
+                String isAssigned = itemList.get(position).getIsAssigned_bus();
+                if(!isAssigned.equals("")){
+                    if(isAssigned.equals("No")){
+                        Intent assign_child = new Intent(v.getContext(), Assign_bus_To_Child.class);
+                        assign_child.putExtra("from_home_child_fname",itemList.get(position).getChild_fname());
+                        assign_child.putExtra("from_home_child_lname",itemList.get(position).getChild_lname());
+                        assign_child.putExtra("child_code",itemList.get(position).getChild_code());
+                        v.getContext().startActivity(assign_child);
+                    }else{
+                        Intent child_location = new Intent(v.getContext(), Child_location.class);
+                        child_location.putExtra("from_home_child_fname",itemList.get(position).getChild_fname());
+                        child_location.putExtra("from_home_child_lname",itemList.get(position).getChild_lname());
+                        child_location.putExtra("child_code",itemList.get(position).getChild_code());
+                        v.getContext().startActivity(child_location);
+                    }
+                }
+
             }
         });
     }

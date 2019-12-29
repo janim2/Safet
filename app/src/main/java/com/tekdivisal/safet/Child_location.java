@@ -100,7 +100,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
     private LatLng pickuplocation, driverlatlng;
     private String sdriver_code, sfirst_name, slastname, saddress, sphone_number,
             sbrand, schasis_no, sbus_code, smodel, snumber_plate, sschoolemail, ssechoollocation,
-            sschoolphone, sschoolname, child_fname_from_home, child_lname_from_home;
+            sschoolphone, sschoolname, child_fname_from_home, child_lname_from_home, child_code, assigned_driver_code;
     private TextView driver_name_tv, number_plate_tv, bus_model_tv, school_name_tv, school_number_tv,
     status_school_name, status_distance,status_time, status_date, status_start_time, status_end_time;
     private String TAG = "so47492459";
@@ -117,6 +117,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         //child name intents from home
         child_fname_from_home = getIntent().getStringExtra("from_home_child_fname");
         child_lname_from_home = getIntent().getStringExtra("from_home_child_lname");
+        child_code = getIntent().getStringExtra("child_code");
 
         getSupportActionBar().setTitle(child_fname_from_home + " " + child_lname_from_home);
         child_location_accessor = new Accessories(this);
@@ -269,14 +270,22 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
     private void getDriverID() {
         try {
-            DatabaseReference get_Driver_notifications = FirebaseDatabase.getInstance().getReference("bus_location").child(school_code);
+//            DatabaseReference get_Driver_notifications = FirebaseDatabase.getInstance()
+//                    .getReference("bus_location").child(school_code);
 
-            get_Driver_notifications.addListenerForSingleValueEvent(new ValueEventListener() {
+            DatabaseReference get_Driver_Id = FirebaseDatabase.getInstance().getReference("children")
+                    .child(school_code).child(parent_code).child(child_code);
+
+            get_Driver_Id.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
-                            getDriverLocation(child.getKey());
+                            if(child.getKey().equals("assigned_bus")){
+                                assigned_driver_code = child.getValue().toString();
+//                                Toast.makeText(Child_location.this, "assigned: "+assigned_driver_code, Toast.LENGTH_LONG).show();
+                                getDriverLocation(assigned_driver_code);
+                            }
                         }
                     } else {
 //                    Toast.makeText(getActivity(),"Cannot get ID",Toast.LENGTH_LONG).show();

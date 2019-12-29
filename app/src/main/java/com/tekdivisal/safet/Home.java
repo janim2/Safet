@@ -79,7 +79,7 @@ public class Home extends Fragment {
             mission_string, vision_string, admission_status_string, parent_code_string,message_arrived_title,
             message_arrived_message,message_arrived_location, message_arrived_date, message_arrived_time;
 
-    private String password_string, user_password_;
+    private String password_string, user_password_, isassigned_bus;
 
     private TextView no_facilities, facilies_no_internet, language_range_textview, mission_text,
             vision_text, admission_status;
@@ -264,7 +264,8 @@ public class Home extends Fragment {
                 @Override
                 public void run() {
                     if(isNetworkAvailable()){
-                        get_Messages_IDs();
+                        Fetch_Messages_IDs();
+//                        Fetch_bus_assignment_state();
                     }else{
 //                        Toast.makeText(Admin_MainActivity.this,"checking", Toast.LENGTH_LONG).show();
                     }
@@ -275,7 +276,61 @@ public class Home extends Fragment {
         }
     }
 
-    private void get_Messages_IDs() {
+//    private void Fetch_bus_assignment_state() {
+//        try{
+//            DatabaseReference get_child_id = FirebaseDatabase.getInstance().getReference("children")
+//                    .child(school_id).child(parent_code_string);//.child(child_one_id);
+//            get_child_id.addListenerForSingleValueEvent(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                    if(dataSnapshot.exists()){
+//                        for(DataSnapshot child : dataSnapshot.getChildren()){
+//                            Fetch_Child_Info(child.getKey());
+//                        }
+//                    }else{
+////                    Toast.makeText(getActivity(),"Cannot get ID",Toast.LENGTH_LONG).show();
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//                    Toast.makeText(getActivity(),"Cancelled",Toast.LENGTH_LONG).show();
+//                }
+//            });
+//        }catch (NullPointerException e){
+//
+//        }
+//    }
+
+//    private void Fetch_Child_Info(String key) {
+//        DatabaseReference get_child_id = FirebaseDatabase.getInstance().getReference("children")
+//                .child(school_id).child(parent_code_string).child(key);
+//        get_child_id.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                if(dataSnapshot.exists()){
+//                    for(DataSnapshot child : dataSnapshot.getChildren()){
+//                        if(child.getKey().equals("isAssigned_bus")){
+//                            isassigned_bus = child.getValue().toString();
+//                            if(isassigned_bus.equals("No")){
+//                                homeaccessor.put("isAssigned_bus","No");
+//                            }else{
+//                                homeaccessor.put("isAssigned_bus","Yes");
+//                            }
+//                        }
+//
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
+
+    private void Fetch_Messages_IDs() {
         try {
             DatabaseReference get_messages_arrived = FirebaseDatabase.getInstance().getReference("temp_messages")
                     .child(school_id).child(parent_code_string);

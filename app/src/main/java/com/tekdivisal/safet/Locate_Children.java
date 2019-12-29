@@ -50,7 +50,7 @@ public class Locate_Children extends Fragment {
     private RecyclerView children_RecyclerView;
     private RecyclerView.Adapter children_Adapter;
     private String school_id_string, parent_code_string, string_child_code, sfirst_name, slastname,
-    sclass, sgender, driver_key;
+    sclass, sgender, driver_key, is_assigned, the_assigned_bus;
     private Accessories home_accessor;
     private String bus_arrived_title, bus_arrived_message, bus_arrived_time, bus_arrivedImage,
             bus_arrived_status;
@@ -153,9 +153,16 @@ public class Locate_Children extends Fragment {
                         if(child.getKey().equals("gender")){
                             sgender = child.getValue().toString();
                         }
+                        if(child.getKey().equals("isAssigned_bus")){
+                            is_assigned = child.getValue().toString();
+                        }
+                        if(child.getKey().equals("assigned_bus")){
+                            the_assigned_bus = child.getValue().toString();
+                        }
+
                         string_child_code = key;
                     }
-                    Children obj = new Children(sfirst_name,slastname,sclass,sgender,string_child_code);
+                    Children obj = new Children(sfirst_name,slastname,sclass,sgender,string_child_code,is_assigned,the_assigned_bus);
                     childrenArray.add(obj);
                     children_RecyclerView.setAdapter(children_Adapter);
                     children_Adapter.notifyDataSetChanged();

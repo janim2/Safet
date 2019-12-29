@@ -46,6 +46,18 @@
             android:id="@+id/no_messages"
             android:textColor="@color/colorPrimary"
             android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No internet connection"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:visibility="gone"
+            android:drawableTop="@drawable/refresh"
+            android:id="@+id/no_internet"
+            android:textColor="@color/colorPrimary"
+            android:layout_gravity="center"/>
     </LinearLayout>
 
 </FrameLayout>

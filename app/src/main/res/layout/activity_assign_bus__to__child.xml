@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Assign_bus_To_Child">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:textColor="@color/main_blue"
+            android:textSize="14sp"
+            android:text="Assign a bus to your child"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
+            android:gravity="center"
+            android:textSize="11sp"
+            android:text="Bus assignment is based on bus route. Please take note."/>
+
+         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+             android:id="@+id/child_name"
+             android:textColor="@color/colorPrimaryDark"
+             android:textSize="15sp"
+             android:layout_marginTop="20dp"/>
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="43dp"
+            android:id="@+id/bus_spinner"
+            android:background="@android:drawable/editbox_background">
+
+        </Spinner>
+
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:id="@+id/loading"
+            android:visibility="gone"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/status"
+            android:textSize="14sp"
+            android:visibility="gone"
+            android:textColor="@color/colorPrimary"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/no_internet"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:drawableTop="@drawable/refresh"
+            android:text="No internet connection"
+            android:textColor="@color/colorPrimary"/>
+
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="43dp"
+            android:text="Assign"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@android:color/white"
+            android:textSize="13sp"
+            android:layout_marginTop="50dp"
+            android:id="@+id/assign_button"/>
+
+
+    </LinearLayout>
+
+</ScrollView>
