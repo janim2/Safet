@@ -33,7 +33,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
              android:id="@+id/child_name"
-             android:textColor="@color/colorPrimaryDark"
+             android:gravity="center"
+             android:textColor="@color/main_blue"
              android:textSize="15sp"
              android:layout_marginTop="20dp"/>
 
@@ -41,6 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="43dp"
             android:id="@+id/bus_spinner"
+            android:layout_marginTop="10dp"
             android:background="@android:drawable/editbox_background">
 
         </Spinner>
@@ -58,6 +60,7 @@
             android:id="@+id/status"
             android:textSize="14sp"
             android:visibility="gone"
+            android:gravity="center"
             android:textColor="@color/colorPrimary"/>
 
         <TextView

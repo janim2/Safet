@@ -587,14 +587,20 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
     }
 
     private void Bus_arrived_notification() {
-        Random notifyrandom = new Random();
-        int notify_no = notifyrandom.nextInt(2334);
-        String notify_id = "arrived" + notify_no+"" + schasis_no;
-        arrived_databaseReference = FirebaseDatabase.getInstance().getReference("bus_notification").child(parent_code).child(school_code).child(sdriver_code);
-        arrived_databaseReference.child("image").setValue("BAN");
-        arrived_databaseReference.child("message").setValue("Bus has arrived at the pickup/school location. If pickup is required, please proceed to bus stop to pickup child.");
-        arrived_databaseReference.child("time").setValue(new Date());
-        arrived_databaseReference.child("title").setValue("Bus Arrived");
+        try {
+            Random notifyrandom = new Random();
+            int notify_no = notifyrandom.nextInt(2334);
+            String notify_id = "arrived" + notify_no+"" + schasis_no;
+            arrived_databaseReference = FirebaseDatabase.getInstance().getReference("bus_notification")
+                    .child(parent_code).child(school_code).child(sdriver_code);
+            arrived_databaseReference.child("image").setValue("BAN");
+            arrived_databaseReference.child("message").setValue("Bus has arrived at the pickup/school location. If pickup is required, please proceed to bus stop to pickup child.");
+            arrived_databaseReference.child("time").setValue(new Date());
+            arrived_databaseReference.child("title").setValue("Bus Arrived");
+        }catch (NullPointerException e){
+
+        }
+
     }
 
     private boolean isNetworkAvailable() {

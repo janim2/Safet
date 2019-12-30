@@ -3,6 +3,7 @@ package com.tekdivisal.safet.Adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +12,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.tekdivisal.safet.Accessories;
 import com.tekdivisal.safet.Assign_bus_To_Child;
 import com.tekdivisal.safet.Child_location;
@@ -52,19 +58,15 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
         TextView status = holder.view.findViewById(R.id.status);
         CardView childCardView = holder.view.findViewById(R.id.child_cardView);
 
-//        Typeface lovelo =Typeface.createFromAsset(context.getAssets(),  "fonts/lovelo.ttf");
-//        name.setTypeface(lovelo);
-//        phone_number.setTypeface(lovelo);
-
         name.setText(itemList.get(position).getChild_fname() + " " + itemList.get(position).getChild_lname());
         child_class.setText("class: " + itemList.get(position).getChild_class());
-//        Accessories n = new Accessories(context);
-//        String sss_tatus = n.getString("bus_status");
-//        if(sss_tatus != null){
-//            status.setText(sss_tatus);
-//        }else{
-//            status.setText("Status");
-//        }
+
+        if(!itemList.get(position).getIsAssigned_bus().equals("No")){
+            SetStatusText(status, itemList.get(position).getAssigned_bus());
+        }else{
+            status.setText("Unassigned");
+        }
+
         childCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,6 +91,35 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
 
             }
         });
+    }
+    String trip_status;
+    private void SetStatusText(final TextView status, String assigned_bus) {
+        Accessories adapter_accessor = new Accessories(context);
+        String school_id_string = adapter_accessor.getString("school_code");
+        String parent_code_string = adapter_accessor.getString("user_phone_number");
+
+        DatabaseReference bus_status = FirebaseDatabase.getInstance().getReference("trip_status")
+                .child(school_id_string).child(assigned_bus);
+            bus_status.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                        for(DataSnapshot child : dataSnapshot.getChildren()){
+                            if(child.getKey().equals("status")){
+                                trip_status = child.getValue().toString();
+                            }
+                        }
+                        status.setText(trip_status);
+                    }else{
+//                    Toast.makeText(getActivity(),"Cannot get ID",Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
     }
 
     @Override

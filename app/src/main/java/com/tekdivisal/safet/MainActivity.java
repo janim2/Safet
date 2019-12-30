@@ -315,7 +315,7 @@ public class MainActivity extends AppCompatActivity
                                             success_message.setText("Code Accepted");
                                             success_message.setVisibility(View.VISIBLE);
                                             password_dialogue.dismiss();
-                                            manager.beginTransaction().replace(R.id.container, new Locate_Children()).commit();
+                                            manager.beginTransaction().replace(R.id.container, new Locate_Children()).addToBackStack("locate").commit();
                                         }else{
                                             loading.setVisibility(View.GONE);
                                             success_message.setText("Invalid password");

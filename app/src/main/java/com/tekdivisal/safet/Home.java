@@ -90,6 +90,8 @@ public class Home extends Fragment {
     private CardView quick_access_cardView;
 
     private Dialog password_dialogue;
+    private CardView confirm_cardView;
+    private Button confirm_button;
 
     public Home() {
         // Required empty public constructor
@@ -121,6 +123,8 @@ public class Home extends Fragment {
         facilities_RecyclerView = unverified.findViewById(R.id.facilities_recyclerView);
         facilies_no_internet = unverified.findViewById(R.id.facilities_no_internet);
         no_facilities = unverified.findViewById(R.id.no_facilities);
+        confirm_cardView = unverified.findViewById(R.id.confirm_cardView);
+        confirm_button = unverified.findViewById(R.id.confirm_button);
 
         language_range_textview = unverified.findViewById(R.id.language_range);
         mission_text = unverified.findViewById(R.id.mission_text);
@@ -149,7 +153,16 @@ public class Home extends Fragment {
 
         if(homeaccessor.getBoolean("isverified")){
             quick_access_cardView.setVisibility(View.VISIBLE);
+        }else{
+            confirm_cardView.setVisibility(View.VISIBLE);
         }
+
+        confirm_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), Verify_School.class));
+            }
+        });
 
         facilies_no_internet.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -671,7 +684,10 @@ public class Home extends Fragment {
                             if(child.getKey().equals("image")){
                                 school_logo_string = child.getValue().toString();
                                 if(!school_logo_string.equals("")){
-                                    Picasso.with(getActivity()).load(Uri.parse(school_logo_string)).into(school_logo);
+                                    try {
+                                        Picasso.with(getActivity()).load(Uri.parse(school_logo_string)).into(school_logo);
+                                    }catch (IllegalArgumentException e){
+                                    }
                                 }else{
                                     image_three_image = "https://via.placeholder.com/550/FFFFFF/808080%20?Text=Digital.comC/O%20https://placeholder.com/";
                                 }

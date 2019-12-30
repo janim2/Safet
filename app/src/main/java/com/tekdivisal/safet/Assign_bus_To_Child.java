@@ -21,10 +21,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Assign_bus_To_Child extends AppCompatActivity {
 
@@ -45,7 +48,7 @@ public class Assign_bus_To_Child extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assign_bus__to__child);
-        getActionBar().setTitle("Bus Assignment");
+        getSupportActionBar().setTitle("Bus Assignment");
         assign_accessor = new Accessories(Assign_bus_To_Child.this);
 
         intent = getIntent();
@@ -67,7 +70,7 @@ public class Assign_bus_To_Child extends AppCompatActivity {
         childname.setText(child_fname + " " + child_lname);
 
         if(isNetworkAvailable()){
-            Fetch_Driver_ID();
+            Fetch_Bus_ID();
         }else{
             loading.setVisibility(View.GONE);
             no_internet.setVisibility(View.VISIBLE);
@@ -78,7 +81,7 @@ public class Assign_bus_To_Child extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(isNetworkAvailable()){
-                    Fetch_Driver_ID();
+                    Fetch_Bus_ID();
                 }else{
                     loading.setVisibility(View.GONE);
                     no_internet.setVisibility(View.VISIBLE);
@@ -92,6 +95,7 @@ public class Assign_bus_To_Child extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selected_bus = titleList.get(position);
+//                Toast.makeText(Assign_bus_To_Child.this, sdriver_code, Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -141,21 +145,15 @@ public class Assign_bus_To_Child extends AppCompatActivity {
     }
 
     private void Check_assigned_number(String key, final String selected_bus) {
-        sdriver_code = key;
-        Toast.makeText(Assign_bus_To_Child.this, "selected bus " + selected_bus, Toast.LENGTH_LONG).show();
-        DatabaseReference bus_details = FirebaseDatabase.getInstance().getReference("bus_details")
-                .child(school_code).child(sdriver_code);
-        bus_details.addListenerForSingleValueEvent(new ValueEventListener() {
+        Query getDriver_code_query = FirebaseDatabase.getInstance().getReference("bus_details").child(school_code).orderByChild("bus_route").equalTo(selected_bus);
+        getDriver_code_query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    for(DataSnapshot child : dataSnapshot.getChildren()){
-                        if(child.getKey().equals("bus_route")){
-                            thebusRoute = child.getValue().toString();
-                            if(thebusRoute.equals(selected_bus)){
-                                String thedriver_code = sdriver_code;
-                                DatabaseReference bus_details = FirebaseDatabase.getInstance().getReference("bus_details")
-                                        .child(school_code).child(thedriver_code);
+                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                    String key = ds.getKey();
+                    sdriver_code = key;
+                    DatabaseReference bus_details = FirebaseDatabase.getInstance().getReference("bus_details")
+                                        .child(school_code).child(sdriver_code);
                                 bus_details.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -183,10 +181,7 @@ public class Assign_bus_To_Child extends AppCompatActivity {
 
                                     }
                                 });
-                            }
-                        }
 
-                    }
                 }
             }
 
@@ -195,6 +190,59 @@ public class Assign_bus_To_Child extends AppCompatActivity {
 
             }
         });
+//        Toast.makeText(Assign_bus_To_Child.this, "selected bus " + selected_bus, Toast.LENGTH_LONG).show();
+//        DatabaseReference bus_details = FirebaseDatabase.getInstance().getReference("bus_details")
+//                .child(school_code).child(sdriver_code);
+//        bus_details.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                if(dataSnapshot.exists()){
+//                    for(DataSnapshot child : dataSnapshot.getChildren()){
+//                        if(child.getKey().equals("bus_route")){
+//                            thebusRoute = child.getValue().toString();
+//                            if(thebusRoute.equals(selected_bus)){
+//                                String thedriver_code = sdriver_code;
+//                                DatabaseReference bus_details = FirebaseDatabase.getInstance().getReference("bus_details")
+//                                        .child(school_code).child(thedriver_code);
+//                                bus_details.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                    @Override
+//                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                        if(dataSnapshot.exists()){
+//                                            for(DataSnapshot child : dataSnapshot.getChildren()){
+//                                                if(child.getKey().equals("assigned_no_left")){
+//                                                    snumber_left = child.getValue().toString();
+//
+//                                                    if(Integer.valueOf(snumber_left) > 0){
+//                                                        Assign_Child_To_Bus(sdriver_code, snumber_left);
+//                                                    }else{
+//                                                        loading.setVisibility(View.GONE);
+//                                                        no_internet.setVisibility(View.GONE);
+//                                                        status.setText("Bus is full");
+//                                                        status.setVisibility(View.VISIBLE);
+//                                                    }
+//                                                }
+//
+//                                            }
+//                                        }
+//                                    }
+//
+//                                    @Override
+//                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                                    }
+//                                });
+//                            }
+//                        }
+//
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
     }
 
     private void Assign_Child_To_Bus(final String sdriver_code, final String number_left) {
@@ -248,9 +296,9 @@ public class Assign_bus_To_Child extends AppCompatActivity {
         }
     }
 
-    private void Fetch_Driver_ID() {
+    private void Fetch_Bus_ID() {
         try {
-            DatabaseReference get_Driver_ID = FirebaseDatabase.getInstance().getReference("drivers")
+            DatabaseReference get_Driver_ID = FirebaseDatabase.getInstance().getReference("bus_details")
                     .child(school_code);
 
             get_Driver_ID.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -258,7 +306,7 @@ public class Assign_bus_To_Child extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
-                            Fetch_Driver_Info(child.getKey());
+                            FetchBusDetails(child.getKey());
                         }
                     } else {
 //                    Toast.makeText(getActivity(),"Cannot get ID",Toast.LENGTH_LONG).show();
@@ -275,43 +323,9 @@ public class Assign_bus_To_Child extends AppCompatActivity {
         }
     }
 
-    private void Fetch_Driver_Info(final String key) {
-        DatabaseReference getdriver_info = FirebaseDatabase.getInstance().getReference("drivers")
-                .child(school_code).child(key);
-        getdriver_info.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    for(DataSnapshot child : dataSnapshot.getChildren()){
-                        if(child.getKey().equals("first_name")){
-                            driverfirst_name = child.getValue().toString();
-                        }
-                        if(child.getKey().equals("last_name")){
-                            driverlastname = child.getValue().toString();
-                        }
-                        if(child.getKey().equals("address")){
-                            driveraddress = child.getValue().toString();
-                        }
-                        if(child.getKey().equals("phone_number")){
-                            driverphone_number = child.getValue().toString();
-                        }
-                        sdriver_code = key;
-                    }
-                    getBusDetails(school_code,sdriver_code);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-
-    private void getBusDetails(final String schoolcode, String drivercode) {
+    private void FetchBusDetails(final String driver_code) {
         DatabaseReference bus_details = FirebaseDatabase.getInstance().getReference("bus_details")
-                .child(schoolcode).child(drivercode);
+                .child(school_code).child(driver_code);
         bus_details.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -340,14 +354,12 @@ public class Assign_bus_To_Child extends AppCompatActivity {
                         }
                         if(child.getKey().equals("bus_route")){
                             sbus_route = child.getValue().toString();
-                            titleList.add(sbus_route);
                         }
                     }
+                    titleList.add(sbus_route);
                     ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(Assign_bus_To_Child.this, android.R.layout.simple_spinner_item, titleList);
                     arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     bus_spinner.setAdapter(arrayAdapter);
-//                    number_plate_tv.setText(snumber_plate);
-//                    bus_model_tv.setText(sbrand + " " + smodel);
                 }
             }
 

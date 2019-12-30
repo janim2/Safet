@@ -50,7 +50,10 @@
                     android:textSize="13sp"
                     android:visibility="gone"
                     android:layout_marginTop="13dp"
+                    android:drawableLeft="@drawable/location"
+                    android:drawablePadding="10dp"
                     android:id="@+id/location_message"
+                    android:gravity="center_vertical"
                     android:text="Location"/>
 
                 <TextView
@@ -59,6 +62,9 @@
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="13sp"
                     android:visibility="gone"
+                    android:gravity="center_vertical"
+                    android:drawableLeft="@drawable/date"
+                    android:drawablePadding="10dp"
                     android:layout_marginTop="5dp"
                     android:id="@+id/date_message"
                     android:text="Date"/>
@@ -69,6 +75,9 @@
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="13sp"
                     android:visibility="gone"
+                    android:gravity="center_vertical"
+                    android:drawableLeft="@drawable/time"
+                    android:drawablePadding="10dp"
                     android:layout_marginTop="5dp"
                     android:id="@+id/time_message"
                     android:text="Time"/>
