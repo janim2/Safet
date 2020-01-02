@@ -145,6 +145,8 @@ public class Assign_bus_To_Child extends AppCompatActivity {
     }
 
     private void Check_assigned_number(String key, final String selected_bus) {
+
+        //finding parent node from child value
         Query getDriver_code_query = FirebaseDatabase.getInstance().getReference("bus_details").child(school_code).orderByChild("bus_route").equalTo(selected_bus);
         getDriver_code_query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -161,7 +163,6 @@ public class Assign_bus_To_Child extends AppCompatActivity {
                                             for(DataSnapshot child : dataSnapshot.getChildren()){
                                                 if(child.getKey().equals("assigned_no_left")){
                                                     snumber_left = child.getValue().toString();
-
                                                     if(Integer.valueOf(snumber_left) > 0){
                                                         Assign_Child_To_Bus(sdriver_code, snumber_left);
                                                     }else{

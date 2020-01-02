@@ -5,10 +5,16 @@ import android.Manifest;
 import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -17,6 +23,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -33,6 +40,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -43,6 +51,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -62,6 +71,8 @@ public class Bus_Location extends Fragment implements OnMapReadyCallback,
     private DatabaseReference driverLocationref;
     private Marker mDriverMarker;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+    private ArrayList<LatLng> buslatlng_array = new ArrayList<>();
+
 
     public Bus_Location() {
         // Required empty public constructor
@@ -178,34 +189,38 @@ public class Bus_Location extends Fragment implements OnMapReadyCallback,
         driverLocationref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
+                if(dataSnapshot.exists()) {
                     List<Object> map = (List<Object>) dataSnapshot.getValue();
                     double locationlat = 0;
                     double locationlong = 0;
-                    if(map.get(0) != null){
+                    if (map.get(0) != null) {
                         locationlat = Double.parseDouble(map.get(0).toString());
                     }
-                    if(map.get(1) != null){
+                    if (map.get(1) != null) {
                         locationlong = Double.parseDouble(map.get(1).toString());
                     }
-                    LatLng driverlatlng = new LatLng(locationlat,locationlong);
-                    if(mDriverMarker != null){
+                    LatLng driverlatlng = new LatLng(locationlat, locationlong);
+                    if (mDriverMarker != null) {
                         mDriverMarker.remove();
                     }
-                    Location loc2  = new Location("");
+                    Location loc2 = new Location("");
                     loc2.setLatitude(driverlatlng.latitude);
                     loc2.setLongitude(driverlatlng.longitude);
-                    CameraPosition cameraPosition = new CameraPosition.Builder()
-                            .target(driverlatlng).tilt(5)
-                            .zoom(17)
-                            .build();
-                    try {
-                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                    }catch (NullPointerException e){
 
-                    }
-                    mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverlatlng).title("Bus").flat(true));//.icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin_)));
+                    buslatlng_array.add(driverlatlng);
                 }
+
+                    for(LatLng latLng : buslatlng_array){
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(latLng).tilt(8f)
+                                .zoom(8)
+                                .build();
+                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        mDriverMarker = mMap.addMarker(new MarkerOptions().position(latLng)
+                                .title("Bus").flat(true).icon(BitmapDescriptorFactory
+                                        .fromBitmap(getMarkerBitmapFromView(R.drawable.schoolbus))));//.icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin_)));
+                    }
+
             }
 
             @Override
@@ -256,6 +271,24 @@ public class Bus_Location extends Fragment implements OnMapReadyCallback,
                 }
             }
         });
+    }
+
+    private Bitmap getMarkerBitmapFromView(@DrawableRes int resId) {
+        View customMarkerView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_custom_marker, null);
+        ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.profile_image);
+        markerImageView.setImageResource(resId);
+        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
+        customMarkerView.buildDrawingCache();
+        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(returnedBitmap);
+        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        Drawable drawable = customMarkerView.getBackground();
+        if (drawable != null)
+            drawable.draw(canvas);
+        customMarkerView.draw(canvas);
+        return returnedBitmap;
     }
 
     private boolean isNetworkAvailable() {
