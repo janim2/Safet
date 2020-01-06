@@ -454,12 +454,22 @@ public class Home extends Fragment {
             CharSequence name = getString(R.string.app_name);
             String description = getString(R.string.app_name);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("1200", name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getActivity().getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+
+            try {
+                try {
+                    NotificationChannel channel = new NotificationChannel("1200", name, importance);
+                    channel.setDescription(description);
+
+                    // Register the channel with the system; you can't change the importance
+                    // or other notification behaviors after this
+                    NotificationManager notificationManager = getActivity().getSystemService(NotificationManager.class);
+                    notificationManager.createNotificationChannel(channel);
+                }catch (NullPointerException e){
+
+                }
+            }catch (OutOfMemoryError e){
+
+            }
 
             NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getActivity());
 

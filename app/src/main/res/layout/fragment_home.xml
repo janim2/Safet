@@ -71,7 +71,7 @@
            android:visibility="gone"
            android:id="@+id/confirm_cardView"
            app:cardBackgroundColor="@color/main_blue"
-           android:layout_margin="20dp">
+           android:layout_marginTop="20dp">
 
            <Button
                android:layout_width="match_parent"
@@ -88,7 +88,10 @@
            android:layout_width="match_parent"
            android:layout_height="43dp"
            android:orientation="horizontal"
-           android:layout_margin="20dp">
+           android:layout_marginBottom="20dp"
+           android:layout_marginLeft="20dp"
+           android:layout_marginRight="20dp"
+           android:layout_marginTop="10dp">
 
            <TextView
                android:layout_width="match_parent"

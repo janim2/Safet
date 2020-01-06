@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -32,6 +33,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,6 +48,8 @@ import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.internal.service.Common;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.model.Polyline;
@@ -119,8 +123,12 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_child_location);
 
+        try{
+            setContentView(R.layout.activity_child_location);
+        }catch (InflateException e){
+
+        }
         //child name intents from home
         child_fname_from_home = getIntent().getStringExtra("from_home_child_fname");
         child_lname_from_home = getIntent().getStringExtra("from_home_child_lname");
@@ -136,13 +144,23 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         child_find_layout = findViewById(R.id.child_find_layout);
 
         bottomNavigationView = findViewById(R.id.find_child_navigation);
+
         //status bottom sheet
-        status_bottom_sheet = findViewById(R.id.status_bottom_sheet);
-        status_sheetBehavior = BottomSheetBehavior.from(status_bottom_sheet);
+        try{
+            status_bottom_sheet = findViewById(R.id.status_bottom_sheet);
+            status_sheetBehavior = BottomSheetBehavior.from(status_bottom_sheet);
+        }catch (NullPointerException e){
+
+        }
 
         //bus bottom sheet
-        bus_bottom_sheet = findViewById(R.id.bus_bottom_sheet);
-        bus_sheetBehaviour = BottomSheetBehavior.from(bus_bottom_sheet);
+        try {
+            bus_bottom_sheet = findViewById(R.id.bus_bottom_sheet);
+            bus_sheetBehaviour = BottomSheetBehavior.from(bus_bottom_sheet);
+        }catch (NullPointerException e){
+
+        }
+
 
         driver_name_tv = findViewById(R.id.the_driver_name);
         number_plate_tv = findViewById(R.id.the_licence_plate);
@@ -368,16 +386,18 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(driverlatlng).tilt(5)
-                            .zoom(17)
+                            .zoom(8)
                             .build();
                     try {
                         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                     } catch (NullPointerException e) {
 
                     }
+
+
                     mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverlatlng)
                             .title(child_fname_from_home).flat(true).icon(BitmapDescriptorFactory
-                            .fromBitmap(getMarkerBitmapFromView(R.drawable.schoolbus))));//.icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin_)));
+                            .fromBitmap(getMarkerBitmapFromView(getResources(),R.drawable.schoolbus,30,30))));//.icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin_)));
 
                     Fetch_Driver_Info(key);
                 }
@@ -612,22 +632,76 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
     }
 
-    private Bitmap getMarkerBitmapFromView(@DrawableRes int resId) {
+//    private Bitmap getMarkerBitmapFromView(@DrawableRes int resId) {
+//            View customMarkerView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_custom_marker, null);
+//            ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.profile_image);
+//            markerImageView.setImageResource(resId);
+//            customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+//            customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
+//            customMarkerView.buildDrawingCache();
+//            Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(),
+//                    Bitmap.Config.ARGB_8888);
+//            Canvas canvas = new Canvas(returnedBitmap);
+//            canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
+//            Drawable drawable = customMarkerView.getBackground();
+//            if (drawable != null)
+//                drawable.draw(canvas);
+//            customMarkerView.draw(canvas);
+//        return returnedBitmap;
+//
+//    }
+
+
+    private Bitmap getMarkerBitmapFromView(Resources res, @DrawableRes int resId,
+                                           int requiredWidth, int requiredHeight){
         View customMarkerView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_custom_marker, null);
         ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.profile_image);
-        markerImageView.setImageResource(resId);
-        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
-        customMarkerView.buildDrawingCache();
-        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(),
-                Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(returnedBitmap);
-        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
-        Drawable drawable = customMarkerView.getBackground();
-        if (drawable != null)
-            drawable.draw(canvas);
-        customMarkerView.draw(canvas);
-        return returnedBitmap;
+//
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res,resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, requiredWidth, requiredHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        Bitmap bitmap = BitmapFactory.decodeResource(res, resId, options);
+
+        Bitmap workingBitmap = Bitmap.createBitmap(bitmap);
+        Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        Canvas canvas = new Canvas(mutableBitmap);
+            canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
+            Drawable drawable = customMarkerView.getBackground();
+            if (drawable != null)
+                drawable.draw(canvas);
+            customMarkerView.draw(canvas);
+        return BitmapFactory.decodeResource(res, resId, options);
+
+    }
+
+    private int calculateInSampleSize(BitmapFactory.Options options, int requiredWidth, int requiredHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > requiredWidth || width > requiredWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= requiredHeight
+                    && (halfWidth / inSampleSize) >= requiredHeight) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+
     }
 
     private boolean isNetworkAvailable() {

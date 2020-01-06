@@ -35,9 +35,14 @@ public class Facilities_Adapter extends RecyclerView.Adapter<Facilities_Adapter.
 
     @Override
     public Facilities_Adapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.facilities_attachment,parent,false);
-        ViewHolder vh = new ViewHolder(layoutView);
-        return vh;
+        try{
+            View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.facilities_attachment,parent,false);
+            ViewHolder vh = new ViewHolder(layoutView);
+            return vh;
+        }catch (OutOfMemoryError e){
+
+        }
+        return null;
     }
 
 

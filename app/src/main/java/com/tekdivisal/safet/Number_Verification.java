@@ -379,7 +379,7 @@ public class Number_Verification extends AppCompatActivity {
             // 2 - Auto-retrieval. On some devices Google Play services can automatically
             //     detect the incoming verification SMS and perform verificaiton without
             //     user action.
-//                signInWithPhoneAuthCredential(credential);
+                signInWithPhoneAuthCredential(credential);
         }
 
         @Override
