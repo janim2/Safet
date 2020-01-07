@@ -22,6 +22,9 @@
       "api_key": [
         {
           "current_key": "AIzaSyAWoVqLvWwHsxJx1m6z3oU87QtRv0_ASnI"
+        },
+        {
+          "current_key": "AIzaSyBqHR9F0VhEhOAXIgktB4lQJLD_HutD4fQ"
         }
       ],
       "services": {
@@ -59,6 +62,9 @@
       "api_key": [
         {
           "current_key": "AIzaSyAWoVqLvWwHsxJx1m6z3oU87QtRv0_ASnI"
+        },
+        {
+          "current_key": "AIzaSyBqHR9F0VhEhOAXIgktB4lQJLD_HutD4fQ"
         }
       ],
       "services": {
@@ -74,17 +80,17 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:719837668582:android:9e097df93d2c05b9ea4727",
+        "mobilesdk_app_id": "1:719837668582:android:0be24815e3ea29caea4727",
         "android_client_info": {
-          "package_name": "com.example.sergeherkul.bustrackeradmin"
+          "package_name": "com.safet.admin.bustrackeradmin"
         }
       },
       "oauth_client": [
         {
-          "client_id": "719837668582-2gcea8ab50i3iip4b94skmpfblhnbh13.apps.googleusercontent.com",
+          "client_id": "719837668582-voet7u5cgitmm04p8fg9kfl04mlh2fql.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.sergeherkul.bustrackeradmin",
+            "package_name": "com.safet.admin.bustrackeradmin",
             "certificate_hash": "6b1b5f18b54d718a043c1cb28e2bd518bd08972c"
           }
         },
@@ -96,6 +102,9 @@
       "api_key": [
         {
           "current_key": "AIzaSyAWoVqLvWwHsxJx1m6z3oU87QtRv0_ASnI"
+        },
+        {
+          "current_key": "AIzaSyBqHR9F0VhEhOAXIgktB4lQJLD_HutD4fQ"
         }
       ],
       "services": {
@@ -118,6 +127,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "719837668582-r0rj8kmujrk0vnpbo0k9hu6ud9k4auf1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tekdivisal.safet",
+            "certificate_hash": "932c89d2f1668c69a00f687e20f7d9e260178602"
+          }
+        },
+        {
           "client_id": "719837668582-sidllhvejv68j3l1n7tuu4kvnbqtj7ug.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -133,6 +150,9 @@
       "api_key": [
         {
           "current_key": "AIzaSyAWoVqLvWwHsxJx1m6z3oU87QtRv0_ASnI"
+        },
+        {
+          "current_key": "AIzaSyBqHR9F0VhEhOAXIgktB4lQJLD_HutD4fQ"
         }
       ],
       "services": {

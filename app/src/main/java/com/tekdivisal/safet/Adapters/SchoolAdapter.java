@@ -58,8 +58,9 @@ public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.ViewHolder
                 school_adapter.put("school_telephone",itemList.get(position).getSchool_phone());
                 school_adapter.put("school_email",itemList.get(position).getSchool_email());
                 school_adapter.put("school_location",itemList.get(position).getSchool_location());
-
-                v.getContext().startActivity(new Intent(v.getContext(), MainActivity.class));
+                Intent main_intent = new Intent(v.getContext(), MainActivity.class);
+                main_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                v.getContext().startActivity(main_intent);
             }
         });
         }
