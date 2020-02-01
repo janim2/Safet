@@ -16,6 +16,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
@@ -84,10 +86,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 public class Child_location extends AppCompatActivity implements OnMapReadyCallback,
@@ -113,12 +117,15 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
             sbrand, schasis_no, sbus_code, smodel, snumber_plate, sschoolemail, ssechoollocation,
             sschoolphone, sschoolname, child_fname_from_home, child_lname_from_home, child_code, assigned_driver_code;
     private TextView driver_name_tv, number_plate_tv, bus_model_tv, school_name_tv, school_number_tv,
-    status_school_name, status_distance,status_time, status_date, status_start_time, status_end_time;
+    status_school_name, status_distance,status_time, status_date, status_start_time, status_end_time,
+    location_name, change_or_set_location_;
     private String TAG = "so47492459";
     private List<Polyline> polylines;
     private static final int[] COLORS = new int[]{R.color.colorPrimaryDark, R.color.colorPrimary, R.color.main_blue, R.color.colorAccent, R.color.primary_dark_material_light};
 
+    List<Address> addresses;
     private FrameLayout child_find_layout;
+    private Geocoder geocoder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,13 +136,16 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         }catch (InflateException e){
 
         }
+        child_location_accessor = new Accessories(this);
+
         //child name intents from home
-        child_fname_from_home = getIntent().getStringExtra("from_home_child_fname");
-        child_lname_from_home = getIntent().getStringExtra("from_home_child_lname");
-        child_code = getIntent().getStringExtra("child_code");
+        child_fname_from_home = child_location_accessor.getString("from_home_child_fname");
+        child_lname_from_home = child_location_accessor.getString("from_home_child_lname");
+        child_code = child_location_accessor.getString("child_code");
 
         getSupportActionBar().setTitle(child_fname_from_home + " " + child_lname_from_home);
-        child_location_accessor = new Accessories(this);
+
+        geocoder = new Geocoder(Child_location.this, Locale.getDefault());
 
         school_code = child_location_accessor.getString("school_code");
         parent_code = child_location_accessor.getString("user_phone_number");
@@ -161,6 +171,9 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
         }
 
+        //setting location items
+        location_name = findViewById(R.id.location_name);
+        change_or_set_location_ = findViewById(R.id.change_set_location);
 
         driver_name_tv = findViewById(R.id.the_driver_name);
         number_plate_tv = findViewById(R.id.the_licence_plate);
@@ -192,9 +205,24 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
             mapFragment.getMapAsync(this);
         }
         if (isNetworkAvailable()) {
-            getDriverID();
+            if(child_location_accessor.getBoolean("has_set_location")){
+                change_or_set_location_.setText("Change");
+                getDriverID();
+//                location_name.setText("");
+            }else{
+                change_or_set_location_.setText("Set");
+                location_name.setText("Location not set");
+                getDriverID();
+            }
 //            getBusDetails();
         }
+
+        change_or_set_location_.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Child_location.this, Set_Pickuplocation.class));
+            }
+        });
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -274,7 +302,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         if (ActivityCompat.checkSelfPermission(Child_location.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(Child_location.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
         }
         buildGoogleApiClient();
-        mMap.setMyLocationEnabled(true);
+//        mMap.setMyLocationEnabled(true);
 
 //        muserMarker = mMap.addMarker(new MarkerOptions().position(pickuplocation).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
     }
@@ -343,19 +371,56 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                         locationlong = Double.parseDouble(map.get(1).toString());
                     }
                     driverlatlng = new LatLng(locationlat, locationlong);
-                    if (mDriverMarker != null) {
-                        mDriverMarker.remove();
-                    }
+
 //
 //                    pickuplocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-//
-                    Location loc1 = new Location("");
-                    try {
-                        loc1.setLatitude(pickuplocation.latitude);
-                        loc1.setLongitude(pickuplocation.longitude);
-                    } catch (NullPointerException e) {
+                    final Location loc1 = new Location("");
 
+                    if(child_location_accessor.getBoolean("has_set_location")){
+                        DatabaseReference user_pickup_location = FirebaseDatabase.getInstance().getReference("user_location")
+                                .child(school_code).child(parent_code).child("l");
+                        user_pickup_location.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    List<Object> map = (List<Object>) dataSnapshot.getValue();
+                                    double locationlat = 0;
+                                    double locationlong = 0;
+                                    if (map.get(0) != null) {
+                                        locationlat = Double.parseDouble(map.get(0).toString());
+                                    }
+                                    if (map.get(1) != null) {
+                                        locationlong = Double.parseDouble(map.get(1).toString());
+                                    }
+
+                                    loc1.setLatitude(locationlat);
+                                    loc1.setLongitude(locationlong);
+
+                                    try {
+                                        addresses = geocoder.getFromLocation(loc1.getLatitude(),loc1.getLongitude(),1);
+                                        location_name.setText(addresses.get(0).getAddressLine(0));
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }else{
+                        try {
+                            loc1.setLatitude(pickuplocation.latitude);
+                            loc1.setLongitude(pickuplocation.longitude);
+                            location_name.setText("Current location");
+                        } catch (NullPointerException e) {
+
+                        }
                     }
+
 
                     Location loc2 = new Location("");
                     try {
@@ -394,6 +459,9 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
                     }
 
+                    if (mDriverMarker != null) {
+                        mDriverMarker.remove();
+                    }
 
                     mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverlatlng)
                             .title(child_fname_from_home).flat(true).icon(BitmapDescriptorFactory

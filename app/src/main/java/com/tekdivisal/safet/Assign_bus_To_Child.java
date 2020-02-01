@@ -56,9 +56,9 @@ public class Assign_bus_To_Child extends AppCompatActivity {
         school_code = assign_accessor.getString("school_code");
         parent_code = assign_accessor.getString("user_phone_number");
 
-        childcode = intent.getStringExtra("child_code");
-        child_fname = intent.getStringExtra("from_home_child_fname");
-        child_lname = intent.getStringExtra("from_home_child_lname");
+        childcode   = assign_accessor.getString("child_code");
+        child_fname = assign_accessor.getString("from_home_child_fname");
+        child_lname = assign_accessor.getString("from_home_child_lname");
 
         childname = findViewById(R.id.child_name);
         bus_spinner = findViewById(R.id.bus_spinner);
@@ -272,6 +272,8 @@ public class Assign_bus_To_Child extends AppCompatActivity {
                                             no_internet.setVisibility(View.GONE);
                                             status.setText("Child assignment complete");
                                             status.setVisibility(View.VISIBLE);
+                                            finish();
+                                            startActivity(new Intent(Assign_bus_To_Child.this, Child_location.class));
                                         }
                                     });
 

@@ -79,10 +79,10 @@ public class Home extends Fragment {
             mission_string, vision_string, admission_status_string, parent_code_string,message_arrived_title,
             message_arrived_message,message_arrived_location, message_arrived_date, message_arrived_time;
 
-    private String password_string, user_password_, isassigned_bus;
+    private String password_string, user_password_, isassigned_bus, location_string;
 
     private TextView no_facilities, facilies_no_internet, language_range_textview, mission_text,
-            vision_text, admission_status;
+            vision_text, admission_status, school_location;
 
     private ImageView school_logo;
     private LinearLayout mission_layout, vision_layout, profile_layout,
@@ -125,6 +125,7 @@ public class Home extends Fragment {
         no_facilities = unverified.findViewById(R.id.no_facilities);
         confirm_cardView = unverified.findViewById(R.id.confirm_cardView);
         confirm_button = unverified.findViewById(R.id.confirm_button);
+        school_location = unverified.findViewById(R.id.school_location);
 
         language_range_textview = unverified.findViewById(R.id.language_range);
         mission_text = unverified.findViewById(R.id.mission_text);
@@ -733,6 +734,11 @@ public class Home extends Fragment {
                         for(DataSnapshot child : dataSnapshot.getChildren()){
                             if(child.getKey().equals("language")){
                                 language_string = child.getValue().toString();
+                            }
+
+                            if(child.getKey().equals("location")){
+                                location_string = child.getValue().toString();
+                                school_location.setText(location_string);
                             }
 
                             if(child.getKey().equals("range")){

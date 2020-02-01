@@ -15,7 +15,11 @@ import android.widget.TextView;
 import com.tekdivisal.safet.Model.Messages;
 import com.tekdivisal.safet.R;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHolder>{
     ArrayList<Messages> itemList;
@@ -69,6 +73,13 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         }
         if(!itemList.get(position).getDate().equals("")){
             date.setVisibility(View.VISIBLE);
+//            Date date_ = null;
+//            try {
+//                date_ = new SimpleDateFormat("yyyy-MMM-dd").parse(itemList.get(position).getDate());
+//                date.setText(DateFormat.getDateInstance(DateFormat.FULL).format(date_));
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
             date.setText(itemList.get(position).getDate());
         }
         if(!itemList.get(position).getTime().equals("")){

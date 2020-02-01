@@ -7,6 +7,52 @@
     android:id="@+id/child_find_layout"
     tools:context=".Child_location">
 
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="top">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:background="@android:color/white">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pickup location"
+                android:layout_weight="3"
+                android:layout_gravity="center_vertical"
+                android:textColor="@android:color/black"
+                android:textSize="10sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:id="@+id/location_name"
+                android:textColor="@color/colorPrimaryDark"
+                android:background="@android:drawable/editbox_background"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="3"
+                android:layout_marginLeft="8dp"
+                android:id="@+id/change_set_location"
+                android:textColor="@color/main_blue"
+                android:textSize="13sp"/>
+
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
