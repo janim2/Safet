@@ -1,11 +1,13 @@
 package com.tekdivisal.safet;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -45,6 +47,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.directions.route.AbstractRouting;
 import com.directions.route.Route;
 import com.directions.route.RouteException;
@@ -85,6 +94,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tekdivisal.safet.Model.Constants;
+import com.tekdivisal.safet.Model.KeyValuePair;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -115,7 +130,8 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
     private LatLng pickuplocation, driverlatlng;
     private String sdriver_code, sfirst_name, slastname, saddress, sphone_number,
             sbrand, schasis_no, sbus_code, smodel, snumber_plate, sschoolemail, ssechoollocation,
-            sschoolphone, sschoolname, child_fname_from_home, child_lname_from_home, child_code, assigned_driver_code;
+            sschoolphone, sschoolname, child_fname_from_home, child_lname_from_home, child_code,
+            assigned_driver_code, isassigned_bus;
     private TextView driver_name_tv, number_plate_tv, bus_model_tv, school_name_tv, school_number_tv,
     status_school_name, status_distance,status_time, status_date, status_start_time, status_end_time,
     location_name, change_or_set_location_;
@@ -127,6 +143,8 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
     private FrameLayout child_find_layout;
     private Geocoder geocoder;
 
+    VolleyRequest request;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,12 +154,15 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         }catch (InflateException e){
 
         }
-        child_location_accessor = new Accessories(this);
 
+        request = new VolleyRequest(this);
+
+        child_location_accessor = new Accessories(this);
         //child name intents from home
         child_fname_from_home = child_location_accessor.getString("from_home_child_fname");
         child_lname_from_home = child_location_accessor.getString("from_home_child_lname");
         child_code = child_location_accessor.getString("child_code");
+        isassigned_bus = child_location_accessor.getString("isAssigned_bus");
 
         getSupportActionBar().setTitle(child_fname_from_home + " " + child_lname_from_home);
 
@@ -190,7 +211,11 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         status_end_time = findViewById(R.id.end_time);
 
         //setting the date
-        status_date.setText(DateFormat.getDateInstance(DateFormat.FULL).format(new Date()));
+        try{
+            status_date.setText(DateFormat.getDateInstance(DateFormat.FULL).format(new Date()));
+        }catch (NullPointerException e){
+
+        }
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -205,57 +230,72 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
             mapFragment.getMapAsync(this);
         }
         if (isNetworkAvailable()) {
-            if(child_location_accessor.getBoolean("has_set_location")){
-                change_or_set_location_.setText("Change");
-                getDriverID();
+            if(isassigned_bus.equals("Yes")){
+                if(child_location_accessor.getBoolean("has_set_location")){
+                    change_or_set_location_.setText("Change");
+                    getDriverID();
 //                location_name.setText("");
+                }else{
+                    try{
+                        change_or_set_location_.setText("Set");
+                        location_name.setText("Location not set");
+                    }catch (NullPointerException e){
+
+                    }
+                    getDriverID();
+                }
             }else{
-                change_or_set_location_.setText("Set");
-                location_name.setText("Location not set");
-                getDriverID();
+                change_or_set_location_.setVisibility(View.GONE);
+                location_name.setText("Unassigned");
+                AlertDialog.Builder notassigned = new AlertDialog.Builder(this);
+                notassigned.setTitle("Bus Assignment");
+                notassigned.setMessage(child_fname_from_home + " has not been assigned to a bus. As" +
+                        " such no bus can pick him up from or to school. \n\nContact school administration for " +
+                        "assistance");
+                notassigned.setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+                });
+                notassigned.show();
             }
+
 //            getBusDetails();
         }
 
-        change_or_set_location_.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(Child_location.this, Set_Pickuplocation.class));
-            }
-        });
+        try{
+            change_or_set_location_.setOnClickListener(v -> startActivity(new Intent(Child_location.this, Set_Pickuplocation.class)));
+        }catch (NullPointerException e){
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.l_location:
+        }
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.l_location:
 //                        fragmentManager.beginTransaction().replace(R.id.child_find_layout,new Bus_Location()).commit();
-                        break;
+                    break;
 
-                    case R.id.bus:
+                case R.id.bus:
 //                        child_location_accessor.put("vital_type","bus_vitals");
 //                        fragmentManager.beginTransaction().replace(R.id.child_find_layout,new Vital_Info()).commit();
-                        if (bus_sheetBehaviour.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-                            bus_sheetBehaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
-                            status_sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        } else {
-                            bus_sheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        }
-                        break;
+                    if (bus_sheetBehaviour.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+                        bus_sheetBehaviour.setState(BottomSheetBehavior.STATE_EXPANDED);
+                        status_sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    } else {
+                        bus_sheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    }
+                    break;
 
-                    case R.id.status:
+                case R.id.status:
 //                        child_location_accessor.put("vital_type","status_vitals");
 //                        fragmentManager.beginTransaction().replace(R.id.child_find_layout,new Vital_Info()).commit();
-                        if (status_sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-                            status_sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                            bus_sheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        } else {
-                            status_sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        }
-                        break;
-                }
-                return false;
+                    if (status_sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+                        status_sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                        bus_sheetBehaviour.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    } else {
+                        status_sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    }
+                    break;
             }
+            return false;
         });
 
     }
@@ -430,8 +470,6 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
                     }
 
-//                    drawLine();
-
                     float distance = loc1.distanceTo(loc2);
                     status_distance.setText(String.valueOf(distance)+"m away");
                     status_time.setText("00:00");
@@ -463,9 +501,16 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                         mDriverMarker.remove();
                     }
 
-                    mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverlatlng)
-                            .title(child_fname_from_home).flat(true).icon(BitmapDescriptorFactory
-                            .fromBitmap(getMarkerBitmapFromView(getResources(),R.drawable.schoolbus,30,30))));//.icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin_)));
+                    try{
+                        mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverlatlng)
+                                .title(child_fname_from_home).flat(true).icon(BitmapDescriptorFactory
+                                        .fromBitmap(getMarkerBitmapFromView(getResources(),R.drawable.schoolbus,30,30))));//.icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin_)));
+//                        drawPolyLine(loc1, loc2);
+//                        drawLine();
+
+                    }catch (NullPointerException e){
+
+                    }
 
                     Fetch_Driver_Info(key);
                 }
@@ -479,13 +524,77 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
     }
 
+    private void drawPolyLine(Location loc1, Location loc2) {
+            RequestQueue queue = Volley.newRequestQueue(this);
+
+//        Toast.makeText(Child_location.this, "getPosition:" + muserMarker.getPosition().toString(), Toast.LENGTH_LONG).show();
+//        Toast.makeText(Child_location.this, "getID:" + muserMarker.getId().toString(), Toast.LENGTH_LONG).show();
+            String url = "https://maps.googleapis.com/maps/api/directions/json?key=" + Constants.MAPSTOKEN +
+                    "&origin=place_id:" +  "ChIJrTLr-GyuEmsRBfy61i59si0" +
+                    "&destination=place_id:" + "ChIJrTLr-GyuEmsRBfy61i99si0";
+            String url1 = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+ driverlatlng.latitude +","+ driverlatlng.longitude + "&key=" + Constants.MAPSTOKEN;
+
+            StringRequest getAddress = new StringRequest(Request.Method.GET, url1, response -> {
+                JSONObject object = null;
+                try {
+                    object = new JSONObject(response);
+                    JSONArray routes = object.getJSONArray("results");
+                    JSONObject route = routes.getJSONObject(1);
+
+                    Toast.makeText(Child_location.this, "address" + route.toString(), Toast.LENGTH_LONG).show();
+//
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }, error -> {
+
+            });
+
+        queue.add(getAddress);
+
+//        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
+//                JSONObject object = null;
+//                try {
+//                    object = new JSONObject(response);
+//                    Toast.makeText(Child_location.this, "loation", Toast.LENGTH_LONG).show();
+//                    JSONArray routes = object.getJSONArray("routes");
+//                    JSONObject route = routes.getJSONObject(0);
+////                JSONObject overview_polyline = route.getJSONObject("overview_polyline");
+//                    JSONArray legs = route.getJSONArray("legs");
+//                    JSONObject leg = legs.getJSONObject(0);
+//                    JSONObject start = leg.getJSONObject("start_location");
+//                    JSONObject end = leg.getJSONObject("end_location");
+//                    Toast.makeText(Child_location.this, end.toString(), Toast.LENGTH_LONG).show();
+//
+////                String polyLineString = overview_polyline.getString("points");
+//
+//                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+//                            new LatLng(end.getDouble("lat"), end.getDouble("lng")), 20));
+//
+//                    drawPath(legs.getJSONObject(0).getJSONArray("steps"),
+//                            new LatLng(start.getDouble("lat"), start.getDouble("lng")),
+//                            new LatLng(end.getDouble("lat"), end.getDouble("lng")));
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }, error -> {
+//
+//            });
+//
+//        queue.add(stringRequest);
+
+    }
+
     private void drawLine() {
 
         Routing routing = new Routing.Builder()
                 .travelMode(Routing.TravelMode.DRIVING)
                 .withListener(this)
                 .waypoints(pickuplocation, driverlatlng)
-                .key("AIzaSyBqHR9F0VhEhOAXIgktB4lQJLD_HutD4fQ")
+                .key("AIzaSyC3NDxV7ESwzeUV6t_wmzlDr7UWxwnqSRc")
                 .build();
         routing.execute();
     }
@@ -749,6 +858,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
     }
 
+
     private int calculateInSampleSize(BitmapFactory.Options options, int requiredWidth, int requiredHeight) {
         // Raw height and width of image
         final int height = options.outHeight;
@@ -772,6 +882,8 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
     }
 
+
+
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -779,4 +891,63 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+//    @Override
+//    public void getResponse(String response, int REQUEST_ID) throws JSONException {
+//        JSONObject object = new JSONObject(response);
+//        switch(REQUEST_ID){
+//            case 2:
+//                Toast.makeText(Child_location.this, "loation", Toast.LENGTH_LONG).show();
+//                JSONArray routes = object.getJSONArray("routes");
+//                JSONObject route = routes.getJSONObject(0);
+////                JSONObject overview_polyline = route.getJSONObject("overview_polyline");
+//                JSONArray legs = route.getJSONArray("legs");
+//                JSONObject leg = legs.getJSONObject(0);
+//                JSONObject start = leg.getJSONObject("start_location");
+//                JSONObject end = leg.getJSONObject("end_location");
+//                Toast.makeText(Child_location.this, end.toString(), Toast.LENGTH_LONG).show();
+//
+////                String polyLineString = overview_polyline.getString("points");
+//
+//                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+//                        new LatLng(end.getDouble("lat"), end.getDouble("lng")), 20));
+//
+//                drawPath(legs.getJSONObject(0).getJSONArray("steps"),
+//                        new LatLng(start.getDouble("lat"), start.getDouble("lng")),
+//                        new LatLng(end.getDouble("lat"), end.getDouble("lng")));
+//                break;
+//        }
+//
+//    }
+
+    void drawPath(JSONArray steps, LatLng start, LatLng end) throws JSONException {
+        int count = steps.length();
+        PolylineOptions polyOptions = new PolylineOptions();
+        polyOptions.color(Color.BLACK);
+        polyOptions.width((float) 7.5);
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+//        builder.include(start);
+//        builder.include(end);
+
+        JSONObject holder;
+
+        for(int i = 0; i < count; i++){
+            holder = steps.getJSONObject(i);
+            polyOptions.addAll(PolyUtil.decode(holder.getJSONObject("polyline").getString("points")));
+            builder.include(new LatLng(
+                    holder.getJSONObject("start_location").getDouble("lat"),
+                    holder.getJSONObject("start_location").getDouble("lng")));
+            builder.include(new LatLng(
+                    holder.getJSONObject("end_location").getDouble("lat"),
+                    holder.getJSONObject("end_location").getDouble("lng")));
+        }
+
+        mMap.addPolyline(polyOptions);
+
+        mMap.addMarker(new MarkerOptions().position(start).title("Origin"));
+        mMap.addMarker(new MarkerOptions().position(end).title("Destination"));
+
+        //BOUND_PADDING is an int to specify padding of bound.. try 100.
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 90));
+    }
 }

@@ -75,19 +75,21 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
                 String isAssigned = itemList.get(position).getIsAssigned_bus();
                 if(!isAssigned.equals("")){
                     Accessories adapter_class = new Accessories(v.getContext());
-                    if(isAssigned.equals("No")){
-                        Intent assign_child = new Intent(v.getContext(), Assign_bus_To_Child.class);
-                        adapter_class.put("from_home_child_fname",itemList.get(position).getChild_fname());
-                        adapter_class.put("from_home_child_lname",itemList.get(position).getChild_lname());
-                        adapter_class.put("child_code",itemList.get(position).getChild_code());
-                        v.getContext().startActivity(assign_child);
-                    }else{
+//                    if(isAssigned.equals("No")){
+//                        Intent assign_child = new Intent(v.getContext(), Assign_bus_To_Child.class);
+//                        adapter_class.put("from_home_child_fname",itemList.get(position).getChild_fname());
+//                        adapter_class.put("from_home_child_lname",itemList.get(position).getChild_lname());
+//                        adapter_class.put("child_code",itemList.get(position).getChild_code());
+//                        adapter_class.put("isAssigned_bus","No");
+//                        v.getContext().startActivity(assign_child);
+//                    }else{
                         Intent child_location = new Intent(v.getContext(), Child_location.class);
                         adapter_class.put("from_home_child_fname",itemList.get(position).getChild_fname());
                         adapter_class.put("from_home_child_lname",itemList.get(position).getChild_lname());
                         adapter_class.put("child_code",itemList.get(position).getChild_code());
+                        adapter_class.put("isAssigned_bus",isAssigned);
                         v.getContext().startActivity(child_location);
-                    }
+//                    }
                 }
 
             }

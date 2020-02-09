@@ -87,7 +87,7 @@
                     android:layout_margin="8dp"
                     android:textColor="@color/main_blue"
                     android:id="@+id/the_driver_name"
-                    android:text="driver name"/>
+                    android:text="None"/>
 
             </LinearLayout>
          </LinearLayout>
@@ -127,7 +127,7 @@
                     android:layout_margin="8dp"
                     android:id="@+id/the_bus_model"
                     android:textColor="@color/main_blue"
-                    android:text="number"/>
+                    android:text="None"/>
 
             </LinearLayout>
          </LinearLayout>
@@ -167,7 +167,7 @@
                     android:layout_margin="8dp"
                     android:id="@+id/the_licence_plate"
                     android:textColor="@color/main_blue"
-                    android:text="licence"/>
+                    android:text="None"/>
 
             </LinearLayout>
          </LinearLayout>
@@ -207,7 +207,7 @@
                     android:layout_margin="8dp"
                     android:textColor="@color/main_blue"
                     android:id="@+id/theschool_number"
-                    android:text="(415) 349-0942"/>
+                    android:text="(000) 000-0000"/>
 
             </LinearLayout>
          </LinearLayout>

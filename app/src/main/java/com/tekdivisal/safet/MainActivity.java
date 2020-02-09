@@ -50,9 +50,6 @@ public class MainActivity extends AppCompatActivity
     private Dialog password_dialogue;
     private String password_string, parent_code,user_password_;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,7 +103,7 @@ public class MainActivity extends AppCompatActivity
             if(mainAccessor.getBoolean("hasChoosenSchool")){
                 if(mainAccessor.getBoolean("isverified")){
                     confirm_menuItem.setTitle("Undo school confirmation");
-                    manager.beginTransaction().replace(R.id.container, new Home()).commit();
+                    manager.beginTransaction().replace(R.id.container, new Home()).addToBackStack("home").commit();
                 }else{
                     profilemenuitem.setVisible(false);
 //                    edit_location_menuItem.setVisible(false);
@@ -139,12 +136,9 @@ public class MainActivity extends AppCompatActivity
         MenuItem notifications = menu.findItem(R.id.notifications);
 
         if(mainAccessor.getBoolean("isverified")){
-            notifications.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    startActivity(new Intent(MainActivity.this, Notifications.class));
-                    return false;
-                }
+            notifications.setOnMenuItemClickListener(item -> {
+                startActivity(new Intent(MainActivity.this, Notifications.class));
+                return false;
             });
         }else{
             notifications.setVisible(false);
@@ -184,13 +178,16 @@ public class MainActivity extends AppCompatActivity
         }
 
         else if (id == R.id.locate_children) {
-            if(mainAccessor.getBoolean("isPasswordCreated")){
-                Show_password_Dialogue(MainActivity.this);
-            }else{
-                Toast.makeText(MainActivity.this, "Create password", Toast.LENGTH_LONG).show();
-                manager.beginTransaction().replace(R.id.container, new Settings()).commit();
-            }
+//            if(mainAccessor.getBoolean("isPasswordCreated")){
+//                Show_password_Dialogue(MainActivity.this);
+//            }else{
+//                Toast.makeText(MainActivity.this, "Create password", Toast.LENGTH_LONG).show();
+//                manager.beginTransaction().replace(R.id.container, new Settings()).commit();
+//            }
 //                manager.beginTransaction().replace(R.id.container, new Locate_Children()).commit();
+
+            manager.beginTransaction().replace(R.id.container, new Locate_Children()).addToBackStack("locate").commit();
+
         }
         else if (id == R.id.profile) {
             manager.beginTransaction().replace(R.id.container, new Profile()).commit();
@@ -235,28 +232,20 @@ public class MainActivity extends AppCompatActivity
             final AlertDialog.Builder logout = new AlertDialog.Builder(MainActivity.this, R.style.Myalert);
             logout.setTitle("Signing Out?");
             logout.setMessage("Leaving us? Please reconsider.");
-            logout.setNegativeButton("Sign out", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+            logout.setNegativeButton("Sign out", (dialog, which) -> {
 //                        logout here
-                    if(isNetworkAvailable()){
-                        FirebaseAuth.getInstance().signOut();
-                        mainAccessor.put("isverified", false);
-                        mainAccessor.put("hasChoosenSchool",false);
-                        mainAccessor.clearStore();
-                        startActivity(new Intent(MainActivity.this,Login.class));
-                    }else{
-                        Toast.makeText(MainActivity.this,"No internet connection",Toast.LENGTH_LONG).show();
-                    }
+                if(isNetworkAvailable()){
+                    FirebaseAuth.getInstance().signOut();
+                    mainAccessor.put("isverified", false);
+                    mainAccessor.put("hasChoosenSchool",false);
+                    mainAccessor.clearStore();
+                    startActivity(new Intent(MainActivity.this,Login.class));
+                }else{
+                    Toast.makeText(MainActivity.this,"No internet connection",Toast.LENGTH_LONG).show();
                 }
             });
 
-            logout.setPositiveButton("Stay", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
+            logout.setPositiveButton("Stay", (dialog, which) -> dialog.cancel());
             logout.show();
 
         }
@@ -279,72 +268,64 @@ public class MainActivity extends AppCompatActivity
         done_button = (Button)password_dialogue.findViewById(R.id.done_button);
         loading = (ProgressBar) password_dialogue.findViewById(R.id.loading);
 
-        cancelpopup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                password_dialogue.dismiss();
-            }
-        });
+        cancelpopup.setOnClickListener(v -> password_dialogue.dismiss());
 
 
-        done_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isNetworkAvailable()){
-                    password_string = password_editText.getText().toString().trim();
-                    if(!password_string.equals("")){
-                        loading.setVisibility(View.VISIBLE);
+        done_button.setOnClickListener(v -> {
+            if(isNetworkAvailable()){
+                password_string = password_editText.getText().toString().trim();
+                if(!password_string.equals("")){
+                    loading.setVisibility(View.VISIBLE);
 
 //                        Verify_password();
-                        try {
-                            DatabaseReference get_password = FirebaseDatabase.getInstance().getReference("passwords").child(parent_code);
-                            get_password.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if(dataSnapshot.exists()){
-                                        for(DataSnapshot child : dataSnapshot.getChildren()){
-                                            if(child.getKey().equals("password")){
-                                                user_password_ = child.getValue().toString();
-                                            }
-                                            else{
-//                                              Toast.makeText(getActivity(),"Couldn't fetch posts",Toast.LENGTH_LONG).show();
-                                            }
+                    try {
+                        DatabaseReference get_password = FirebaseDatabase.getInstance().getReference("passwords").child(parent_code);
+                        get_password.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists()){
+                                    for(DataSnapshot child : dataSnapshot.getChildren()){
+                                        if(child.getKey().equals("password")){
+                                            user_password_ = child.getValue().toString();
                                         }
-                                        if(user_password_.equals(password_string)){
-                                            loading.setVisibility(View.GONE);
-                                            success_message.setText("Code Accepted");
-                                            success_message.setVisibility(View.VISIBLE);
-                                            password_dialogue.dismiss();
-                                            manager.beginTransaction().replace(R.id.container, new Locate_Children()).addToBackStack("locate").commit();
-                                        }else{
-                                            loading.setVisibility(View.GONE);
-                                            success_message.setText("Invalid password");
-                                            success_message.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                                            success_message.setVisibility(View.VISIBLE);
+                                        else{
+//                                              Toast.makeText(getActivity(),"Couldn't fetch posts",Toast.LENGTH_LONG).show();
                                         }
                                     }
+                                    if(user_password_.equals(password_string)){
+                                        loading.setVisibility(View.GONE);
+                                        success_message.setText("Code Accepted");
+                                        success_message.setVisibility(View.VISIBLE);
+                                        password_dialogue.dismiss();
+                                        manager.beginTransaction().replace(R.id.container, new Locate_Children()).addToBackStack("locate").commit();
+                                    }else{
+                                        loading.setVisibility(View.GONE);
+                                        success_message.setText("Invalid password");
+                                        success_message.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                                        success_message.setVisibility(View.VISIBLE);
+                                    }
                                 }
+                            }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Toast.makeText(MainActivity.this,"Cancelled",Toast.LENGTH_LONG).show();
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                Toast.makeText(MainActivity.this,"Cancelled",Toast.LENGTH_LONG).show();
 
-                                }
-                            });
-                        }catch (NullPointerException e){
+                            }
+                        });
+                    }catch (NullPointerException e){
 
-                        }
-                    }else{
-                        loading.setVisibility(View.GONE);
-                        success_message.setText("Invalid password");
-                        success_message.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                        success_message.setVisibility(View.VISIBLE);
                     }
                 }else{
-                    success_message.setText("No internet connection");
+                    loading.setVisibility(View.GONE);
+                    success_message.setText("Invalid password");
                     success_message.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                     success_message.setVisibility(View.VISIBLE);
                 }
+            }else{
+                success_message.setText("No internet connection");
+                success_message.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                success_message.setVisibility(View.VISIBLE);
             }
         });
 

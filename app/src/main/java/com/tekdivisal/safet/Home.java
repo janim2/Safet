@@ -192,13 +192,16 @@ public class Home extends Fragment {
         child_location_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(homeaccessor.getBoolean("isPasswordCreated")){
-                    Show_password_Dialogue(getActivity());
-                }else{
-                    Toast.makeText(getActivity(), "Create password", Toast.LENGTH_LONG).show();
-                    manager.beginTransaction().replace(R.id.container, new Settings()).addToBackStack("settings")
-                            .commit();
-                }
+//                if(homeaccessor.getBoolean("isPasswordCreated")){
+//                    Show_password_Dialogue(getActivity());
+//                }else{
+//                    Toast.makeText(getActivity(), "Create password", Toast.LENGTH_LONG).show();
+//                    manager.beginTransaction().replace(R.id.container, new Settings()).addToBackStack("settings")
+//                            .commit();
+//                }
+                manager.beginTransaction().replace(R.id.container, new Locate_Children()).commit();
+
+
             }
         });
 
