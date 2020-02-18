@@ -59,11 +59,12 @@ import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.internal.service.Common;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.maps.DirectionsApi;
+import com.google.maps.GeoApiContext;
 import com.google.maps.android.PolyUtil;
 
 
@@ -94,6 +95,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.maps.errors.ApiException;
+import com.google.maps.model.DirectionsLeg;
+import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.DirectionsRoute;
+import com.google.maps.model.Duration;
+import com.google.maps.model.TravelMode;
 import com.tekdivisal.safet.Model.Constants;
 import com.tekdivisal.safet.Model.KeyValuePair;
 
@@ -104,10 +111,13 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+
+import static java.text.DateFormat.getDateTimeInstance;
 
 public class Child_location extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -144,6 +154,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
     private Geocoder geocoder;
 
     VolleyRequest request;
+    private String bus_status,bus_starttime_hrs, bus_status_mins, bus_starttime_secs, theduration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +165,8 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
         }catch (InflateException e){
 
         }
+
+        polylines = new ArrayList<>();
 
         request = new VolleyRequest(this);
 
@@ -229,6 +242,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
             assert mapFragment != null;
             mapFragment.getMapAsync(this);
         }
+
         if (isNetworkAvailable()) {
             if(isassigned_bus.equals("Yes")){
                 if(child_location_accessor.getBoolean("has_set_location")){
@@ -438,7 +452,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
                                     try {
                                         addresses = geocoder.getFromLocation(loc1.getLatitude(),loc1.getLongitude(),1);
-                                        location_name.setText(addresses.get(0).getAddressLine(0));
+                                        location_name.setText(addresses.get(0).getLocality());
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
@@ -472,20 +486,13 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
                     float distance = loc1.distanceTo(loc2);
                     status_distance.setText(String.valueOf(distance)+"m away");
-                    status_time.setText("00:00");
-                    if (distance < 80) {
+                    if (distance < 50) {
                         status_distance.setText("Bus arrived");
 //                      // add to notifications
                         Bus_arrived_notification();
                     } else {
                         status_distance.setText(String.valueOf(distance)+"m away");
                     }
-
-                    //drawing a line between the two destinations
-//                    PolylineOptions options = new PolylineOptions().add(pickuplocation)
-//                            .add(driverlatlng).width(5).color(Color.BLUE).geodesic(true);
-//
-//                    mMap.addPolyline(options);
 
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(driverlatlng).tilt(5)
@@ -506,7 +513,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                                 .title(child_fname_from_home).flat(true).icon(BitmapDescriptorFactory
                                         .fromBitmap(getMarkerBitmapFromView(getResources(),R.drawable.schoolbus,30,30))));//.icon(BitmapDescriptorFactory.fromResource(R.mipmap.pin_)));
 //                        drawPolyLine(loc1, loc2);
-//                        drawLine();
+                        drawLine();
 
                     }catch (NullPointerException e){
 
@@ -524,79 +531,21 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
     }
 
-    private void drawPolyLine(Location loc1, Location loc2) {
-            RequestQueue queue = Volley.newRequestQueue(this);
-
-//        Toast.makeText(Child_location.this, "getPosition:" + muserMarker.getPosition().toString(), Toast.LENGTH_LONG).show();
-//        Toast.makeText(Child_location.this, "getID:" + muserMarker.getId().toString(), Toast.LENGTH_LONG).show();
-            String url = "https://maps.googleapis.com/maps/api/directions/json?key=" + Constants.MAPSTOKEN +
-                    "&origin=place_id:" +  "ChIJrTLr-GyuEmsRBfy61i59si0" +
-                    "&destination=place_id:" + "ChIJrTLr-GyuEmsRBfy61i99si0";
-            String url1 = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+ driverlatlng.latitude +","+ driverlatlng.longitude + "&key=" + Constants.MAPSTOKEN;
-
-            StringRequest getAddress = new StringRequest(Request.Method.GET, url1, response -> {
-                JSONObject object = null;
-                try {
-                    object = new JSONObject(response);
-                    JSONArray routes = object.getJSONArray("results");
-                    JSONObject route = routes.getJSONObject(1);
-
-                    Toast.makeText(Child_location.this, "address" + route.toString(), Toast.LENGTH_LONG).show();
-//
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }, error -> {
-
-            });
-
-        queue.add(getAddress);
-
-//        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
-//                JSONObject object = null;
-//                try {
-//                    object = new JSONObject(response);
-//                    Toast.makeText(Child_location.this, "loation", Toast.LENGTH_LONG).show();
-//                    JSONArray routes = object.getJSONArray("routes");
-//                    JSONObject route = routes.getJSONObject(0);
-////                JSONObject overview_polyline = route.getJSONObject("overview_polyline");
-//                    JSONArray legs = route.getJSONArray("legs");
-//                    JSONObject leg = legs.getJSONObject(0);
-//                    JSONObject start = leg.getJSONObject("start_location");
-//                    JSONObject end = leg.getJSONObject("end_location");
-//                    Toast.makeText(Child_location.this, end.toString(), Toast.LENGTH_LONG).show();
-//
-////                String polyLineString = overview_polyline.getString("points");
-//
-//                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-//                            new LatLng(end.getDouble("lat"), end.getDouble("lng")), 20));
-//
-//                    drawPath(legs.getJSONObject(0).getJSONArray("steps"),
-//                            new LatLng(start.getDouble("lat"), start.getDouble("lng")),
-//                            new LatLng(end.getDouble("lat"), end.getDouble("lng")));
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }, error -> {
-//
-//            });
-//
-//        queue.add(stringRequest);
-
-    }
 
     private void drawLine() {
-
-        Routing routing = new Routing.Builder()
-                .travelMode(Routing.TravelMode.DRIVING)
-                .withListener(this)
-                .waypoints(pickuplocation, driverlatlng)
-                .key("AIzaSyC3NDxV7ESwzeUV6t_wmzlDr7UWxwnqSRc")
-                .build();
-        routing.execute();
+        try {
+            if(pickuplocation != null && driverlatlng != null){
+                Routing routing = new Routing.Builder()
+                        .travelMode(Routing.TravelMode.DRIVING)
+                        .withListener(this)
+                        .waypoints(pickuplocation, driverlatlng)
+                        .key(getResources().getString(R.string.google_maps_key))
+                        .build();
+                routing.execute();
+            }
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -634,9 +583,18 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
             polyOptions.addAll(route.get(i).getPoints());
             Polyline polyline = mMap.addPolyline(polyOptions);
             polylines.add(polyline);
-            Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
+
+            theduration = route.get(i).getDurationText();
+
+            try {
+                status_time.setText(String.valueOf(route.get(i).getDurationText()) + " away");
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+//            Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
         }
     }
+
 
     @Override
     public void onRoutingCancelled() {
@@ -708,6 +666,8 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                     }
                     driver_name_tv.setText(sfirst_name + " " + slastname);
                     getBusDetails(school_code,sdriver_code);
+                    FetchDriver_Starttime(school_code, sdriver_code);
+
                 }
             }
 
@@ -790,6 +750,101 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
             }
         });
+    }
+
+    private void FetchDriver_Starttime(String sch_code, String drivercode) {
+        try {
+            DatabaseReference timereference = FirebaseDatabase.getInstance().getReference("trip_status")
+                    .child(sch_code).child(drivercode);
+            timereference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                        for(DataSnapshot child : dataSnapshot.getChildren()) {
+                            if (child.getKey().equals("status")) {
+                                bus_status = child.getValue().toString();
+                            }
+
+                            if (!bus_status.equals("Arrived")) {
+                                DatabaseReference timereference = FirebaseDatabase.getInstance().getReference("trip_status")
+                                        .child(sch_code).child(drivercode).child("time");
+                                timereference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.exists()) {
+                                            for (DataSnapshot child : dataSnapshot.getChildren()) {
+                                                if (child.getKey().equals("hours")) {
+                                                    bus_starttime_hrs = child.getValue().toString();
+                                                }
+
+                                                if (child.getKey().equals("minutes")) {
+                                                    bus_status_mins = child.getValue().toString();
+                                                }
+
+                                                if (child.getKey().equals("seconds")) {
+                                                    bus_starttime_secs = child.getValue().toString();
+                                                } else {
+//                                                  Toast.makeText(getActivity(),"Couldn't fetch posts",Toast.LENGTH_LONG).show();
+
+                                                }
+                                            }
+
+                                            try {
+                                                status_start_time.setText(bus_starttime_hrs+":"+bus_status_mins);
+
+                                                String remove_hours  = theduration.replace("hours", " ");
+                                                String remove_mins = remove_hours.replace("mins", "");
+                                                String[] splited_time = remove_mins.split("",2);
+                                                String[] nextst = splited_time[1].split(" ",2);
+                                                String hr = nextst[0];
+                                                String min = nextst[1].replaceFirst(" ", "");
+
+                                                String end_time;
+                                                int add_mins = Integer.valueOf(min.trim()) + Integer.valueOf(bus_status_mins);
+                                                if(add_mins > 60){
+                                                    int submins = add_mins - 60;
+                                                    int add_hrs = Integer.valueOf(hr) + Integer.valueOf(bus_starttime_hrs);
+                                                    int total_hrs = add_hrs + 1;
+                                                    end_time = String.valueOf(total_hrs)+":"+String.valueOf(submins);
+                                                    status_end_time.setText(end_time);
+
+                                                }else{
+                                                    int add_hrs = Integer.valueOf(hr) + Integer.valueOf(bus_starttime_hrs);
+                                                    end_time = String.valueOf(add_hrs)+":"+String.valueOf(add_mins);
+                                                    status_end_time.setText(end_time);
+
+                                                }
+
+                                            }catch (Exception e){
+
+                                            }
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                            }else {
+                                status_start_time.setText("Trip not started");
+                                status_end_time.setText("Arrived at ");
+                            }
+                        }
+                       }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(Child_location.this,"Cancelled",Toast.LENGTH_LONG).show();
+
+                }
+            });
+        }catch (NullPointerException e){
+
+        }
     }
 
     private void Bus_arrived_notification() {
@@ -919,35 +974,4 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 //
 //    }
 
-    void drawPath(JSONArray steps, LatLng start, LatLng end) throws JSONException {
-        int count = steps.length();
-        PolylineOptions polyOptions = new PolylineOptions();
-        polyOptions.color(Color.BLACK);
-        polyOptions.width((float) 7.5);
-
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//        builder.include(start);
-//        builder.include(end);
-
-        JSONObject holder;
-
-        for(int i = 0; i < count; i++){
-            holder = steps.getJSONObject(i);
-            polyOptions.addAll(PolyUtil.decode(holder.getJSONObject("polyline").getString("points")));
-            builder.include(new LatLng(
-                    holder.getJSONObject("start_location").getDouble("lat"),
-                    holder.getJSONObject("start_location").getDouble("lng")));
-            builder.include(new LatLng(
-                    holder.getJSONObject("end_location").getDouble("lat"),
-                    holder.getJSONObject("end_location").getDouble("lng")));
-        }
-
-        mMap.addPolyline(polyOptions);
-
-        mMap.addMarker(new MarkerOptions().position(start).title("Origin"));
-        mMap.addMarker(new MarkerOptions().position(end).title("Destination"));
-
-        //BOUND_PADDING is an int to specify padding of bound.. try 100.
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 90));
-    }
 }

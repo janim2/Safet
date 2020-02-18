@@ -61,7 +61,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0 min away"
+                    android:text=""
                     android:textSize="13sp"
                     android:id="@+id/_time"
                     android:textColor="@color/colorPrimary"
@@ -125,7 +125,7 @@
                 android:layout_margin="8dp"
                 android:textColor="@color/main_blue"
                 android:id="@+id/start_time"
-                android:text="00:00 am"/>
+                android:text="None"/>
 
         </LinearLayout>
     </LinearLayout>
@@ -239,8 +239,7 @@
                 android:layout_margin="8dp"
                 android:textColor="@color/main_blue"
                 android:id="@+id/end_time"
-                android:text="00:00 am"/>
-
+                android:text="None"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

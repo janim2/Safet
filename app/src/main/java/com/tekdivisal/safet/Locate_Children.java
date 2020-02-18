@@ -93,16 +93,13 @@ public class Locate_Children extends Fragment {
         children_Adapter = new ChildrenAdapter(getFromDatabase(),getActivity());
         children_RecyclerView.setAdapter(children_Adapter);
 
-        no_internet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isNetworkAvailable()){
-                    get_Children_IDs();
-                    new Look_for_all().execute();
-                }else{
-                    no_children_textView.setVisibility(View.GONE);
-                    no_internet.setVisibility(View.VISIBLE);
-                }
+        no_internet.setOnClickListener(v -> {
+            if(isNetworkAvailable()){
+                get_Children_IDs();
+                new Look_for_all().execute();
+            }else{
+                no_children_textView.setVisibility(View.GONE);
+                no_internet.setVisibility(View.VISIBLE);
             }
         });
         return home;

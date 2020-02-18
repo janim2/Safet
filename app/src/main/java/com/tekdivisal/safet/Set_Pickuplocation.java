@@ -47,12 +47,19 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 
 public class Set_Pickuplocation extends AppCompatActivity implements OnMapReadyCallback,
@@ -72,6 +79,9 @@ public class Set_Pickuplocation extends AppCompatActivity implements OnMapReadyC
     private ProgressBar loading;
 
     private GoogleMap mMap;
+    private int AUTOCOMPLETE_REQUEST_CODE = 1;
+
+    //google places autocomplete
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,10 +108,29 @@ public class Set_Pickuplocation extends AppCompatActivity implements OnMapReadyC
             mapFragment.getMapAsync(this);
         }
 
-        set_pickup_location_button.setOnClickListener(new View.OnClickListener() {
+        //google maps autocomplete
+        Places.initialize(Set_Pickuplocation.this, getResources().getString(R.string.google_maps_key));
+
+        // Initialize the AutocompleteSupportFragment.
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
+        // Specify the types of place data to return.
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+
+        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
-            public void onClick(View v) {
-                if(isNetworkAvailable()){
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+//                mMap.clear();
+//                Toast.makeText(Set_Pickuplocation.this, place.getName() + ", " + place.getId(), Toast.LENGTH_LONG).show();
+//                muserMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title("Me").flat(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                AlertDialog.Builder setlocation = new AlertDialog.Builder(Set_Pickuplocation.this);
+                setlocation.setTitle("Set pickup location");
+                setlocation.setMessage("Are you sure you want to set pickup location to " + place.getName());
+                setlocation.setPositiveButton("SET", (dialog, which) -> {
+                    dialog.dismiss();
                     loading.setVisibility(View.VISIBLE);
                     try{
                         DatabaseReference pickupLocation_ = FirebaseDatabase.getInstance().getReference("user_location")
@@ -116,24 +145,66 @@ public class Set_Pickuplocation extends AppCompatActivity implements OnMapReadyC
                                 builder.setTitle("Pickup location");
                                 builder.setMessage("Pickup location has been set successfully.");
 
-                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        pickuplocation_accessor.put("has_set_location", true);
-                                        dialog.cancel();
-                                        finish();
-                                        startActivity(new Intent(Set_Pickuplocation.this, Child_location.class));
-                                    }
+                                builder.setPositiveButton("OK", (dialog, which) -> {
+                                    pickuplocation_accessor.put("has_set_location", true);
+                                    dialog.cancel();
+                                    finish();
+                                    startActivity(new Intent(Set_Pickuplocation.this, Child_location.class));
                                 });
                                 builder.show();
                             }
                         });
                     }catch (NullPointerException e){
                         e.printStackTrace();
-                    }
-                }else{
+                    } });
 
+                setlocation.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                setlocation.show();
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+//                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
+
+
+        set_pickup_location_button.setOnClickListener(v -> {
+            if(isNetworkAvailable()){
+                loading.setVisibility(View.VISIBLE);
+                try{
+                    DatabaseReference pickupLocation_ = FirebaseDatabase.getInstance().getReference("user_location")
+                            .child(school_code);
+                    GeoFire geoFireAvailable = new GeoFire(pickupLocation_);
+
+                    geoFireAvailable.setLocation(parent_code, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
+                        @Override
+                        public void onComplete(String s, DatabaseError databaseError) {
+                            loading.setVisibility(View.GONE);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(Set_Pickuplocation.this);
+                            builder.setTitle("Pickup location");
+                            builder.setMessage("Pickup location has been set successfully.");
+
+                            builder.setPositiveButton("OK", (dialog, which) -> {
+                                pickuplocation_accessor.put("has_set_location", true);
+                                dialog.cancel();
+                                finish();
+                                startActivity(new Intent(Set_Pickuplocation.this, Child_location.class));
+                            });
+                            builder.show();
+                        }
+                    });
+                }catch (NullPointerException e){
+                    e.printStackTrace();
                 }
+            }else{
+
             }
         });
 
@@ -274,6 +345,66 @@ public class Set_Pickuplocation extends AppCompatActivity implements OnMapReadyC
                 }
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+//                mMap.clear();
+//                muserMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title("Me").flat(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+//                Toast.makeText(Set_Pickuplocation.this, place.getName() + ", " + place.getId(), Toast.LENGTH_LONG).show();
+                AlertDialog.Builder setlocation = new AlertDialog.Builder(Set_Pickuplocation.this);
+                setlocation.setTitle("Set pickup location");
+                setlocation.setMessage("Are you sure you want to set pickup location to " + place.getName());
+                setlocation.setPositiveButton("SET", (dialog, which) -> {
+                    dialog.dismiss();
+                    loading.setVisibility(View.VISIBLE);
+                    try{
+                        DatabaseReference pickupLocation_ = FirebaseDatabase.getInstance().getReference("user_location")
+                                .child(school_code);
+                        GeoFire geoFireAvailable = new GeoFire(pickupLocation_);
+
+                        geoFireAvailable.setLocation(parent_code, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
+                            @Override
+                            public void onComplete(String s, DatabaseError databaseError) {
+                                loading.setVisibility(View.GONE);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(Set_Pickuplocation.this);
+                                builder.setTitle("Pickup location");
+                                builder.setMessage("Pickup location has been set successfully.");
+
+                                builder.setPositiveButton("OK", (dialog, which) -> {
+                                    pickuplocation_accessor.put("has_set_location", true);
+                                    dialog.cancel();
+                                    finish();
+                                    startActivity(new Intent(Set_Pickuplocation.this, Child_location.class));
+                                });
+                                builder.show();
+                            }
+                        });
+                    }catch (NullPointerException e){
+                        e.printStackTrace();
+                    } });
+
+                setlocation.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                setlocation.show();
+
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // TODO: Handle the error.
+                Status status = Autocomplete.getStatusFromIntent(data);
+//                Log.i(TAG, status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+
     }
 
     private boolean isNetworkAvailable() {
