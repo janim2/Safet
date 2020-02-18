@@ -154,7 +154,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
     private Geocoder geocoder;
 
     VolleyRequest request;
-    private String bus_status,bus_starttime_hrs, bus_status_mins, bus_starttime_secs, theduration;
+    private String bus_status,bus_starttime_hrs, bus_status_mins, bus_starttime_secs, theduration, end_time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -583,11 +583,9 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
             polyOptions.addAll(route.get(i).getPoints());
             Polyline polyline = mMap.addPolyline(polyOptions);
             polylines.add(polyline);
-
-            theduration = route.get(i).getDurationText();
-
             try {
                 status_time.setText(String.valueOf(route.get(i).getDurationText()) + " away");
+                theduration = route.get(i).getDurationText();
             }catch (NullPointerException e){
                 e.printStackTrace();
             }
@@ -791,16 +789,20 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
                                             try {
                                                 status_start_time.setText(bus_starttime_hrs+":"+bus_status_mins);
+                                            }catch (Exception e){
 
+                                            }
+
+                                            //setting end time
+                                            try {
                                                 String remove_hours  = theduration.replace("hours", " ");
                                                 String remove_mins = remove_hours.replace("mins", "");
                                                 String[] splited_time = remove_mins.split("",2);
                                                 String[] nextst = splited_time[1].split(" ",2);
                                                 String hr = nextst[0];
-                                                String min = nextst[1].replaceFirst(" ", "");
+                                                String min = nextst[1].replaceFirst(" ", "").trim();
 
-                                                String end_time;
-                                                int add_mins = Integer.valueOf(min.trim()) + Integer.valueOf(bus_status_mins);
+                                                int add_mins = Integer.valueOf(min) + Integer.valueOf(bus_status_mins);
                                                 if(add_mins > 60){
                                                     int submins = add_mins - 60;
                                                     int add_hrs = Integer.valueOf(hr) + Integer.valueOf(bus_starttime_hrs);
@@ -814,10 +816,11 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                                                     status_end_time.setText(end_time);
 
                                                 }
-
-                                            }catch (Exception e){
+                                            }catch (NullPointerException e){
 
                                             }
+
+//                                            end_time ends here
 
                                         }
                                     }
@@ -830,7 +833,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
                             }else {
                                 status_start_time.setText("Trip not started");
-                                status_end_time.setText("Arrived at ");
+                                status_end_time.setText("Arrived at " + end_time);
                             }
                         }
                        }
