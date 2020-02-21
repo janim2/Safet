@@ -18,8 +18,14 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="Myalert" parent="Base.Theme.AppCompat.Dialog.Alert">
-        <item name="background">@color/main_blue</item>
+        <item name="background">@color/colorPrimary</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="dialogCornerRadius">10dp</item>
+    </style>
+
+
+    <style name="PopupStyle" parent="Base.Theme.AppCompat.Dialog.Alert">
+        <item name="android:background">@android:color/white</item>
         <item name="dialogCornerRadius">10dp</item>
     </style>
 </resources>

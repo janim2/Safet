@@ -108,7 +108,7 @@ public class About extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
                     for(DataSnapshot child : dataSnapshot.getChildren()){
-                        if(child.getKey().equals("email")){
+                        if(child.getKey().equals("the_email")){
                             sschoolemail = child.getValue().toString();
                             about_accessor.put("school_email",sschoolemail);
                         }

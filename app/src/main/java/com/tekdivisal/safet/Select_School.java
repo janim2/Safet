@@ -132,7 +132,7 @@ public class Select_School extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
                     for(DataSnapshot child : dataSnapshot.getChildren()){
-                        if(child.getKey().equals("email")){
+                        if(child.getKey().equals("the_email")){
                             sschoolemail = child.getValue().toString();
                         }
                         if(child.getKey().equals("location")){

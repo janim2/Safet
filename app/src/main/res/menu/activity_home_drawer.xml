@@ -18,10 +18,11 @@
             android:id="@+id/profile"
             android:icon="@drawable/user"
             android:title="Profile" />
-        <item
-            android:id="@+id/edit_location"
-            android:title="Bus Location"
-            android:icon="@drawable/route"/>
+
+        <!--<item-->
+            <!--android:id="@+id/edit_location"-->
+            <!--android:title="Bus Location"-->
+            <!--android:icon="@drawable/route"/>-->
 
         <item
             android:id="@+id/settings"

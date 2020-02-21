@@ -63,17 +63,14 @@ public class Notifications extends AppCompatActivity {
         notifications_Adapter = new NotifyAdapter(getNotificationsFromDatabase(),Notifications.this);
         notifications_RecyclerView.setAdapter(notifications_Adapter);
 
-        no_internet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                no_internet.setVisibility(View.GONE);
-                no_notifications.setVisibility(View.VISIBLE);
-                if(isNetworkAvailable()){
-                    getUserNotifications_ID();
-                }else{
-                    no_notifications.setVisibility(View.GONE);
-                    no_internet.setVisibility(View.VISIBLE);
-                }
+        no_internet.setOnClickListener(v -> {
+            no_internet.setVisibility(View.GONE);
+            no_notifications.setVisibility(View.VISIBLE);
+            if(isNetworkAvailable()){
+                getUserNotifications_ID();
+            }else{
+                no_notifications.setVisibility(View.GONE);
+                no_internet.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -153,7 +150,10 @@ public class Notifications extends AppCompatActivity {
         return  notificationsArray;
     }
 
-
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+    }
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager

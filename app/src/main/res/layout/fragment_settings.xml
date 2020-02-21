@@ -33,6 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="43dp"
             android:orientation="vertical"
+            android:visibility="gone"
             android:id="@+id/create_or_change_layout"
             android:layout_margin="10dp">
 
@@ -91,7 +92,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Pick up Remainder"
+                    android:text="Pick up and drop remainder"
                     android:layout_weight="1"
                     android:textSize="14sp"
                     android:textColor="@color/main_blue"/>
@@ -103,6 +104,7 @@
                     android:layout_weight="2"
                     android:gravity="right"
                     android:textSize="14sp"
+                    android:id="@+id/change_reminder_"
                     android:textColor="@color/colorPrimary"/>
 
             </LinearLayout>
@@ -110,40 +112,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="13sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:text="Currently 1.0km before drop spot"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Drop Remainder"
-                    android:layout_weight="1"
-                    android:textSize="14sp"
-                    android:textColor="@color/main_blue"
-                    />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Change"
-                    android:layout_weight="2"
-                    android:gravity="right"
-                    android:textSize="14sp"
-                    android:textColor="@color/colorPrimary"/>
-
-            </LinearLayout>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:text="Currently 1.0km before drop spot"/>
+                android:id="@+id/reminder_set"
+                android:textColor="@color/colorPrimaryDark"/>
 
             <View
                 android:layout_width="match_parent"
@@ -173,6 +143,7 @@
                     android:layout_weight="2"
                     android:gravity="right"
                     android:textSize="14sp"
+                    android:id="@+id/select_all"
                     android:textColor="@color/colorPrimary"/>
 
             </LinearLayout>
@@ -184,7 +155,6 @@
                 android:layout_marginTop="5dp"
                 android:textColor="@color/colorPrimaryDark"
                 android:id="@+id/pickup_notify_text"
-                android:checked="true"
                 android:text="@string/pickup_notification"/>
 
             <CheckBox
@@ -192,7 +162,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
                 android:layout_marginTop="10dp"
-                android:checked="true"
                 android:textColor="@color/colorPrimaryDark"
                 android:id="@+id/drop_notify_text"
                 android:text="@string/drop_notification"/>
@@ -201,7 +170,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
-                 android:checked="true"
                  android:layout_marginTop="10dp"
                  android:textColor="@color/colorPrimaryDark"
                  android:id="@+id/reached_notify_text"
@@ -212,7 +180,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
                 android:layout_marginTop="10dp"
-                android:checked="true"
                 android:textColor="@color/colorPrimaryDark"
                 android:id="@+id/left_notify_text"
                 android:text="@string/left_school_notification"/>

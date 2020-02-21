@@ -301,7 +301,7 @@ public class Verify_School extends AppCompatActivity {
                             parent_lname = child.getValue().toString();
                             verify_school_accesssrs.put("parent_lname", parent_lname);
                         }
-                        if(child.getKey().equals("email")){
+                        if(child.getKey().equals("the_email")){
                             parent_email = child.getValue().toString();
                             verify_school_accesssrs.put("parent_email", parent_email);
                         }

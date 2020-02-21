@@ -159,7 +159,8 @@ public class Locate_Children extends Fragment {
 
                         string_child_code = key;
                     }
-                    Children obj = new Children(sfirst_name,slastname,sclass,sgender,string_child_code,is_assigned,the_assigned_bus);
+                    Children obj = new Children(parent_code_string,sfirst_name,slastname,sclass,sgender,
+                            string_child_code,is_assigned,the_assigned_bus);
                     childrenArray.add(obj);
                     children_RecyclerView.setAdapter(children_Adapter);
                     children_Adapter.notifyDataSetChanged();

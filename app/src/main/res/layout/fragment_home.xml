@@ -209,13 +209,13 @@
                        android:layout_height="wrap_content"
                        android:orientation="vertical"
                        android:layout_weight="1"
-                       android:id="@+id/bus_location_layout"
+                       android:id="@+id/messages_layout"
                        android:padding="10dp">
 
                        <ImageView
                            android:layout_width="50dp"
                            android:layout_height="50dp"
-                           android:src="@drawable/route"
+                           android:src="@drawable/the_email"
                            android:padding="7dp"
                            android:layout_gravity="center"
                            android:background="@drawable/border_only_curved_corners"/>
@@ -223,7 +223,7 @@
                        <TextView
                            android:layout_width="match_parent"
                            android:layout_height="wrap_content"
-                           android:text="Bus location"
+                           android:text="Messages"
                            android:textColor="@color/colorPrimaryDark"
                            android:layout_marginTop="5dp"
                            android:gravity="center"/>

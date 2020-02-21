@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/logo_launch_"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Set_Pickuplocation"></activity>
+        <activity android:name=".Child_Details"></activity>
+        <activity android:name=".Set_Pickuplocation" />
         <activity android:name=".Assign_bus_To_Child" />
         <activity
             android:name=".Change_password"

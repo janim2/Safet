@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity
 //        getting the menuitem that i want to change
         profilemenuitem = menu.findItem(R.id.profile);
         confirm_menuItem = menu.findItem(R.id.confirm_school);
-        edit_location_menuItem = menu.findItem(R.id.edit_location);
+//        edit_location_menuItem = menu.findItem(R.id.edit_location);
         locate_children_menuItem = menu.findItem(R.id.locate_children);
 
         password_dialogue = new Dialog(MainActivity.this);
@@ -190,17 +190,21 @@ public class MainActivity extends AppCompatActivity
 
         }
         else if (id == R.id.profile) {
-            manager.beginTransaction().replace(R.id.container, new Profile()).commit();
+            manager.beginTransaction().replace(R.id.container, new Profile()).addToBackStack("profile").commit();
 
-        } else if (id == R.id.edit_location) {
-            if(mainAccessor.getBoolean("isverified")){
-                manager.beginTransaction().replace(R.id.container, new Edit_Location()).commit();
-            }else{
-                Toast.makeText(MainActivity.this, "Confirm school", Toast.LENGTH_LONG).show();
-            }
+        }
 
+//        else if (id == R.id.edit_location) {
+//            if(mainAccessor.getBoolean("isverified")){
+//                manager.beginTransaction().replace(R.id.container, new Edit_Location()).commit();
+//            }else{
+//                Toast.makeText(MainActivity.this, "Confirm school", Toast.LENGTH_LONG).show();
+//            }
+//
+//
+//        }
 
-        } else if (id == R.id.settings) {
+        else if (id == R.id.settings) {
             manager.beginTransaction().replace(R.id.container, new Settings()).commit();
 
         } else if (id == R.id.about_school) {

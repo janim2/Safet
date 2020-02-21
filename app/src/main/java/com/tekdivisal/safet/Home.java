@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
@@ -86,7 +87,7 @@ public class Home extends Fragment {
 
     private ImageView school_logo;
     private LinearLayout mission_layout, vision_layout, profile_layout,
-            child_location_layout, bus_location_layout, contact_layout,settings_layout, logout_layout;
+            child_location_layout, messages_layout, contact_layout,settings_layout, logout_layout;
     private CardView quick_access_cardView;
 
     private Dialog password_dialogue;
@@ -141,7 +142,7 @@ public class Home extends Fragment {
         //quick access initializations
         profile_layout = unverified.findViewById(R.id.profile_layout);
         child_location_layout = unverified.findViewById(R.id.child_location_layout);
-        bus_location_layout = unverified.findViewById(R.id.bus_location_layout);
+        messages_layout = unverified.findViewById(R.id.messages_layout);
         contact_layout = unverified.findViewById(R.id.contact_layout);
         settings_layout = unverified.findViewById(R.id.settings_layout);
         logout_layout = unverified.findViewById(R.id.logout_layout);
@@ -158,40 +159,25 @@ public class Home extends Fragment {
             confirm_cardView.setVisibility(View.VISIBLE);
         }
 
-        confirm_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getActivity(), Verify_School.class));
-            }
-        });
+        confirm_button.setOnClickListener(v -> startActivity(new Intent(getActivity(), Verify_School.class)));
 
-        facilies_no_internet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isNetworkAvailable()){
-                    Fetch_Image_One();
+        facilies_no_internet.setOnClickListener(v -> {
+            if(isNetworkAvailable()){
+                Fetch_Image_One();
 //                    Fetch_Facilities_IDS();
-                }else{
-                    facilies_no_internet.setVisibility(View.VISIBLE);
-                    no_facilities.setVisibility(View.GONE);
+            }else{
+                facilies_no_internet.setVisibility(View.VISIBLE);
+                no_facilities.setVisibility(View.GONE);
 //                    mission_text.setText("No internet connection");
 //                    vision_text.setText("No internet connection");
-                }
             }
         });
 
         //quick access
-        profile_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                manager.beginTransaction().replace(R.id.container, new Profile()).addToBackStack("profile")
-                        .commit();
-            }
-        });
+        profile_layout.setOnClickListener(v -> manager.beginTransaction().replace(R.id.container, new Profile()).addToBackStack("profile")
+                .commit());
 
-        child_location_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        child_location_layout.setOnClickListener(v -> {
 //                if(homeaccessor.getBoolean("isPasswordCreated")){
 //                    Show_password_Dialogue(getActivity());
 //                }else{
@@ -199,69 +185,40 @@ public class Home extends Fragment {
 //                    manager.beginTransaction().replace(R.id.container, new Settings()).addToBackStack("settings")
 //                            .commit();
 //                }
-                manager.beginTransaction().replace(R.id.container, new Locate_Children()).commit();
-
-
-            }
+            manager.beginTransaction().replace(R.id.container, new Locate_Children()).commit();
         });
 
-        bus_location_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(homeaccessor.getBoolean("isverified")){
-                    manager.beginTransaction().replace(R.id.container, new Edit_Location()).addToBackStack("bus_l")
-                            .commit();
-                }else{
-                    Toast.makeText(getActivity(), "Confirm school", Toast.LENGTH_LONG).show();
-                }
-            }
+        messages_layout.setOnClickListener(v -> {
+                startActivity(new Intent(getActivity(), Messages_Activity.class));
         });
 
-        contact_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                manager.beginTransaction().replace(R.id.container, new Contact_school()).addToBackStack("contact").commit();
-            }
-        });
+        contact_layout.setOnClickListener(v -> manager.beginTransaction().replace(R.id.container, new Contact_school()).addToBackStack("contact").commit());
 
-        settings_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                manager.beginTransaction().replace(R.id.container, new Settings()).addToBackStack("settings").commit();
-            }
-        });
+        settings_layout.setOnClickListener(v -> manager.beginTransaction().replace(R.id.container, new Settings()).addToBackStack("settings").commit());
 
-        logout_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final AlertDialog.Builder logout = new AlertDialog.Builder(getActivity(), R.style.Myalert);
-                logout.setTitle("Signing Out?");
-                logout.setMessage("Leaving us? Please reconsider.");
-                logout.setNegativeButton("Sign out", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        logout_layout.setOnClickListener(v -> {
+            final AlertDialog.Builder logout = new AlertDialog.Builder(getActivity(), R.style.Myalert);
+            logout.setTitle("Signing Out?");
+            logout.setMessage("Leaving us? Please reconsider.");
+            logout.setNegativeButton("Sign out", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 //                        logout here
-                        if(isNetworkAvailable()){
-                            FirebaseAuth.getInstance().signOut();
-                            homeaccessor.put("isverified", false);
-                            homeaccessor.put("hasChoosenSchool",false);
-                            homeaccessor.clearStore();
-                            startActivity(new Intent(getActivity(),Login.class));
-                        }else{
-                            Toast.makeText(getActivity(),"No internet connection",Toast.LENGTH_LONG).show();
-                        }
+                    if(isNetworkAvailable()){
+                        FirebaseAuth.getInstance().signOut();
+                        homeaccessor.put("isverified", false);
+                        homeaccessor.put("hasChoosenSchool",false);
+                        homeaccessor.clearStore();
+                        startActivity(new Intent(getActivity(),Login.class));
+                    }else{
+                        Toast.makeText(getActivity(),"No internet connection",Toast.LENGTH_LONG).show();
                     }
-                });
+                }
+            });
 
-                logout.setPositiveButton("Stay", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                logout.show();
+            logout.setPositiveButton("Stay", (dialog, which) -> dialog.cancel());
+            logout.show();
 
-            }
         });
 
         return  unverified;
@@ -505,14 +462,11 @@ public class Home extends Fragment {
             move_from_tmpMessage_to_main.child("location").setValue(message_arrived_location);
             move_from_tmpMessage_to_main.child("date").setValue(message_arrived_date);
             move_from_tmpMessage_to_main.child("time").setValue(message_arrived_time)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    DatabaseReference removeRef = FirebaseDatabase.getInstance().getReference("temp_messages").child(school_id).child(parent_code_string).child(message_key);
-                    removeRef.removeValue();
-                    Toast.makeText(getActivity(), "Removed", Toast.LENGTH_LONG).show();
-                }
-            });
+                    .addOnCompleteListener(task -> {
+                        DatabaseReference removeRef = FirebaseDatabase.getInstance().getReference("temp_messages").child(school_id).child(parent_code_string).child(message_key);
+                        removeRef.removeValue();
+                        Toast.makeText(getActivity(), "Removed", Toast.LENGTH_LONG).show();
+                    });
         }catch (NullPointerException e){
 
         }
@@ -818,72 +772,64 @@ public class Home extends Fragment {
         done_button = (Button)password_dialogue.findViewById(R.id.done_button);
         loading = (ProgressBar) password_dialogue.findViewById(R.id.loading);
 
-        cancelpopup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                password_dialogue.dismiss();
-            }
-        });
+        cancelpopup.setOnClickListener(v -> password_dialogue.dismiss());
 
 
-        done_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isNetworkAvailable()){
-                    password_string = password_editText.getText().toString().trim();
-                    if(!password_string.equals("")){
-                        loading.setVisibility(View.VISIBLE);
+        done_button.setOnClickListener(v -> {
+            if(isNetworkAvailable()){
+                password_string = password_editText.getText().toString().trim();
+                if(!password_string.equals("")){
+                    loading.setVisibility(View.VISIBLE);
 
 //                        Verify_password();
-                        try {
-                            DatabaseReference get_password = FirebaseDatabase.getInstance().getReference("passwords").child(parent_code_string);
-                            get_password.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if(dataSnapshot.exists()){
-                                        for(DataSnapshot child : dataSnapshot.getChildren()){
-                                            if(child.getKey().equals("password")){
-                                                user_password_ = child.getValue().toString();
-                                            }
-                                            else{
-//                                              Toast.makeText(getActivity(),"Couldn't fetch posts",Toast.LENGTH_LONG).show();
-                                            }
+                    try {
+                        DatabaseReference get_password = FirebaseDatabase.getInstance().getReference("passwords").child(parent_code_string);
+                        get_password.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists()){
+                                    for(DataSnapshot child : dataSnapshot.getChildren()){
+                                        if(child.getKey().equals("password")){
+                                            user_password_ = child.getValue().toString();
                                         }
-                                        if(user_password_.equals(password_string)){
-                                            loading.setVisibility(View.GONE);
-                                            success_message.setText("Code Accepted");
-                                            success_message.setVisibility(View.VISIBLE);
-                                            password_dialogue.dismiss();
-                                            manager.beginTransaction().replace(R.id.container, new Locate_Children()).commit();
-                                        }else{
-                                            loading.setVisibility(View.GONE);
-                                            success_message.setText("Invalid password");
-                                            success_message.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                                            success_message.setVisibility(View.VISIBLE);
+                                        else{
+//                                              Toast.makeText(getActivity(),"Couldn't fetch posts",Toast.LENGTH_LONG).show();
                                         }
                                     }
+                                    if(user_password_.equals(password_string)){
+                                        loading.setVisibility(View.GONE);
+                                        success_message.setText("Code Accepted");
+                                        success_message.setVisibility(View.VISIBLE);
+                                        password_dialogue.dismiss();
+                                        manager.beginTransaction().replace(R.id.container, new Locate_Children()).commit();
+                                    }else{
+                                        loading.setVisibility(View.GONE);
+                                        success_message.setText("Invalid password");
+                                        success_message.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                                        success_message.setVisibility(View.VISIBLE);
+                                    }
                                 }
+                            }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Toast.makeText(getActivity(),"Cancelled",Toast.LENGTH_LONG).show();
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                Toast.makeText(getActivity(),"Cancelled",Toast.LENGTH_LONG).show();
 
-                                }
-                            });
-                        }catch (NullPointerException e){
+                            }
+                        });
+                    }catch (NullPointerException e){
 
-                        }
-                    }else{
-                        loading.setVisibility(View.GONE);
-                        success_message.setText("Invalid password");
-                        success_message.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                        success_message.setVisibility(View.VISIBLE);
                     }
                 }else{
-                    success_message.setText("No internet connection");
+                    loading.setVisibility(View.GONE);
+                    success_message.setText("Invalid password");
                     success_message.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                     success_message.setVisibility(View.VISIBLE);
                 }
+            }else{
+                success_message.setText("No internet connection");
+                success_message.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                success_message.setVisibility(View.VISIBLE);
             }
         });
 
@@ -908,6 +854,11 @@ public class Home extends Fragment {
 
     }
 
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+    }
+
     private boolean isNetworkAvailable() {
         try {
             ConnectivityManager connectivityManager
@@ -917,6 +868,6 @@ public class Home extends Fragment {
         }catch (NullPointerException e){
 
         }
-      return true;
+        return true;
     }
 }
