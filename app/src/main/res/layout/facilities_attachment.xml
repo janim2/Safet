@@ -23,7 +23,7 @@
                 android:layout_height="180dp"
                 android:scaleType="centerCrop"
                 android:id="@+id/facility_image"
-                android:src="@drawable/school_logo"/>
+                app:srcCompat="@drawable/school_logo"/>
         </LinearLayout>
 
         <TextView

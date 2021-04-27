@@ -2,21 +2,21 @@ package com.tekdivisal.safet;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -27,14 +27,12 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.tekdivisal.safet.Model.Notify;
 
 import java.util.Objects;
 
@@ -45,8 +43,8 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mauth;
     private Accessories mainAccessor;
     private Menu menu;
-    private MenuItem profilemenuitem, confirm_menuItem, edit_location_menuItem,
-    locate_children_menuItem;
+    private MenuItem profilemenuitem, confirm_menuItem, settingmenuitem,
+            edit_location_menuItem,  locate_children_menuItem;
     private Dialog password_dialogue;
     private String password_string, parent_code,user_password_;
 
@@ -89,6 +87,7 @@ public class MainActivity extends AppCompatActivity
         menu = navigationView.getMenu();
 //        getting the menuitem that i want to change
         profilemenuitem = menu.findItem(R.id.profile);
+        settingmenuitem = menu.findItem(R.id.settings);
         confirm_menuItem = menu.findItem(R.id.confirm_school);
 //        edit_location_menuItem = menu.findItem(R.id.edit_location);
         locate_children_menuItem = menu.findItem(R.id.locate_children);
@@ -108,6 +107,7 @@ public class MainActivity extends AppCompatActivity
                     profilemenuitem.setVisible(false);
 //                    edit_location_menuItem.setVisible(false);
                     locate_children_menuItem.setVisible(false);
+                    settingmenuitem.setVisible(false);
                     manager.beginTransaction().replace(R.id.container, new Home()).commit();
                 }
             }else{
@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity
         }
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -216,9 +217,9 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(MainActivity.this, "Unconfirmed", Toast.LENGTH_LONG).show();
                 mainAccessor.put("isverified", false);
                 confirm_menuItem.setTitle("Confirm school");
-                            Intent restart = new Intent(MainActivity.this, MainActivity.class);
-                            restart.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(restart);
+                Intent restart = new Intent(MainActivity.this, MainActivity.class);
+                restart.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(restart);
             }else{
                 startActivity(new Intent(MainActivity.this, Verify_School.class));
             }

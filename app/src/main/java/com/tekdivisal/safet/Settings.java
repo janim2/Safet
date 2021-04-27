@@ -1,16 +1,13 @@
 package com.tekdivisal.safet;
 
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.location.SettingInjectorService;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -21,22 +18,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tekdivisal.safet.Helpers.HelperClass;
-import com.tekdivisal.safet.Model.Notify;
 
 
 /**
@@ -129,7 +121,7 @@ public class Settings extends Fragment {
         });
 
         delete_notifications_layout.setOnClickListener(v -> {
-            AlertDialog.Builder delete_notifications = new AlertDialog.Builder(getActivity(), R.style.Myalert);
+            AlertDialog.Builder delete_notifications = new AlertDialog.Builder(getActivity());
             delete_notifications.setTitle("Delete Notifications")
                     .setMessage("Are you sure you want to delete all your notifications?")
                     .setPositiveButton("DELETE", (dialog, which) -> {
@@ -139,19 +131,14 @@ public class Settings extends Fragment {
                                         .child(school_id_string).child(parent_code);
                                 delete_.removeValue().addOnCompleteListener(task -> Toast.makeText(getActivity(), "Notifications deleted", Toast.LENGTH_LONG).show());
                             }catch (NullPointerException e){
-
+                                e.printStackTrace();
                             }
                         }else{
                             Toast.makeText(getActivity(), "No internet connection", Toast.LENGTH_LONG).show();
                         }
                     });
 
-            delete_notifications.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
+            delete_notifications.setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss());
 
             delete_notifications.show();
         });
@@ -270,9 +257,17 @@ public class Settings extends Fragment {
 
         left_notify.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){
-                SaveSettings(school_id_string,parent_code,"left_notify", "Yes");
+                try{
+                    SaveSettings(school_id_string,parent_code,"left_notify", "Yes");
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
             }else{
-                SaveSettings(school_id_string,parent_code,"left_notify", "No");
+                try{
+                    SaveSettings(school_id_string,parent_code,"left_notify", "No");
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -311,28 +306,32 @@ public class Settings extends Fragment {
                             }
                         }
 
-                        if(shouldN_for_pickup.equals("Yes")){
-                            pickup_notify.setChecked(true);
-                        }else{
-                            pickup_notify.setChecked(false);
-                        }
+                        try{
+                            if(shouldN_for_pickup.equals("Yes")){
+                                pickup_notify.setChecked(true);
+                            }else{
+                                pickup_notify.setChecked(false);
+                            }
 
-                        if(shouldN_for_drop.equals("Yes")){
-                            dropped_notify.setChecked(true);
-                        }else{
-                            dropped_notify.setChecked(false);
-                        }
+                            if(shouldN_for_drop.equals("Yes")){
+                                dropped_notify.setChecked(true);
+                            }else{
+                                dropped_notify.setChecked(false);
+                            }
 
-                        if(shouldN_for_left.equals("Yes")){
-                            left_notify.setChecked(true);
-                        }else{
-                            left_notify.setChecked(false);
-                        }
+                            if(shouldN_for_left.equals("Yes")){
+                                left_notify.setChecked(true);
+                            }else{
+                                left_notify.setChecked(false);
+                            }
 
-                        if(shouldN_for_reached.equals("Yes")){
-                            reached_notify.setChecked(true);
-                        }else{
-                            reached_notify.setChecked(false);
+                            if(shouldN_for_reached.equals("Yes")){
+                                reached_notify.setChecked(true);
+                            }else{
+                                reached_notify.setChecked(false);
+                            }
+                        }catch (NullPointerException e){
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -344,12 +343,11 @@ public class Settings extends Fragment {
                 }
             });
         }catch (NullPointerException e){
-
+            e.printStackTrace();
         }
     }
 
     private void SaveSettings(String school_id_string, String parent_code, String itemtoChange, String changeValue) {
-        try {
             if(itemtoChange.equals("pickup_notify")){
                 DatabaseReference addsettings = FirebaseDatabase.getInstance().getReference("settings")
                         .child(school_id_string).child(parent_code);
@@ -399,9 +397,6 @@ public class Settings extends Fragment {
                                     settings_accessor.put("hassetAlertSettings", true);
                                 });
             }
-        }catch (NullPointerException e){
-
-        }
     }
 
     private void Changereminder_dialogue(FragmentActivity activity) {
@@ -445,7 +440,7 @@ public class Settings extends Fragment {
                 try {
                     DatabaseReference change_pick = FirebaseDatabase.getInstance().getReference("settings")
                             .child(school_id_string).child(parent_code);
-                    change_pick.setValue("notify_distance",selected_distance).addOnCompleteListener(task -> {
+                    change_pick.child("notify_distance").setValue(selected_distance[0]).addOnCompleteListener(task -> {
                         success_message.setText("Setting changed");
                         success_message.setVisibility(View.VISIBLE);
                         view_process_dialogue.dismiss();

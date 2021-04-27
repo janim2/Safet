@@ -2,7 +2,7 @@ package com.tekdivisal.safet.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
+
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -52,7 +52,7 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
 
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(ViewHolder holder,final int position) {
         final TextView name = holder.view.findViewById(R.id.student_name);
         TextView child_class = holder.view.findViewById(R.id.child_class);
         TextView status = holder.view.findViewById(R.id.status);
@@ -103,7 +103,7 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
 
         DatabaseReference bus_status = FirebaseDatabase.getInstance().getReference("trip_status")
                 .child(school_id_string).child(assigned_bus);
-            bus_status.addListenerForSingleValueEvent(new ValueEventListener() {
+            bus_status.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if(dataSnapshot.exists()){

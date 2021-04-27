@@ -1,13 +1,7 @@
 package com.tekdivisal.safet;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -21,25 +15,19 @@ import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -47,32 +35,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.directions.route.AbstractRouting;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+
 import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
-import com.google.android.gms.common.internal.service.Common;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.maps.DirectionsApi;
-import com.google.maps.GeoApiContext;
-import com.google.maps.android.PolyUtil;
-
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
@@ -82,42 +57,26 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.maps.errors.ApiException;
-import com.google.maps.model.DirectionsLeg;
-import com.google.maps.model.DirectionsResult;
-import com.google.maps.model.DirectionsRoute;
-import com.google.maps.model.Duration;
-import com.google.maps.model.TravelMode;
-import com.tekdivisal.safet.Model.Constants;
-import com.tekdivisal.safet.Model.KeyValuePair;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
-
-import static java.text.DateFormat.getDateTimeInstance;
 
 public class Child_location extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -481,24 +440,26 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                         loc2.setLatitude(driverlatlng.latitude);
                         loc2.setLongitude(driverlatlng.longitude);
                     } catch (NullPointerException e) {
-
+                        e.printStackTrace();
                     }
 
-                    float distance = loc1.distanceTo(loc2);
-                    status_distance.setText(String.valueOf(distance)+"m away");
-                    if (distance < 50) {
-                        status_distance.setText("Bus arrived");
-//                      // add to notifications
-                        Bus_arrived_notification();
-                    } else {
-                        status_distance.setText(String.valueOf(distance)+"m away");
-                    }
 
-                    CameraPosition cameraPosition = new CameraPosition.Builder()
-                            .target(driverlatlng).tilt(5)
-                            .zoom(8)
-                            .build();
                     try {
+                        float distance = loc1.distanceTo(loc2);
+                        status_distance.setText(String.valueOf(distance)+"m away");
+                        if (distance < 50) {
+                            status_distance.setText("Bus arrived");
+//                      // add to notifications
+                            Bus_arrived_notification();
+                        } else {
+                            status_distance.setText(String.valueOf(distance)+"m away");
+                        }
+
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(driverlatlng).tilt(5)
+                                .zoom(8)
+                                .build();
+
                         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                     } catch (NullPointerException e) {
 
@@ -662,7 +623,12 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                         }
                         sdriver_code = key;
                     }
-                    driver_name_tv.setText(sfirst_name + " " + slastname);
+
+                    try{
+                        driver_name_tv.setText(sfirst_name + " " + slastname);
+                    }catch (NullPointerException e){
+                        e.printStackTrace();
+                    }
                     getBusDetails(school_code,sdriver_code);
                     FetchDriver_Starttime(school_code, sdriver_code);
 
@@ -700,8 +666,12 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                             snumber_plate = child.getValue().toString();
                         }
                     }
-                    number_plate_tv.setText(snumber_plate);
-                    bus_model_tv.setText(sbrand + " " + smodel);
+                    try{
+                        number_plate_tv.setText(snumber_plate);
+                        bus_model_tv.setText(sbrand + " " + smodel);
+                    }catch (NullPointerException e){
+                        e.printStackTrace();
+                    }
                     getSchoolinformation(schoolcode);
                 }
             }
@@ -737,9 +707,15 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                             child_location_accessor.put("school_telephone",sschoolphone);
                         }
                     }
-                    school_name_tv.setText(sschoolname);
-                    status_school_name.setText(sschoolname);
-                    school_number_tv.setText(sschoolphone);
+                    try{
+                        school_name_tv.setText(sschoolname);
+                        status_school_name.setText(sschoolname);
+                        school_number_tv.setText(sschoolphone);
+                    }
+                    catch (NullPointerException e){
+                        e.printStackTrace();
+                    }
+
                 }
             }
 
@@ -817,7 +793,7 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
 
                                                 }
                                             }catch (NullPointerException e){
-
+                                                e.printStackTrace();
                                             }
 
 //                                            end_time ends here
@@ -832,8 +808,12 @@ public class Child_location extends AppCompatActivity implements OnMapReadyCallb
                                 });
 
                             }else {
-                                status_start_time.setText("Trip not started");
-                                status_end_time.setText("Arrived at " + end_time);
+                                try{
+                                    status_start_time.setText("Trip not started");
+                                    status_end_time.setText("Arrived at " + end_time);
+                                }catch (NullPointerException e){
+                                    e.printStackTrace();
+                                }
                             }
                         }
                        }

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,7 +21,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.tekdivisal.safet.Adapters.ChildrenAdapter;
 import com.tekdivisal.safet.Adapters.ProfileChildrenAdapter;
 import com.tekdivisal.safet.Helpers.HelperClass;
 import com.tekdivisal.safet.Model.Children;
@@ -81,10 +82,10 @@ public class Profile extends Fragment {
             parent_email_Textview.setText(sparent_email);
             parent_locationTextView.setText(sparent_location);
         }catch (NullPointerException e){
-
+            e.printStackTrace();
         }
 
-        if(sparent_email.equals("")){
+        if(sparent_email.equals("") || sparent_location.equals("")){
             getUserInformation();
         }
 
@@ -131,7 +132,7 @@ public class Profile extends Fragment {
                             parent_lname = child.getValue().toString();
                             profile_accessor.put("parent_lname", parent_lname);
                         }
-                        if(child.getKey().equals("the_email")){
+                        if(child.getKey().equals("email")){
                             parent_email = child.getValue().toString();
                             profile_accessor.put("parent_email", parent_email);
                         }
@@ -139,7 +140,6 @@ public class Profile extends Fragment {
                             parent_location = child.getValue().toString();
                             profile_accessor.put("parent_location", parent_location);
                         }
-
                     }
                 }
             }

@@ -25,7 +25,7 @@
 
 
     <style name="PopupStyle" parent="Base.Theme.AppCompat.Dialog.Alert">
-        <item name="android:background">@android:color/white</item>
+        <item name="background">@android:color/white</item>
         <item name="dialogCornerRadius">10dp</item>
     </style>
 </resources>

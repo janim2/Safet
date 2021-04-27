@@ -18,9 +18,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
+
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -40,8 +39,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -56,7 +53,6 @@ import com.tekdivisal.safet.PiccassoImageProcessor.PicassoImageLoadingService;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Random;
 
 import ss.com.bannerslider.Slider;
 
@@ -86,7 +82,8 @@ public class Home extends Fragment {
             vision_text, admission_status, school_location;
 
     private ImageView school_logo;
-    private LinearLayout mission_layout, vision_layout, profile_layout,
+    private CardView mission_layout, vision_layout;
+    private LinearLayout profile_layout,
             child_location_layout, messages_layout, contact_layout,settings_layout, logout_layout;
     private CardView quick_access_cardView;
 
@@ -151,7 +148,8 @@ public class Home extends Fragment {
         facilities_Adapter = new Facilities_Adapter(getFacilitiesFromDatabase(),getActivity());
         facilities_RecyclerView.setAdapter(facilities_Adapter);
 
-        new Look_for_all().execute();
+//        new Look_for_all().execute();
+        Fetch_Messages_IDs();
 
         if(homeaccessor.getBoolean("isverified")){
             quick_access_cardView.setVisibility(View.VISIBLE);
@@ -225,30 +223,30 @@ public class Home extends Fragment {
     }
 
 
-    private class Look_for_all extends AsyncTask<String, Void, Void> {
-
-        @Override
-        protected Void doInBackground(String... strings) {
-            final Handler thehandler;
-
-            thehandler = new Handler(Looper.getMainLooper());
-            final int delay = 15000;
-
-            thehandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if(isNetworkAvailable()){
-                        Fetch_Messages_IDs();
-//                        Fetch_bus_assignment_state();
-                    }else{
-//                        Toast.makeText(Admin_MainActivity.this,"checking", Toast.LENGTH_LONG).show();
-                    }
-                    thehandler.postDelayed(this,delay);
-                }
-            },delay);
-            return null;
-        }
-    }
+//    private class Look_for_all extends AsyncTask<String, Void, Void> {
+//
+//        @Override
+//        protected Void doInBackground(String... strings) {
+//            final Handler thehandler;
+//
+//            thehandler = new Handler(Looper.getMainLooper());
+//            final int delay = 15000;
+//
+//            thehandler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    if(isNetworkAvailable()){
+//                        Fetch_Messages_IDs();
+////                        Fetch_bus_assignment_state();
+//                    }else{
+////                        Toast.makeText(Admin_MainActivity.this,"checking", Toast.LENGTH_LONG).show();
+//                    }
+//                    thehandler.postDelayed(this,delay);
+//                }
+//            },delay);
+//            return null;
+//        }
+//    }
 
 //    private void Fetch_bus_assignment_state() {
 //        try{
@@ -308,7 +306,7 @@ public class Home extends Fragment {
         try {
             DatabaseReference get_messages_arrived = FirebaseDatabase.getInstance().getReference("temp_messages")
                     .child(school_id).child(parent_code_string);
-            get_messages_arrived.addListenerForSingleValueEvent(new ValueEventListener() {
+            get_messages_arrived.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if(dataSnapshot.exists()){
@@ -333,7 +331,7 @@ public class Home extends Fragment {
     private void Fetch_message_details(final String key) {
         DatabaseReference has_bus_arrived = FirebaseDatabase.getInstance().getReference("temp_messages")
                 .child(school_id).child(parent_code_string).child(key);
-        has_bus_arrived.addListenerForSingleValueEvent(new ValueEventListener() {
+        has_bus_arrived.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){

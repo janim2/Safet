@@ -2,13 +2,13 @@ package com.tekdivisal.safet.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import android.support.v7.widget.RecyclerView;
 import com.tekdivisal.safet.Accessories;
 import com.tekdivisal.safet.MainActivity;
 import com.tekdivisal.safet.Model.Notify;
@@ -46,7 +46,7 @@ public class SchoolAdapter extends RecyclerView.Adapter<SchoolAdapter.ViewHolder
     @Override
     public void onBindViewHolder(SchoolAdapter.ViewHolder holder, final int position) {
         final TextView school_name = holder.view.findViewById(R.id.school_name);
-        school_name.setText(itemList.get(position).getSchool_name());
+        school_name.setText(itemList.get(position).getSchool_name().toUpperCase());
 
         school_name.setOnClickListener(new View.OnClickListener() {
             @Override

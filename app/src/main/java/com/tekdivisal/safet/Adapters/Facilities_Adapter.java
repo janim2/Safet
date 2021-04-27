@@ -2,13 +2,12 @@ package com.tekdivisal.safet.Adapters;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.support.v7.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 import com.tekdivisal.safet.Model.Facilities;
 import com.tekdivisal.safet.R;

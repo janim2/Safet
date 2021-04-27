@@ -14,7 +14,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+
 import android.support.annotation.NonNull;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -38,7 +40,6 @@ import com.tekdivisal.safet.Model.Children;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -182,23 +183,23 @@ public class Locate_Children extends Fragment {
 
         @Override
         protected Void doInBackground(String... strings) {
-            final Handler thehandler;
-
-            thehandler = new Handler(Looper.getMainLooper());
-            final int delay = 15000;
-
-            thehandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
+//            final Handler thehandler;
+//
+//            thehandler = new Handler(Looper.getMainLooper());
+//            final int delay = 15000;
+//
+//            thehandler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
                     if(isNetworkAvailable()){
                         get_bus_Arrived_IDs();
                         get_bus_status_IDs();
                     }else{
 //                        Toast.makeText(Admin_MainActivity.this,"checking", Toast.LENGTH_LONG).show();
                     }
-                    thehandler.postDelayed(this,delay);
-                }
-            },delay);
+//                    thehandler.postDelayed(this,delay);
+//                }
+//            },delay);
             return null;
         }
     }
@@ -208,7 +209,7 @@ public class Locate_Children extends Fragment {
         try {
             DatabaseReference get_Bus_arrived = FirebaseDatabase.getInstance().getReference("bus_notification")
                     .child(parent_code_string).child(school_id_string);
-            get_Bus_arrived.addListenerForSingleValueEvent(new ValueEventListener() {
+            get_Bus_arrived.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if(dataSnapshot.exists()){
@@ -233,7 +234,7 @@ public class Locate_Children extends Fragment {
     private void Has_bus_arrived(final String key) {
         DatabaseReference has_bus_arrived = FirebaseDatabase.getInstance().getReference("bus_notification")
                 .child(parent_code_string).child(school_id_string).child(key);
-        has_bus_arrived.addListenerForSingleValueEvent(new ValueEventListener() {
+        has_bus_arrived.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
@@ -368,7 +369,7 @@ public class Locate_Children extends Fragment {
         try {
             DatabaseReference get_Bus_arrived = FirebaseDatabase.getInstance().getReference("trip_status")
                     .child(school_id_string);
-            get_Bus_arrived.addListenerForSingleValueEvent(new ValueEventListener() {
+            get_Bus_arrived.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if(dataSnapshot.exists()){
@@ -394,7 +395,7 @@ public class Locate_Children extends Fragment {
 //        Toast.makeText(getActivity(), "working", Toast.LENGTH_LONG).show();
         DatabaseReference get_Bus_status = FirebaseDatabase.getInstance().getReference("trip_status")
                 .child(school_id_string).child(key);
-        get_Bus_status.addListenerForSingleValueEvent(new ValueEventListener() {
+        get_Bus_status.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
@@ -405,7 +406,7 @@ public class Locate_Children extends Fragment {
 //                                Toast.makeText(getActivity(), bus_arrived_status,Toast.LENGTH_LONG).show();
 //                                home_accessor.put("bus_status", bus_arrived_status);
                             }catch (NullPointerException e){
-
+                                e.printStackTrace();
                             }
 
                         }

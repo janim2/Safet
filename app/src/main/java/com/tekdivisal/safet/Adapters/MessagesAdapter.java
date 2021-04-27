@@ -1,17 +1,13 @@
 package com.tekdivisal.safet.Adapters;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import android.support.v7.widget.RecyclerView;
 import com.tekdivisal.safet.Model.Messages;
 import com.tekdivisal.safet.R;
 
@@ -67,12 +63,13 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         title.setText(itemList.get(position).getMessage_title());
         message.setText(itemList.get(position).getMessage_message());
 
-        if(!itemList.get(position).getLocation().equals("")){
-            location.setVisibility(View.VISIBLE);
-            location.setText(itemList.get(position).getLocation());
-        }
-        if(!itemList.get(position).getDate().equals("")){
-            date.setVisibility(View.VISIBLE);
+        try{
+            if(!itemList.get(position).getLocation().equals("")){
+                location.setVisibility(View.VISIBLE);
+                location.setText(itemList.get(position).getLocation());
+            }
+            if(!itemList.get(position).getDate().equals("")){
+                date.setVisibility(View.VISIBLE);
 //            Date date_ = null;
 //            try {
 //                date_ = new SimpleDateFormat("yyyy-MMM-dd").parse(itemList.get(position).getDate());
@@ -80,14 +77,16 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 //            } catch (ParseException e) {
 //                e.printStackTrace();
 //            }
-            date.setText(itemList.get(position).getDate());
+                date.setText(itemList.get(position).getDate());
+            }
+            if(!itemList.get(position).getTime().equals("")){
+                time.setVisibility(View.VISIBLE);
+                time.setText(itemList.get(position).getTime());
+            }
+        }catch (NullPointerException e){
+            e.printStackTrace();
         }
-        if(!itemList.get(position).getTime().equals("")){
-            time.setVisibility(View.VISIBLE);
-            time.setText(itemList.get(position).getTime());
-        }
-
-        }
+    }
 
 
     @Override

@@ -14,5 +14,4 @@
     <string name="drop_notification"><b>Drop notification</b>\nNotify when bus gets to drop location</string>
     <string name="reached_school_notification"><b>Reached school</b>\nNotify when reached school</string>
     <string name="left_school_notification"><b>Left school</b>\nNotify when leaving school</string>
-    <string name="create_password">Create Password</string>
-</resources>
+    <string name="create_password">Create Password</string></resources>
